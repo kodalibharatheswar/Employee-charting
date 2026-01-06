@@ -43,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()

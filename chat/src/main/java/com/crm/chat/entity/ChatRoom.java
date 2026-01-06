@@ -2,20 +2,26 @@ package com.crm.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+// import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Table(name = "chat_rooms", indexes = {
         @Index(name = "idx_chatroom_updated", columnList = "updated_at")
 })
-@Data
+// @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoom {
@@ -88,4 +94,17 @@ public class ChatRoom {
     public void updateLastMessageTime() {
         this.lastMessageAt = LocalDateTime.now();
     }
+
+
+   @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChatRoom chatRoom)) return false;
+        return id != null && id.equals(chatRoom.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    } 
 }

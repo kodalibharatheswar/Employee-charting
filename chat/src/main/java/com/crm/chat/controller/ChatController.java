@@ -12,11 +12,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +33,56 @@ public class ChatController {
     private final ConversationService conversationService;
     private final ChatRoomService chatRoomService;
     private final MessageService messageService;
+
+    // Define a storage location
+    private final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+
+
+    @PostMapping("/api/chat/upload")
+    public ResponseEntity<MessageDTO> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("chatId") Long chatId,
+            @RequestParam("chatType") String chatType) throws IOException {
+
+        // Get Current User
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userService.findByUsername(username).orElseThrow();
+
+        // Create directory if not exists
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Save file locally with unique name
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath);
+
+        // Path to return to UI (accessible via static resources)
+        String fileUrl = "/uploads/" + fileName;
+
+        // Save Message to Database
+        Message message = new Message();
+        message.setSender(currentUser);
+        message.setContent(fileUrl);
+        message.setType(Message.MessageType.FILE);
+        
+        if ("direct".equals(chatType)) {
+            // Logic to link to conversation
+            message = messageService.sendDirectMessage(currentUser.getId(), chatId, fileUrl);
+            message.setType(Message.MessageType.FILE); // Ensure type is FILE
+        } else {
+            // Logic to link to chatRoom
+            message = messageService.sendGroupMessage(currentUser.getId(), chatId, fileUrl);
+            message.setType(Message.MessageType.FILE);
+        }
+
+        // Note: You should update your MessageService methods to accept Type 
+        // OR manually update the type after calling existing service methods.
+        
+        return ResponseEntity.ok(MessageDTO.fromEntity(message));
+    }
 
     private User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -102,6 +159,21 @@ public class ChatController {
                 .map(MessageDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+
+    @PostMapping("/api/chatrooms/{chatRoomId}/members/batch")
+@ResponseBody
+public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId, 
+                                             @RequestBody List<Long> userIds) {
+    for (Long userId : userIds) {
+        try {
+            chatRoomService.addMemberToChatRoom(chatRoomId, userId, ChatRoomMember.MemberRole.MEMBER);
+        } catch (Exception e) {
+            // Ignore if already a member or log error
+        }
+    }
+    return ResponseEntity.ok("Members added");
+}
 
     @PostMapping("/api/conversations/{conversationId}/messages")
     @ResponseBody

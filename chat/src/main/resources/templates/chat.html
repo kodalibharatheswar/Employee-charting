@@ -3,119 +3,649 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Chat</title>
-    <link rel="stylesheet" th:href="@{/css/chat.css}">
+    <title>Employee Chat - CRM Module</title>
+    <!-- Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        /* Modern CRM Style Palette */
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #1e293b;
+            --bg-light: #f8fafc;
+            --bg-sidebar: #0f172a;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --sent-msg: #3b82f6;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-light); height: 100vh; overflow: hidden; color: var(--text-main); }
+
+        .chat-container { display: flex; height: 100vh; width: 100vw; }
+
+        /* Sidebar Styling */
+        .sidebar { width: 350px; background: var(--bg-sidebar); color: white; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid #1e293b; }
+        .sidebar-header h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .user-info { display: flex; align-items: center; gap: 8px; font-size: 13px; opacity: 0.9; }
+        .status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+
+        /* Navigation Tabs */
+        .tabs { display: flex; background: #1e293b; padding: 4px; margin: 10px 15px; border-radius: 8px; }
+        .tab-btn { flex: 1; padding: 8px; border: none; background: none; color: #94a3b8; cursor: pointer; font-size: 12px; font-weight: 600; border-radius: 6px; transition: 0.2s; }
+        .tab-btn.active { color: white; background: var(--primary); }
+
+        /* Sidebar Lists */
+        .chat-list { flex: 1; overflow-y: auto; padding-top: 10px; }
+        .list-section-header { padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .list-section-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 1px; }
+        .btn-add { background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-add:hover { background: var(--primary); }
+        
+        .chat-item { padding: 12px 20px; cursor: pointer; border-left: 3px solid transparent; transition: 0.2s; border-bottom: 1px solid #1e293b; }
+        .chat-item:hover { background: #1e293b; }
+        .chat-item.active { background: #1e293b; border-left-color: var(--primary); }
+        .item-name { display: block; font-weight: 500; font-size: 14px; color: #f1f5f9; }
+        .item-preview { display: block; font-size: 11px; color: #64748b; margin-top: 2px; }
+
+        /* Main Chat Window */
+        .main-chat { flex: 1; display: flex; flex-direction: column; background: #f1f5f9; }
+        .welcome { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-muted); }
+        .welcome h2 { font-size: 24px; color: var(--secondary); margin-bottom: 8px; }
+        
+        .chat-header { padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .chat-header-info { cursor: pointer; transition: opacity 0.2s; flex: 1; margin-right: 20px; }
+        .chat-header-info:hover { opacity: 0.7; }
+        .chat-header h4 { font-size: 16px; font-weight: 600; }
+        
+        .messages-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+
+        /* Message Bubbles */
+        .message { max-width: 65%; padding: 10px 14px; border-radius: 12px; font-size: 14px; position: relative; word-wrap: break-word; }
+        .message.sent { align-self: flex-end; background: var(--sent-msg); color: white; border-bottom-right-radius: 2px; }
+        .message.received { align-self: flex-start; background: white; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+        .message .file-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: 600; }
+        .message.received .file-link { color: var(--primary); }
+
+        /* Input Area */
+        .input-area { padding: 20px; background: white; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
+        input#message-input { flex: 1; padding: 12px 18px; border: 1px solid var(--border); border-radius: 24px; outline: none; background: var(--bg-light); transition: 0.2s; }
+        input#message-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        
+        .btn-upload { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.2s; }
+        .btn-upload:hover { background: #e2e8f0; color: var(--primary); }
+
+        button#send-button { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 24px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button#send-button:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        /* Modal Styles */
+        .modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal.active { display: flex; }
+        .modal-content { background: white; width: 480px; border-radius: 16px; padding: 32px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: var(--text-muted); transition: 0.2s; }
+        .close-modal:hover { color: var(--secondary); }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; }
+        .form-group input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; outline: none; transition: 0.2s; }
+        .form-group input:focus { border-color: var(--primary); }
+
+        /* Checkbox List for Group Members */
+        .checkbox-container { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 4px; margin-top: 8px; background: var(--bg-light); }
+        .user-select-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 6px; cursor: pointer; transition: 0.15s; }
+        .user-select-item:hover { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .user-select-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
+        .user-select-item div { font-size: 13px; font-weight: 500; }
+        .user-select-item span { font-size: 11px; color: var(--text-muted); display: block; }
+
+        /* Member Info List inside info modal */
+        .info-list { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; max-height: 250px; overflow-y: auto; }
+        .info-user-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--bg-light); }
+        .btn-remove-member { background: none; border: none; color: var(--danger); font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: 0.2s; opacity: 0.6; }
+        .btn-remove-member:hover { opacity: 1; background: #fee2e2; }
+
+        .btn-submit { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s; margin-top: 10px; }
+        .btn-submit:disabled { background: var(--border); cursor: not-allowed; }
+
+        .btn-outline { width: 100%; padding: 10px; background: white; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; margin-top: 15px; transition: 0.2s; }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-<div class="chat-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Employee Chat</h2>
-            <div class="user-info">
-                <span class="user-name" th:text="${currentUser.fullName}"></span>
-                <span class="user-status online">●</span>
-            </div>
-            <!-- Fixed logout to use POST form -->
-            <form th:action="@{/logout}" method="post" style="display: inline; margin: 0;">
-                <button type="submit" class="btn-logout">Logout</button>
-            </form>
-        </div>
-
-        <!-- Tabs for Direct & Group Chat -->
-        <div class="chat-tabs">
-            <button class="tab-btn active" data-tab="direct">Direct Messages</button>
-            <button class="tab-btn" data-tab="groups">Groups</button>
-        </div>
-
-        <!-- Direct Messages List -->
-        <div class="chat-list" id="direct-list">
-            <div class="list-header">
-                <h3>Conversations</h3>
-                <button class="btn-new-chat" id="btn-new-direct">+</button>
-            </div>
-            <div id="conversation-list" class="chat-items"></div>
-        </div>
-
-        <!-- Group Chat List -->
-        <div class="chat-list hidden" id="groups-list">
-            <div class="list-header">
-                <h3>Chat Rooms</h3>
-                <button class="btn-new-chat" id="btn-new-group">+</button>
-            </div>
-            <div id="chatroom-list" class="chat-items"></div>
-        </div>
-    </div>
-
-    <!-- Main Chat Area -->
-    <div class="main-chat">
-        <div class="welcome-screen" id="welcome-screen">
-            <h2>Welcome to Employee Chat!</h2>
-            <p>Select a conversation or create a new one to start chatting</p>
-        </div>
-
-        <div class="chat-window hidden" id="chat-window">
-            <div class="chat-header">
-                <div class="chat-header-info">
-                    <h3 id="chat-title">Chat Name</h3>
-                    <span id="chat-subtitle">Status</span>
-                </div>
-                <div class="chat-header-actions">
-                    <button id="btn-chat-info" title="Chat Info">ℹ️</button>
-                    <button id="btn-close-chat" title="Close">✖</button>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>CRM Messaging</h3>
+                <div class="user-info">
+                    <div class="status-dot"></div>
+                    <span id="display-name" th:text="${currentUser.fullName}">Admin User</span>
                 </div>
             </div>
 
-            <div class="messages-container" id="messages-container"></div>
-
-            <div class="typing-indicator hidden" id="typing-indicator">
-                <span></span> is typing...
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-direct" onclick="switchTab('direct')">Direct</button>
+                <button class="tab-btn" id="tab-groups" onclick="switchTab('groups')">Groups</button>
             </div>
 
-            <div class="message-input-container">
-                <input type="text" id="message-input" placeholder="Type a message..." />
-                <button id="send-button">Send</button>
+            <div class="chat-list">
+                <!-- Direct Messages Section -->
+                <div id="direct-section">
+                    <div class="list-section-header">
+                        <span>Direct Messages</span>
+                        <button class="btn-add" onclick="showModal('new-direct-modal')" title="New Conversation">+</button>
+                    </div>
+                    <div id="conversation-list"></div>
+                </div>
+
+                <!-- Groups Section -->
+                <div id="groups-section" class="hidden">
+                    <div class="list-section-header">
+                        <span>Groups</span>
+                        <button class="btn-add" onclick="showModal('new-group-modal')" title="Create New Group">+</button>
+                    </div>
+                    <div id="chatroom-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="main-chat">
+            <div id="welcome-screen" class="welcome">
+                <h2>Internal CRM Chat</h2>
+                <p>Select a teammate or group to start collaborating</p>
+            </div>
+
+            <div id="chat-window" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="chat-header">
+                    <div class="chat-header-info" onclick="showGroupInfoIfApplicable()">
+                        <h4 id="chat-title">Recipient Name</h4>
+                        <span id="chat-subtitle" style="font-size: 11px; color: var(--text-muted); display: block; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Syncing...</span>
+                    </div>
+                    <button onclick="closeChat()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px;">✕</button>
+                </div>
+
+                <div class="messages-container" id="messages-container"></div>
+
+                <div class="input-area">
+                    <!-- File Upload Interaction -->
+                    <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(this)">
+                    <button class="btn-upload" onclick="document.getElementById('file-input').click()" title="Upload File">📎</button>
+                    
+                    <input type="text" id="message-input" placeholder="Write a message..." autocomplete="off">
+                    <button id="send-button">Send</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal for New Direct Chat -->
-<div id="new-direct-modal" class="modal hidden">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Start New Conversation</h2>
-        <input type="text" id="search-users" placeholder="Search employees..." />
-        <div id="users-list" class="users-list"></div>
-    </div>
-</div>
-
-<!-- Modal for New Group Chat -->
-<div id="new-group-modal" class="modal hidden">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Create Group Chat</h2>
-        <div class="form-group">
-            <label>Group Name</label>
-            <input type="text" id="group-name" placeholder="Enter group name" />
+    <!-- Modal: New Direct Conversation -->
+    <div id="new-direct-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3 style="margin-bottom: 20px;">New Conversation</h3>
+            <input type="text" id="search-users" placeholder="Search by employee name..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px;">
+            <div id="users-list-modal" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;"></div>
         </div>
-        <div class="form-group">
-            <label>Description</label>
-            <input type="text" id="group-description" placeholder="Enter description (optional)" />
-        </div>
-        <button id="create-group-btn" class="btn-primary">Create Group</button>
     </div>
-</div>
 
-<!-- Hidden fields -->
-<input type="hidden" id="currentUserId" th:value="${currentUser.id}" />
-<input type="hidden" id="currentUsername" th:value="${currentUser.username}" />
+    <!-- Modal: Create New Group -->
+    <div id="new-group-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3 style="margin-bottom: 20px;">Create Team Group</h3>
+            <div class="form-group">
+                <label>Group Name</label>
+                <input type="text" id="group-name-input" placeholder="e.g. Sales Q1 Targets">
+            </div>
+            <div class="form-group">
+                <label>Add Teammates</label>
+                <input type="text" id="group-search-members" placeholder="Search employees..." style="margin-bottom: 10px; font-size: 12px;">
+                <div id="members-checkbox-list" class="checkbox-container">
+                    <!-- Employees loaded here -->
+                </div>
+            </div>
+            <button class="btn-submit" id="btn-create-group" onclick="createGroup()">Create Group</button>
+        </div>
+    </div>
 
-<!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script th:src="@{/js/chat.js}"></script>
+    <!-- Modal: Group Information -->
+    <div id="group-info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3 id="info-modal-title">Group Details</h3>
+            <p id="info-modal-desc" style="font-size: 13px; color: var(--text-muted); margin-top: 5px;"></p>
+            
+            <div class="info-list" id="info-members-list">
+                <!-- Members injected here -->
+            </div>
+
+            <button class="btn-outline" id="btn-add-more-trigger" onclick="showAddMemberToGroupModal()">+ Add New Members</button>
+        </div>
+    </div>
+
+    <!-- Modal: Add New Members to Existing Group -->
+    <div id="add-member-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3>Add New Teammates</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Select colleagues who aren't in this group yet.</p>
+            
+            <div class="form-group">
+                <input type="text" id="add-member-search" placeholder="Search employees..." style="margin-bottom: 10px;">
+                <div id="add-member-checkbox-list" class="checkbox-container">
+                    <!-- Employees not in group loaded here -->
+                </div>
+            </div>
+            <button class="btn-submit" id="btn-save-new-members" onclick="addNewMembersToGroup()">Add to Group</button>
+        </div>
+    </div>
+
+    <!-- Auth Context -->
+    <input type="hidden" id="currentUserId" th:value="${currentUser.id}">
+    <input type="hidden" id="currentUsername" th:value="${currentUser.username}">
+
+    <script>
+        let stompClient = null;
+        let currentId = null;
+        let currentType = null;
+        let currentGroupAdminId = null; 
+        let currentGroupMembers = []; 
+        let subscriptions = [];
+        const myId = document.getElementById('currentUserId').value;
+
+        /**
+         * Logic Helpers
+         */
+        function getApiUrl(path) {
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return path;
+            const base = window.location.origin.startsWith('blob:') ? '' : window.location.origin;
+            return base.replace(/\/$/, "") + "/" + path.replace(/^\//, "");
+        }
+
+        async function fetchJson(url, options = {}) {
+            try {
+                const response = await fetch(url, options);
+                if (response.redirected && response.url.includes('/login')) {
+                    window.location.reload();
+                    return;
+                }
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                const ct = response.headers.get("content-type");
+                return (ct && ct.includes("application/json")) ? await response.json() : null;
+            } catch (err) {
+                console.error("API Call Failed:", url, err);
+                throw err;
+            }
+        }
+
+        /**
+         * Initialization & WebSockets
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            initWebSocket();
+            loadConversations();
+            loadChatRooms();
+            
+            document.getElementById('send-button').onclick = sendMessage;
+            document.getElementById('message-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+            document.getElementById('search-users').oninput = (e) => searchUsers(e.target.value);
+            document.getElementById('group-search-members').oninput = (e) => filterList('members-checkbox-list', e.target.value);
+            document.getElementById('add-member-search').oninput = (e) => filterList('add-member-checkbox-list', e.target.value);
+        });
+
+        function initWebSocket() {
+            stompClient = Stomp.over(new SockJS('/ws'));
+            stompClient.debug = null; 
+            stompClient.connect({}, () => console.log("System Ready"));
+        }
+
+        /**
+         * Navigation
+         */
+        function switchTab(type) {
+            document.getElementById('tab-direct').classList.toggle('active', type === 'direct');
+            document.getElementById('tab-groups').classList.toggle('active', type === 'groups');
+            document.getElementById('direct-section').classList.toggle('hidden', type !== 'direct');
+            document.getElementById('groups-section').classList.toggle('hidden', type !== 'groups');
+        }
+
+        /**
+         * Data Loading
+         */
+        async function loadConversations() {
+            try {
+                const users = await fetchJson(getApiUrl('/api/users'));
+                if (!users) return;
+                const html = users.map(u => `
+                    <div class="chat-item" id="item-direct-${u.id}" onclick="startDirectChat('${u.id}', '${u.fullName}')">
+                        <span class="item-name">${u.fullName}</span>
+                        <span class="item-preview">${u.department || 'Employee'}</span>
+                    </div>
+                `).join('');
+                document.getElementById('conversation-list').innerHTML = html;
+                highlightActive();
+            } catch (e) { }
+        }
+
+        async function loadChatRooms() {
+            try {
+                const rooms = await fetchJson(getApiUrl('/api/chatrooms'));
+                if (!rooms) return;
+                const html = rooms.map(r => `
+                    <div class="chat-item" id="item-group-${r.id}" onclick="openChat('${r.id}', '${r.name}', 'group', ${r.createdById})">
+                        <span class="item-name"># ${r.name}</span>
+                        <span class="item-preview">${r.memberCount} active members</span>
+                    </div>
+                `).join('');
+                document.getElementById('chatroom-list').innerHTML = html;
+                highlightActive();
+            } catch (e) { }
+        }
+
+        async function loadMembersForGroup() {
+            try {
+                const users = await fetchJson(getApiUrl('/api/users'));
+                const html = users.filter(u => u.id != myId).map(u => `
+                    <label class="user-select-item" data-name="${u.fullName.toLowerCase()}">
+                        <input type="checkbox" name="group-members" value="${u.id}">
+                        <div>
+                            <div>${u.fullName}</div>
+                            <span>${u.department || 'N/A'}</span>
+                        </div>
+                    </label>
+                `).join('');
+                document.getElementById('members-checkbox-list').innerHTML = html;
+            } catch (e) { }
+        }
+
+        /**
+         * Search Logic
+         */
+        async function searchUsers(query) {
+            if(!query) { document.getElementById('users-list-modal').innerHTML = ''; return; }
+            try {
+                const users = await fetchJson(getApiUrl(`/api/users/search?query=${encodeURIComponent(query)}`));
+                const html = users.map(u => `
+                    <div class="user-select-item" style="background: var(--bg-light); margin: 2px 0;" onclick="startDirectChat('${u.id}', '${u.fullName}')">
+                        <div style="font-weight: 600;">${u.fullName}</div>
+                    </div>
+                `).join('');
+                document.getElementById('users-list-modal').innerHTML = html;
+            } catch (e) { }
+        }
+
+        function filterList(containerId, query) {
+            const val = query.toLowerCase();
+            document.querySelectorAll(`#${containerId} .user-select-item`).forEach(item => {
+                const name = item.dataset.name || item.innerText.toLowerCase();
+                item.style.display = name.includes(val) ? 'flex' : 'none';
+            });
+        }
+
+        /**
+         * File Upload
+         */
+        async function handleFileUpload(input) {
+            const file = input.files[0];
+            if (!file || !currentId) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("chatId", currentId);
+            formData.append("chatType", currentType);
+
+            try {
+                const messageData = await fetchJson(getApiUrl('/api/chat/upload'), {
+                    method: 'POST',
+                    body: formData
+                });
+                displayMessage(messageData);
+                input.value = ""; 
+            } catch (err) {
+                alert("File upload failed.");
+            }
+        }
+
+        /**
+         * Actions: Create/Start Chat
+         */
+        async function startDirectChat(userId, name) {
+            try {
+                const res = await fetchJson(getApiUrl('/api/conversations?recipientId=' + userId), { method: 'POST' });
+                closeModals();
+                switchTab('direct');
+                openChat(res.conversationId, name, 'direct');
+                await loadConversations();
+            } catch (e) { alert("Could not start chat"); }
+        }
+
+        async function createGroup() {
+            const btn = document.getElementById('btn-create-group');
+            const name = document.getElementById('group-name-input').value.trim();
+            if(!name) return alert("Please provide a group name");
+
+            const selectedMembers = Array.from(document.querySelectorAll('input[name="group-members"]:checked')).map(cb => cb.value);
+
+            btn.disabled = true;
+            btn.innerText = "Creating Group...";
+
+            try {
+                const room = await fetchJson(getApiUrl('/api/chatrooms'), {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name: name, type: 'GROUP' })
+                });
+
+                for (const uid of selectedMembers) {
+                    await fetchJson(getApiUrl(`/api/chatrooms/${room.id}/members`), {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ userId: uid, role: 'MEMBER' })
+                    });
+                }
+
+                closeModals();
+                switchTab('groups');
+                await loadChatRooms();
+                openChat(room.id, room.name, 'group', myId);
+            } catch (e) {
+                alert("Failed to initialize group: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Create Group";
+            }
+        }
+
+        /**
+         * Chat Engagement
+         */
+        async function openChat(id, title, type, creatorId) {
+            currentId = id; currentType = type;
+            currentGroupAdminId = creatorId || null;
+            currentGroupMembers = []; 
+            
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('chat-window').classList.remove('hidden');
+            document.getElementById('chat-title').innerText = title;
+            document.getElementById('chat-subtitle').innerText = 'Syncing messages...';
+            document.getElementById('messages-container').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Loading conversation history...</p>';
+            
+            highlightActive();
+            
+            try {
+                const msgUrl = type === 'direct' ? getApiUrl(`/api/conversations/${id}/messages`) : getApiUrl(`/api/chatrooms/${id}/messages`);
+                const msgs = await fetchJson(msgUrl);
+                const container = document.getElementById('messages-container');
+                container.innerHTML = '';
+                if(msgs && msgs.length > 0) msgs.forEach(displayMessage);
+                else container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">Start of chat history</p>';
+                
+                if (type === 'group') {
+                    await refreshGroupMembersDisplay();
+                } else {
+                    document.getElementById('chat-subtitle').innerText = 'Active now';
+                }
+
+                subscriptions.forEach(s => s.unsubscribe());
+                subscriptions = [];
+                
+                const dest = type === 'direct' ? `conversation.${id}` : `chatroom.${id}`;
+                const sub = stompClient.subscribe(`/topic/${dest}`, (m) => displayMessage(JSON.parse(m.body)));
+                subscriptions.push(sub);
+            } catch (e) { 
+                document.getElementById('chat-subtitle').innerText = 'Offline';
+            }
+        }
+
+        async function refreshGroupMembersDisplay() {
+            const memberUrl = getApiUrl(`/api/chatrooms/${currentId}/members`);
+            const members = await fetchJson(memberUrl);
+            if (members) {
+                currentGroupMembers = members;
+                const names = members.map(m => m.fullName).join(", ");
+                document.getElementById('chat-subtitle').innerText = names;
+            }
+        }
+
+        function showGroupInfoIfApplicable() {
+            if (currentType === 'group' && currentId) {
+                const modal = document.getElementById('group-info-modal');
+                document.getElementById('info-modal-title').innerText = document.getElementById('chat-title').innerText;
+                
+                const listContainer = document.getElementById('info-members-list');
+                listContainer.innerHTML = '<strong>Members (' + currentGroupMembers.length + ')</strong>';
+                
+                const isAdmin = myId == currentGroupAdminId;
+                document.getElementById('btn-add-more-trigger').style.display = isAdmin ? 'block' : 'none';
+
+                currentGroupMembers.forEach(m => {
+                    const item = document.createElement('div');
+                    item.className = 'info-user-item';
+                    let removeBtn = (isAdmin && m.id != currentGroupAdminId) ? 
+                        `<button class="btn-remove-member" onclick="removeMemberFromGroup(${m.id}, '${m.fullName}')" title="Remove Member">✕</button>` : '';
+
+                    item.innerHTML = `
+                        <div style="flex:1">
+                            <span style="display:block; font-weight:500;">${m.fullName} ${m.id == currentGroupAdminId ? '<small style="color:var(--primary)">(Admin)</small>' : ''}</span>
+                            <span style="font-size:11px; color:var(--text-muted)">${m.department || 'Staff'}</span>
+                        </div>
+                        ${removeBtn}
+                    `;
+                    listContainer.appendChild(item);
+                });
+                modal.classList.add('active');
+            }
+        }
+
+        async function removeMemberFromGroup(userId, fullName) {
+            if (!confirm(`Are you sure you want to remove ${fullName} from the group?`)) return;
+            try {
+                const response = await fetch(getApiUrl(`/api/chatrooms/${currentId}/members/${userId}`), { method: 'DELETE' });
+                if (response.ok) {
+                    await refreshGroupMembersDisplay();
+                    await loadChatRooms();
+                    showGroupInfoIfApplicable();
+                }
+            } catch (e) { alert("Error removing member"); }
+        }
+
+        async function showAddMemberToGroupModal() {
+            document.getElementById('group-info-modal').classList.remove('active');
+            document.getElementById('add-member-modal').classList.add('active');
+            try {
+                const users = await fetchJson(getApiUrl('/api/users'));
+                const existingMemberIds = currentGroupMembers.map(m => m.id);
+                const container = document.getElementById('add-member-checkbox-list');
+                const addableUsers = users.filter(u => !existingMemberIds.includes(u.id));
+                container.innerHTML = addableUsers.length ? addableUsers.map(u => `
+                    <label class="user-select-item" data-name="${u.fullName.toLowerCase()}">
+                        <input type="checkbox" name="new-group-members" value="${u.id}">
+                        <div><div>${u.fullName}</div><span>${u.department || 'N/A'}</span></div>
+                    </label>
+                `).join('') : '<p style="font-size:12px; padding:10px; color:var(--text-muted);">Everyone is already in the group.</p>';
+            } catch (e) { }
+        }
+
+        async function addNewMembersToGroup() {
+            const btn = document.getElementById('btn-save-new-members');
+            const selectedIds = Array.from(document.querySelectorAll('input[name="new-group-members"]:checked')).map(cb => cb.value);
+            if (!selectedIds.length) return alert("Select members");
+            btn.disabled = true; btn.innerText = "Adding...";
+            try {
+                for (const uid of selectedIds) {
+                    await fetchJson(getApiUrl(`/api/chatrooms/${currentId}/members`), {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ userId: uid, role: 'MEMBER' })
+                    });
+                }
+                closeModals();
+                await refreshGroupMembersDisplay();
+                await loadChatRooms(); 
+                showGroupInfoIfApplicable(); 
+            } catch (e) { alert("Error adding members"); }
+            finally { btn.disabled = false; btn.innerText = "Add to Group"; }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const val = input.value.trim();
+            if(!val || !currentId) return;
+            const payload = { content: val, type: 'TEXT' };
+            if(currentType === 'direct') payload.conversationId = currentId; else payload.chatRoomId = currentId;
+            stompClient.send(currentType === 'direct' ? '/app/chat.sendDirectMessage' : '/app/chat.sendGroupMessage', {}, JSON.stringify(payload));
+            input.value = '';
+        }
+
+        function displayMessage(msg) {
+            const container = document.getElementById('messages-container');
+            const placeholder = container.querySelector('p');
+            if(placeholder) placeholder.remove();
+            const isMe = msg.senderId == myId;
+            const div = document.createElement('div');
+            div.className = `message ${isMe ? 'sent' : 'received'}`;
+            let contentHtml = '';
+            if (msg.type === 'FILE' || msg.type === 'IMAGE') {
+                contentHtml = `<a href="${msg.content}" target="_blank" class="file-link"><span>📄</span> <span>${msg.content.split('_').pop() || 'Download'}</span></a>`;
+            } else {
+                if(!isMe && currentType === 'group') contentHtml += `<span style="font-size:9px; font-weight:bold; display:block; margin-bottom:4px; opacity:0.8;">${msg.senderName}</span>`;
+                contentHtml += `<span>${msg.content}</span>`;
+            }
+            div.innerHTML = contentHtml;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        /**
+         * UI Utilities
+         */
+        function highlightActive() {
+            document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+            const el = document.getElementById((currentType === 'direct' ? 'item-direct-' : 'item-group-') + currentId);
+            if(el) el.classList.add('active');
+        }
+
+        function showModal(id) { 
+            document.getElementById(id).classList.add('active'); 
+            if(id === 'new-group-modal') loadMembersForGroup();
+        }
+
+        function closeModals() { 
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+            document.getElementById('group-name-input').value = '';
+            document.getElementById('search-users').value = '';
+            document.getElementById('add-member-search').value = '';
+        }
+
+        function closeChat() { 
+            document.getElementById('chat-window').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            currentId = null; highlightActive();
+        }
+    </script>
 </body>
 </html>
-
-

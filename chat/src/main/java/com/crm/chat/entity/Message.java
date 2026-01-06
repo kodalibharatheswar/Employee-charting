@@ -3,17 +3,23 @@ package com.crm.chat.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "messages", indexes = {
         @Index(name = "idx_conversation_created", columnList = "conversation_id,created_at"),
         @Index(name = "idx_chatroom_created", columnList = "chat_room_id,created_at")
 })
-@Data
+// @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
@@ -70,5 +76,17 @@ public class Message {
     public void markAsRead() {
         this.isRead = true;
         this.readAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Message message)) return false;
+        return id != null && id.equals(message.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -3,15 +3,20 @@ package com.crm.chat.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "chat_room_members", indexes = {
         @Index(name = "idx_chatroom_user", columnList = "chat_room_id,user_id")
 })
-@Data
+// @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomMember {
@@ -56,5 +61,17 @@ public class ChatRoomMember {
 
     public void updateLastRead() {
         this.lastReadAt = LocalDateTime.now();
+    }
+
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChatRoomMember that)) return false;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
