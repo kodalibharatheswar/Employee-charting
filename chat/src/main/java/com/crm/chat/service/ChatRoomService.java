@@ -65,6 +65,17 @@ public class ChatRoomService {
         chatRoomMemberRepository.save(member);
     }
 
+
+    // New logic for updating member roles
+    public void updateMemberRole(Long chatRoomId, Long userId, ChatRoomMember.MemberRole role) {
+        ChatRoomMember member = chatRoomMemberRepository
+                .findByChatRoomIdAndUserId(chatRoomId, userId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        member.setRole(role);
+        chatRoomMemberRepository.save(member);
+    }
+
+
     public void removeMemberFromChatRoom(Long chatRoomId, Long userId) {
         chatRoomMemberRepository.deleteByChatRoomIdAndUserId(chatRoomId, userId);
     }

@@ -71,6 +71,35 @@
         .message .file-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: 600; }
         .message.received .file-link { color: var(--primary); }
 
+       /* Enhanced Typing Indicator Styles */
+        .typing-wrapper {
+            padding: 8px 24px;
+            background: transparent;
+            font-size: 13px;
+            color: var(--text-muted);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .typing-wrapper.visible { opacity: 1; }
+        
+        .typing-dots { display: flex; gap: 3px; }
+        .typing-dots span {
+            width: 4px; height: 4px; background: #94a3b8; border-radius: 50%;
+            animation: pulse 1.4s infinite ease-in-out;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes pulse {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+
         /* Input Area */
         .input-area { padding: 20px; background: white; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
         input#message-input { flex: 1; padding: 12px 18px; border: 1px solid var(--border); border-radius: 24px; outline: none; background: var(--bg-light); transition: 0.2s; }
@@ -105,6 +134,13 @@
         /* Member Info List inside info modal */
         .info-list { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; max-height: 250px; overflow-y: auto; }
         .info-user-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--bg-light); }
+
+
+        .role-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+        .role-admin { background: #fee2e2; color: #ef4444; }
+        .role-moderator { background: #fef3c7; color: #d97706; }
+        .role-member { background: #dcfce7; color: #16a34a; }
+
         .btn-remove-member { background: none; border: none; color: var(--danger); font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: 0.2s; opacity: 0.6; }
         .btn-remove-member:hover { opacity: 1; background: #fee2e2; }
 
@@ -115,6 +151,16 @@
         .btn-outline:hover { background: var(--primary); color: white; }
 
         .hidden { display: none !important; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -173,6 +219,14 @@
 
                 <div class="messages-container" id="messages-container"></div>
 
+                    <!-- Typing Indicator Wrapper -->
+                <div id="typing-indicator" class="typing-wrapper">
+                    <div class="typing-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <span id="typing-text"></span>
+                </div>
+
                 <div class="input-area">
                     <!-- File Upload Interaction -->
                     <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(this)">
@@ -215,17 +269,22 @@
         </div>
     </div>
 
-    <!-- Modal: Group Information -->
+
+    <!-- Enhanced Group Info Modal -->
     <div id="group-info-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModals()">×</span>
             <h3 id="info-modal-title">Group Details</h3>
-            <p id="info-modal-desc" style="font-size: 13px; color: var(--text-muted); margin-top: 5px;"></p>
             
-            <div class="info-list" id="info-members-list">
-                <!-- Members injected here -->
+            <div id="group-admin-tools" class="hidden" style="margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                <label style="font-size: 11px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 5px;">RENAME GROUP</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="edit-group-name" style="flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 4px;">
+                    <button class="btn-submit" style="width: auto; padding: 8px 15px; margin: 0;" onclick="renameGroup()">Save</button>
+                </div>
             </div>
 
+            <div class="info-list" id="info-members-list"></div>
             <button class="btn-outline" id="btn-add-more-trigger" onclick="showAddMemberToGroupModal()">+ Add New Members</button>
         </div>
     </div>
@@ -255,9 +314,12 @@
         let stompClient = null;
         let currentId = null;
         let currentType = null;
-        let currentGroupAdminId = null; 
+        let currentGroupAdminId = null;
+        let isCreatingConversation = false;  // ADD THIS
+        let conversationCreationTimeout = null;  // ADD THIS
         let currentGroupMembers = []; 
         let subscriptions = [];
+        let typingTimeout = null;
         const myId = document.getElementById('currentUserId').value;
 
         /**
@@ -295,6 +357,10 @@
             
             document.getElementById('send-button').onclick = sendMessage;
             document.getElementById('message-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+
+            // Add typing indicator event
+            document.getElementById('message-input').addEventListener('input', sendTypingStatus);
+
             document.getElementById('search-users').oninput = (e) => searchUsers(e.target.value);
             document.getElementById('group-search-members').oninput = (e) => filterList('members-checkbox-list', e.target.value);
             document.getElementById('add-member-search').oninput = (e) => filterList('add-member-checkbox-list', e.target.value);
@@ -305,6 +371,49 @@
             stompClient.debug = null; 
             stompClient.connect({}, () => console.log("System Ready"));
         }
+
+
+        /**
+         * Typing Logic
+         */
+        function sendTypingStatus() {
+            if (!stompClient || !currentId) return;
+
+            // Send 'isTyping: true'
+            stompClient.send("/app/chat.typing", {}, JSON.stringify({
+                chatType: currentType === 'direct' ? 'conversation' : 'chatroom',
+                chatId: currentId,
+                isTyping: true
+            }));
+
+            // Debounce: Clear existing timeout and set new one to stop typing status
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                stompClient.send("/app/chat.typing", {}, JSON.stringify({
+                    chatType: currentType === 'direct' ? 'conversation' : 'chatroom',
+                    chatId: currentId,
+                    isTyping: false
+                }));
+            }, 1500); // 1.5 second of inactivity means stopped typing
+        }
+
+        function handleTypingNotification(data) {
+            console.log("Received typing notification:", data);
+            
+            // Safety check for user ID (compare as strings)
+            if (String(data.userId) === String(myId)) return;
+
+            const wrapper = document.getElementById('typing-indicator');
+            const textEl = document.getElementById('typing-text');
+            
+            if (data.isTyping) {
+                textEl.innerText = `${data.fullName} is typing...`;
+                wrapper.classList.add('visible');
+            } else {
+                wrapper.classList.remove('visible');
+            }
+        }
+
 
         /**
          * Navigation
@@ -355,15 +464,13 @@
                 const html = users.filter(u => u.id != myId).map(u => `
                     <label class="user-select-item" data-name="${u.fullName.toLowerCase()}">
                         <input type="checkbox" name="group-members" value="${u.id}">
-                        <div>
-                            <div>${u.fullName}</div>
-                            <span>${u.department || 'N/A'}</span>
-                        </div>
+                        <div><div>${u.fullName}</div><span>${u.department || 'N/A'}</span></div>
                     </label>
                 `).join('');
                 document.getElementById('members-checkbox-list').innerHTML = html;
             } catch (e) { }
         }
+
 
         /**
          * Search Logic
@@ -413,134 +520,195 @@
             }
         }
 
-        /**
-         * Actions: Create/Start Chat
-         */
+
         async function startDirectChat(userId, name) {
-            try {
-                const res = await fetchJson(getApiUrl('/api/conversations?recipientId=' + userId), { method: 'POST' });
-                closeModals();
-                switchTab('direct');
-                openChat(res.conversationId, name, 'direct');
-                await loadConversations();
-            } catch (e) { alert("Could not start chat"); }
-        }
+    // Prevent multiple simultaneous conversation creation requests
+    if (isCreatingConversation) {
+        console.log('Already creating conversation, please wait...');
+        return;
+    }
+    
+    // Clear any pending timeout
+    if (conversationCreationTimeout) {
+        clearTimeout(conversationCreationTimeout);
+    }
+    
+    // Set flag to prevent duplicate requests
+    isCreatingConversation = true;
+    
+    try {
+        const res = await fetchJson(getApiUrl('/api/conversations?recipientId=' + userId), { method: 'POST' });
+        closeModals();
+        switchTab('direct');
+        openChat(res.conversationId, name, 'direct');
+        await loadConversations();
+    } catch (e) { 
+        console.error('Error starting chat:', e);
+        alert("Could not start chat. Please try again."); 
+    } finally {
+        // Reset flag after a short delay to allow for UI updates
+        conversationCreationTimeout = setTimeout(() => {
+            isCreatingConversation = false;
+        }, 1000);
+    }
+}
 
         async function createGroup() {
-            const btn = document.getElementById('btn-create-group');
             const name = document.getElementById('group-name-input').value.trim();
-            if(!name) return alert("Please provide a group name");
-
-            const selectedMembers = Array.from(document.querySelectorAll('input[name="group-members"]:checked')).map(cb => cb.value);
-
-            btn.disabled = true;
-            btn.innerText = "Creating Group...";
-
+            if(!name) return;
             try {
                 const room = await fetchJson(getApiUrl('/api/chatrooms'), {
                     method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ name: name, type: 'GROUP' })
                 });
-
+                const selectedMembers = Array.from(document.querySelectorAll('input[name="group-members"]:checked')).map(cb => cb.value);
                 for (const uid of selectedMembers) {
                     await fetchJson(getApiUrl(`/api/chatrooms/${room.id}/members`), {
                         method: 'POST', headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ userId: uid, role: 'MEMBER' })
                     });
                 }
-
-                closeModals();
-                switchTab('groups');
-                await loadChatRooms();
+                closeModals(); switchTab('groups'); await loadChatRooms();
                 openChat(room.id, room.name, 'group', myId);
-            } catch (e) {
-                alert("Failed to initialize group: " + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Create Group";
-            }
+            } catch (e) { alert("Error creating group."); }
         }
+
+        
 
         /**
          * Chat Engagement
          */
+
         async function openChat(id, title, type, creatorId) {
             currentId = id; currentType = type;
             currentGroupAdminId = creatorId || null;
-            currentGroupMembers = []; 
-            
+            document.getElementById('typing-indicator').classList.remove('visible');
             document.getElementById('welcome-screen').classList.add('hidden');
             document.getElementById('chat-window').classList.remove('hidden');
             document.getElementById('chat-title').innerText = title;
-            document.getElementById('chat-subtitle').innerText = 'Syncing messages...';
-            document.getElementById('messages-container').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Loading conversation history...</p>';
-            
+            document.getElementById('chat-subtitle').innerText = 'Syncing...';
+            document.getElementById('messages-container').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Loading...</p>';
             highlightActive();
-            
             try {
                 const msgUrl = type === 'direct' ? getApiUrl(`/api/conversations/${id}/messages`) : getApiUrl(`/api/chatrooms/${id}/messages`);
                 const msgs = await fetchJson(msgUrl);
                 const container = document.getElementById('messages-container');
                 container.innerHTML = '';
                 if(msgs && msgs.length > 0) msgs.forEach(displayMessage);
-                else container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">Start of chat history</p>';
-                
-                if (type === 'group') {
-                    await refreshGroupMembersDisplay();
-                } else {
-                    document.getElementById('chat-subtitle').innerText = 'Active now';
-                }
-
+                if (type === 'group') await refreshGroupMembersDisplay();
+                else document.getElementById('chat-subtitle').innerText = 'Active now';
                 subscriptions.forEach(s => s.unsubscribe());
                 subscriptions = [];
-                
                 const dest = type === 'direct' ? `conversation.${id}` : `chatroom.${id}`;
-                const sub = stompClient.subscribe(`/topic/${dest}`, (m) => displayMessage(JSON.parse(m.body)));
-                subscriptions.push(sub);
-            } catch (e) { 
-                document.getElementById('chat-subtitle').innerText = 'Offline';
-            }
+                subscriptions.push(stompClient.subscribe(`/topic/${dest}`, (m) => {
+                    const data = JSON.parse(m.body);
+                    // Handle different message types
+                    if (data.type === 'ROLE_UPDATE') {
+                        // Role update notification
+                        refreshGroupMembersDisplay();
+                        // Show a brief notification
+                        const notifText = data.message || `${data.userName} role updated to ${data.newRole}`;
+                        showNotification(notifText);
+                    } else {
+                        // Regular chat message
+                        displayMessage(data);
+                        document.getElementById('typing-indicator').classList.remove('visible');
+                    }
+                }));
+                subscriptions.push(stompClient.subscribe(`/topic/${dest}.typing`, (m) => handleTypingNotification(JSON.parse(m.body))));
+            } catch (e) { document.getElementById('chat-subtitle').innerText = 'Offline'; }
         }
+
 
         async function refreshGroupMembersDisplay() {
             const memberUrl = getApiUrl(`/api/chatrooms/${currentId}/members`);
             const members = await fetchJson(memberUrl);
             if (members) {
                 currentGroupMembers = members;
-                const names = members.map(m => m.fullName).join(", ");
-                document.getElementById('chat-subtitle').innerText = names;
+                document.getElementById('chat-subtitle').innerText = members.map(m => m.fullName).join(", ");
             }
         }
+ 
 
         function showGroupInfoIfApplicable() {
-            if (currentType === 'group' && currentId) {
-                const modal = document.getElementById('group-info-modal');
-                document.getElementById('info-modal-title').innerText = document.getElementById('chat-title').innerText;
-                
-                const listContainer = document.getElementById('info-members-list');
-                listContainer.innerHTML = '<strong>Members (' + currentGroupMembers.length + ')</strong>';
-                
-                const isAdmin = myId == currentGroupAdminId;
-                document.getElementById('btn-add-more-trigger').style.display = isAdmin ? 'block' : 'none';
-
-                currentGroupMembers.forEach(m => {
-                    const item = document.createElement('div');
-                    item.className = 'info-user-item';
-                    let removeBtn = (isAdmin && m.id != currentGroupAdminId) ? 
-                        `<button class="btn-remove-member" onclick="removeMemberFromGroup(${m.id}, '${m.fullName}')" title="Remove Member">✕</button>` : '';
-
-                    item.innerHTML = `
-                        <div style="flex:1">
-                            <span style="display:block; font-weight:500;">${m.fullName} ${m.id == currentGroupAdminId ? '<small style="color:var(--primary)">(Admin)</small>' : ''}</span>
-                            <span style="font-size:11px; color:var(--text-muted)">${m.department || 'Staff'}</span>
-                        </div>
-                        ${removeBtn}
-                    `;
-                    listContainer.appendChild(item);
+            if(currentType !== 'group') return;
+            
+            // Fetch latest members to get updated roles
+            fetch(`/api/chatrooms/${currentId}/members`)
+                .then(response => response.json())
+                .then(members => {
+                    currentGroupMembers = members;
+                    
+                    document.getElementById('info-modal-title').innerText = document.getElementById('chat-title').innerText;
+                    
+                    // ROLE-BASED ADMIN CHECK
+                    const myRecord = currentGroupMembers.find(m => String(m.id) === String(myId));
+                    const isAdmin = myRecord && myRecord.role === 'ADMIN';
+                    
+                    document.getElementById('group-admin-tools').classList.toggle('hidden', !isAdmin);
+                    if (isAdmin) document.getElementById('edit-group-name').value = document.getElementById('chat-title').innerText;
+                    
+                    // Show/hide add members button for admins only
+                    const addMemberBtn = document.getElementById('btn-add-more-trigger');
+                    if (addMemberBtn) {
+                        addMemberBtn.style.display = isAdmin ? 'block' : 'none';
+                    }
+                    
+                    const list = document.getElementById('info-members-list');
+                    list.innerHTML = `<p style="font-weight:bold; font-size:12px; margin-bottom:10px; color:var(--text-muted)">MEMBERS LIST</p>` + 
+                    currentGroupMembers.map(m => {
+                        const role = m.role || 'MEMBER';
+                        const isSelf = String(m.id) === String(myId);
+                        return `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f1f5f9">
+                            <div>
+                                <span style="font-weight:500">${m.fullName} ${isSelf?'(You)':''}</span><br>
+                                <small class="role-badge role-${role.toLowerCase()}">${role}</small>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                ${isAdmin && !isSelf ? `
+                                    <select onchange="updateRole(${m.id}, this.value)" style="font-size:11px; padding:4px; border-radius:4px; border:1px solid var(--border)">
+                                        <option value="MEMBER" ${role==='MEMBER'?'selected':''}>Member</option>
+                                        <option value="ADMIN" ${role==='ADMIN'?'selected':''}>Admin</option>
+                                    </select>
+                                    <button onclick="removeMember(${m.id}, '${m.fullName}')" style="background:none; border:none; color:var(--danger); cursor:pointer;">✕</button>
+                                ` : ''}
+                            </div>
+                        </div>`;
+                    }).join('');
+                    showModal('group-info-modal');
+                })
+                .catch(error => {
+                    console.error('Error fetching members:', error);
+                    alert('Error loading group members');
                 });
-                modal.classList.add('active');
-            }
         }
+
+        async function renameGroup() {
+            const newName = document.getElementById('edit-group-name').value.trim();
+            if (!newName) return;
+            try {
+                await fetchJson(getApiUrl(`/api/chatrooms/${currentId}`), {
+                    method: 'PUT', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name: newName })
+                });
+                document.getElementById('chat-title').innerText = newName;
+                await loadChatRooms();
+                alert("Group renamed successfully.");
+            } catch (e) { alert("Error updating group name."); }
+        }
+
+        async function updateRole(userId, newRole) {
+            try {
+                await fetchJson(getApiUrl(`/api/chatrooms/${currentId}/members/${userId}/role`), {
+                    method: 'PUT', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ role: newRole })
+                });
+                await refreshGroupMembersDisplay();
+                showGroupInfoIfApplicable();
+            } catch (e) { alert("Error updating role."); }
+        }
+
 
         async function removeMemberFromGroup(userId, fullName) {
             if (!confirm(`Are you sure you want to remove ${fullName} from the group?`)) return;
@@ -554,7 +722,30 @@
             } catch (e) { alert("Error removing member"); }
         }
 
+        // Alias function for removeMember (used in the new UI)
+        async function removeMember(userId, fullName) {
+            // Check if current user is admin
+            const myRecord = currentGroupMembers.find(m => String(m.id) === String(myId));
+            const isAdmin = myRecord && myRecord.role === 'ADMIN';
+            
+            if (!isAdmin) {
+                alert('Only admins can remove members from the group.');
+                return;
+            }
+            
+            await removeMemberFromGroup(userId, fullName);
+        }
+
         async function showAddMemberToGroupModal() {
+            // Check if current user is admin
+            const myRecord = currentGroupMembers.find(m => String(m.id) === String(myId));
+            const isAdmin = myRecord && myRecord.role === 'ADMIN';
+            
+            if (!isAdmin) {
+                alert('Only admins can add new members to the group.');
+                return;
+            }
+            
             document.getElementById('group-info-modal').classList.remove('active');
             document.getElementById('add-member-modal').classList.add('active');
             try {
@@ -601,11 +792,9 @@
             input.value = '';
         }
 
-        function displayMessage(msg) {
+       function displayMessage(msg) {
             const container = document.getElementById('messages-container');
-            const placeholder = container.querySelector('p');
-            if(placeholder) placeholder.remove();
-            const isMe = msg.senderId == myId;
+            const isMe = String(msg.senderId) === String(myId);
             const div = document.createElement('div');
             div.className = `message ${isMe ? 'sent' : 'received'}`;
             let contentHtml = '';
@@ -645,6 +834,30 @@
             document.getElementById('chat-window').classList.add('hidden');
             document.getElementById('welcome-screen').classList.remove('hidden');
             currentId = null; highlightActive();
+        }
+
+        function showNotification(message) {
+            // Create a temporary notification toast
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
     </script>
 </body>

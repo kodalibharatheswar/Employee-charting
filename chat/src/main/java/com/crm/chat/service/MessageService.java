@@ -27,8 +27,7 @@ public class MessageService {
     public Message sendDirectMessage(Long senderId, Long conversationId, String content) {
         User sender = userService.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
-        Conversation conversation = conversationService.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        Conversation conversation = conversationService.findById(conversationId);
 
         // Verify sender is participant
         if (!conversationService.isParticipant(conversationId, senderId)) {
@@ -56,8 +55,7 @@ public class MessageService {
     public Message sendGroupMessage(Long senderId, Long chatRoomId, String content) {
         User sender = userService.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
-        ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId).orElseThrow(() -> new RuntimeException("Chat room not found"));
 
         // Verify sender is member
         if (!chatRoomService.isMember(chatRoomId, senderId)) {

@@ -33,9 +33,21 @@ public class ChatController {
     private final ConversationService conversationService;
     private final ChatRoomService chatRoomService;
     private final MessageService messageService;
+    private final org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
 
     // Define a storage location
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+
+
+    /**
+     * Helper to check if the current user has ADMIN privileges in a specific chat room.
+     */
+    private boolean isCurrentUserAdmin(Long chatRoomId) {
+        User currentUser = getCurrentUser();
+        return chatRoomService.getChatRoomMembers(chatRoomId).stream()
+                .anyMatch(m -> m.getUser().getId().equals(currentUser.getId()) && 
+                          m.getRole() == ChatRoomMember.MemberRole.ADMIN);
+    }
 
 
     @PostMapping("/api/chat/upload")
@@ -44,42 +56,27 @@ public class ChatController {
             @RequestParam("chatId") Long chatId,
             @RequestParam("chatType") String chatType) throws IOException {
 
-        // Get Current User
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userService.findByUsername(username).orElseThrow();
 
-        // Create directory if not exists
         Path uploadPath = Paths.get(UPLOAD_DIR);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // Save file locally with unique name
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(file.getInputStream(), filePath);
 
-        // Path to return to UI (accessible via static resources)
         String fileUrl = "/uploads/" + fileName;
 
-        // Save Message to Database
-        Message message = new Message();
-        message.setSender(currentUser);
-        message.setContent(fileUrl);
-        message.setType(Message.MessageType.FILE);
-        
+        Message message;
         if ("direct".equals(chatType)) {
-            // Logic to link to conversation
             message = messageService.sendDirectMessage(currentUser.getId(), chatId, fileUrl);
-            message.setType(Message.MessageType.FILE); // Ensure type is FILE
         } else {
-            // Logic to link to chatRoom
             message = messageService.sendGroupMessage(currentUser.getId(), chatId, fileUrl);
-            message.setType(Message.MessageType.FILE);
         }
-
-        // Note: You should update your MessageService methods to accept Type 
-        // OR manually update the type after calling existing service methods.
+        message.setType(Message.MessageType.FILE);
         
         return ResponseEntity.ok(MessageDTO.fromEntity(message));
     }
@@ -91,16 +88,11 @@ public class ChatController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    @GetMapping("/chat")
+     @GetMapping("/chat")
     public String chatPage(Model model) {
         User currentUser = getCurrentUser();
         userService.setUserOnline(currentUser.getId());
-
         model.addAttribute("currentUser", currentUser);
-        model.addAttribute("users", userService.getAllActiveUsersExcept(currentUser.getId()));
-        model.addAttribute("conversations", conversationService.getUserConversations(currentUser.getId()));
-        model.addAttribute("chatRooms", chatRoomService.getUserChatRooms(currentUser.getId()));
-
         return "chat";
     }
 
@@ -188,20 +180,17 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
         return MessageDTO.fromEntity(message);
     }
 
+
     @PostMapping("/api/chatrooms")
     @ResponseBody
     public ChatRoomDTO createChatRoom(@RequestBody Map<String, String> payload) {
         User currentUser = getCurrentUser();
-        String name = payload.get("name");
-        String description = payload.get("description");
-        String typeStr = payload.getOrDefault("type", "GROUP");
-
-        ChatRoom.ChatRoomType type = ChatRoom.ChatRoomType.valueOf(typeStr);
         ChatRoom chatRoom = chatRoomService.createChatRoom(
-                name, description, currentUser.getId(), type);
-
+                payload.get("name"), payload.get("description"), 
+                currentUser.getId(), ChatRoom.ChatRoomType.valueOf(payload.getOrDefault("type", "GROUP")));
         return ChatRoomDTO.fromEntity(chatRoom);
     }
+
 
     @GetMapping("/api/chatrooms")
     @ResponseBody
@@ -212,6 +201,48 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
                 .map(ChatRoomDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+
+    @PutMapping("/api/chatrooms/{chatRoomId}")
+    @ResponseBody
+    public ChatRoomDTO updateChatRoom(@PathVariable Long chatRoomId, @RequestBody Map<String, String> payload) {
+        // Fix: Check for ADMIN role instead of creator ID
+        if (!isCurrentUserAdmin(chatRoomId)) {
+            throw new RuntimeException("Unauthorized: Only group admins can update group details.");
+        }
+        ChatRoom updated = chatRoomService.updateChatRoom(chatRoomId, payload.get("name"), payload.get("description"));
+        return ChatRoomDTO.fromEntity(updated);
+    }
+
+
+    @PutMapping("/api/chatrooms/{chatRoomId}/members/{userId}/role")
+    @ResponseBody
+    public ResponseEntity<String> updateMemberRole(@PathVariable Long chatRoomId, @PathVariable Long userId, @RequestBody Map<String, String> payload) {
+        // Fix: Check for ADMIN role instead of creator ID
+        if (!isCurrentUserAdmin(chatRoomId)) {
+            throw new RuntimeException("Unauthorized: Only group admins can change roles.");
+        }
+        
+        // Get the user whose role is being updated
+        User updatedUser = userService.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+        String newRole = payload.get("role");
+        
+        chatRoomService.updateMemberRole(chatRoomId, userId, ChatRoomMember.MemberRole.valueOf(newRole));
+        
+        // Send WebSocket notification to all members of the chat room
+        Map<String, Object> notification = new HashMap<>();
+        notification.put("type", "ROLE_UPDATE");
+        notification.put("userId", userId);
+        notification.put("userName", updatedUser.getFullName());
+        notification.put("newRole", newRole);
+        notification.put("message", updatedUser.getFullName() + " is now " + (newRole.equals("ADMIN") ? "an admin" : "a member"));
+        
+        messagingTemplate.convertAndSend("/topic/chatroom." + chatRoomId, (Object) notification);
+        
+        return ResponseEntity.ok("Updated");
+    }
+
 
     @GetMapping("/api/chatrooms/{chatRoomId}/messages")
     @ResponseBody
@@ -245,32 +276,44 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
         return MessageDTO.fromEntity(message);
     }
 
+
     @PostMapping("/api/chatrooms/{chatRoomId}/members")
     @ResponseBody
-    public ResponseEntity<String> addMemberToChatRoom(@PathVariable Long chatRoomId,
-                                                      @RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> addMember(@PathVariable Long chatRoomId, @RequestBody Map<String, Object> payload) {
+        // Permission check: Only admins can add new members
+        if (!isCurrentUserAdmin(chatRoomId)) {
+            throw new RuntimeException("Unauthorized: Only group admins can add new members.");
+        }
         Long userId = Long.valueOf(payload.get("userId").toString());
-        String roleStr = payload.getOrDefault("role", "MEMBER").toString();
-        ChatRoomMember.MemberRole role = ChatRoomMember.MemberRole.valueOf(roleStr);
-
-        chatRoomService.addMemberToChatRoom(chatRoomId, userId, role);
-        return ResponseEntity.ok("Member added successfully");
+        chatRoomService.addMemberToChatRoom(chatRoomId, userId, ChatRoomMember.MemberRole.MEMBER);
+        return ResponseEntity.ok("Added");
     }
 
     @GetMapping("/api/chatrooms/{chatRoomId}/members")
     @ResponseBody
-    public List<UserDTO> getChatRoomMembers(@PathVariable Long chatRoomId) {
+    public List<Map<String, Object>> getChatRoomMembers(@PathVariable Long chatRoomId) {
         return chatRoomService.getChatRoomMembers(chatRoomId)
                 .stream()
-                .map(member -> UserDTO.fromEntity(member.getUser()))
+                .map(member -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", member.getUser().getId());
+                    map.put("fullName", member.getUser().getFullName());
+                    map.put("department", member.getUser().getDepartment());
+                    map.put("role", member.getRole().name()); // Crucial: Fixes the 'undefined' role bug
+                    return map;
+                })
                 .collect(Collectors.toList());
     }
 
     @DeleteMapping("/api/chatrooms/{chatRoomId}/members/{userId}")
     @ResponseBody
-    public ResponseEntity<String> removeMemberFromChatRoom(@PathVariable Long chatRoomId,
-                                                           @PathVariable Long userId) {
+    public ResponseEntity<String> removeMember(@PathVariable Long chatRoomId, @PathVariable Long userId) {
+        User currentUser = getCurrentUser();
+        // Permission check: Admin can remove anyone; non-admins can only remove themselves (leave)
+        if (!isCurrentUserAdmin(chatRoomId) && !userId.equals(currentUser.getId())) {
+            throw new RuntimeException("Unauthorized: Only admins can remove other members.");
+        }
         chatRoomService.removeMemberFromChatRoom(chatRoomId, userId);
-        return ResponseEntity.ok("Member removed successfully");
+        return ResponseEntity.ok("Removed");
     }
 }

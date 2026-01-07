@@ -90,4 +90,9 @@ public class Conversation {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public Conversation orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
 }
