@@ -3,8 +3,10 @@ package com.crm.chat.controller;
 import com.crm.chat.dto.MessageDTO;
 import com.crm.chat.entity.Message;
 import com.crm.chat.entity.User;
+import com.crm.chat.entity.Call;
 import com.crm.chat.service.MessageService;
 import com.crm.chat.service.UserService;
+import com.crm.chat.service.CallService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
 import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,8 +25,15 @@ public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final UserService userService;
+    private final CallService callService;
 
-    // Handle direct messages (one-to-one)
+    // ============================================================================
+    // EXISTING CHAT MESSAGING METHODS (UNCHANGED)
+    // ============================================================================
+
+    /**
+     * Handle direct messages (one-to-one)
+     */
     @MessageMapping("/chat.sendDirectMessage")
     public void sendDirectMessage(@Payload Map<String, Object> messageData, Principal principal) {
         try {
@@ -43,7 +53,7 @@ public class WebSocketController {
             Message message = messageService.sendDirectMessage(sender.getId(), conversationId, content);
             MessageDTO messageDTO = MessageDTO.fromEntity(message);
 
-            // Explicitly cast destination to String to resolve ambiguity
+            // Broadcast to conversation subscribers
             String destination = "/topic/conversation." + conversationId;
             messagingTemplate.convertAndSend(destination, (Object) messageDTO);
 
@@ -52,7 +62,9 @@ public class WebSocketController {
         }
     }
 
-    // Handle group messages
+    /**
+     * Handle group messages
+     */
     @MessageMapping("/chat.sendGroupMessage")
     public void sendGroupMessage(@Payload Map<String, Object> messageData, Principal principal) {
         try {
@@ -72,7 +84,7 @@ public class WebSocketController {
             Message message = messageService.sendGroupMessage(sender.getId(), chatRoomId, content);
             MessageDTO messageDTO = MessageDTO.fromEntity(message);
 
-            // Explicitly cast destination to String to resolve ambiguity
+            // Broadcast to chatroom subscribers
             String destination = "/topic/chatroom." + chatRoomId;
             messagingTemplate.convertAndSend(destination, (Object) messageDTO);
 
@@ -81,7 +93,9 @@ public class WebSocketController {
         }
     }
 
-    // Handle user connection (when user opens chat)
+    /**
+     * Handle user connection (when user opens chat)
+     */
     @MessageMapping("/chat.addUser")
     public void addUser(@Payload Map<String, Object> userData,
                         SimpMessageHeaderAccessor headerAccessor,
@@ -122,7 +136,6 @@ public class WebSocketController {
                     "fullName", user.getFullName()
             );
 
-            // Explicitly cast destination to String to resolve ambiguity
             String destination = "/topic/public";
             messagingTemplate.convertAndSend(destination, (Object) notification);
 
@@ -131,7 +144,9 @@ public class WebSocketController {
         }
     }
 
-    // Handle typing indicator
+    /**
+     * Handle typing indicator
+     */
     @MessageMapping("/chat.typing")
     public void handleTyping(@Payload Map<String, Object> typingData, Principal principal) {
         try {
@@ -164,7 +179,6 @@ public class WebSocketController {
                 return; // Invalid chat type
             }
 
-            // Explicitly cast to resolve ambiguity
             messagingTemplate.convertAndSend(destination, (Object) notification);
 
         } catch (Exception e) {
@@ -172,7 +186,9 @@ public class WebSocketController {
         }
     }
 
-    // Handle message read receipt
+    /**
+     * Handle message read receipt
+     */
     @MessageMapping("/chat.markAsRead")
     public void markAsRead(@Payload Map<String, Object> readData, Principal principal) {
         try {
@@ -193,6 +209,556 @@ public class WebSocketController {
                 }
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ============================================================================
+    // NEW WEBRTC SIGNALING METHODS FOR AUDIO/VIDEO CALLS
+    // ============================================================================
+
+    /**
+     * Initiate a call (audio/video/screen share)
+     * 
+     * Payload structure:
+     * {
+     *   "callType": "AUDIO" | "VIDEO" | "SCREEN_SHARE",
+     *   "callMode": "DIRECT" | "GROUP",
+     *   "conversationId": Long (for direct calls),
+     *   "chatRoomId": Long (for group calls),
+     *   "recipientId": Long (for direct calls)
+     * }
+     */
+    @MessageMapping("/call.initiate")
+    public void initiateCall(@Payload Map<String, Object> callData, Principal principal) {
+        try {
+            if (principal == null) {
+                System.err.println("Principal is null in initiateCall");
+                return;
+            }
+
+            String username = principal.getName();
+            User caller = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            String callTypeStr = callData.get("callType").toString();
+            String callModeStr = callData.get("callMode").toString();
+            
+            Call.CallType callType = Call.CallType.valueOf(callTypeStr);
+            Call.CallMode callMode = Call.CallMode.valueOf(callModeStr);
+
+            Call call;
+
+            if (callMode == Call.CallMode.DIRECT) {
+                // Direct call (1-on-1)
+                Long conversationId = Long.valueOf(callData.get("conversationId").toString());
+                call = callService.initiateDirectCall(caller.getId(), conversationId, callType);
+
+                // Get recipient ID and notify them
+                Long recipientId = Long.valueOf(callData.get("recipientId").toString());
+                
+                Map<String, Object> notification = createCallNotification(call, "INCOMING_CALL", caller);
+                
+                // Send to specific user using /user/{userId}/queue/call
+                messagingTemplate.convertAndSendToUser(
+                    recipientId.toString(),
+                    "/queue/call",
+                    notification
+                );
+
+            } else {
+                // Group call (conference)
+                Long chatRoomId = Long.valueOf(callData.get("chatRoomId").toString());
+                call = callService.initiateGroupCall(caller.getId(), chatRoomId, callType);
+
+                // Notify all group members
+                Map<String, Object> notification = createCallNotification(call, "INCOMING_GROUP_CALL", caller);
+                
+                String destination = "/topic/chatroom." + chatRoomId + ".call";
+                messagingTemplate.convertAndSend((String)destination, (Object)notification);
+            }
+
+            System.out.println("Call initiated: " + call.getId() + " by " + caller.getFullName());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendCallError(principal, "Failed to initiate call: " + e.getMessage());
+        }
+    }
+
+    /**
+     * WebRTC Offer - Send SDP offer to recipient(s)
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "offer": { sdp, type }, // WebRTC SDP offer
+     *   "recipientId": Long (for direct calls)
+     * }
+     */
+    @MessageMapping("/call.offer")
+    public void handleOffer(@Payload Map<String, Object> offerData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User sender = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(offerData.get("callId").toString());
+            Map<String, Object> offer = (Map<String, Object>) offerData.get("offer");
+
+            Call call = callService.findById(callId)
+                    .orElseThrow(() -> new RuntimeException("Call not found"));
+
+            Map<String, Object> message = new HashMap<>();
+            message.put("type", "OFFER");
+            message.put("callId", callId);
+            message.put("offer", offer);
+            message.put("senderId", sender.getId());
+            message.put("senderName", sender.getFullName());
+
+            if (call.isDirectCall()) {
+                // Direct call - send to specific recipient
+                Long recipientId = Long.valueOf(offerData.get("recipientId").toString());
+                messagingTemplate.convertAndSendToUser(
+                    recipientId.toString(),
+                    "/queue/call.signal",
+                    message
+                );
+            } else {
+                // Group call - broadcast to all participants
+                String destination = "/topic/chatroom." + call.getChatRoom().getId() + ".signal";
+                messagingTemplate.convertAndSend((String)destination, (Object)message);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendCallError(principal, "Failed to send offer: " + e.getMessage());
+        }
+    }
+
+    /**
+     * WebRTC Answer - Send SDP answer back to caller
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "answer": { sdp, type }, // WebRTC SDP answer
+     *   "recipientId": Long // The caller's ID
+     * }
+     */
+    @MessageMapping("/call.answer")
+    public void handleAnswer(@Payload Map<String, Object> answerData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User sender = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(answerData.get("callId").toString());
+            Map<String, Object> answer = (Map<String, Object>) answerData.get("answer");
+            Long recipientId = Long.valueOf(answerData.get("recipientId").toString());
+
+            // Update call status to ONGOING
+            callService.changeCallStatus(callId, Call.CallStatus.ONGOING);
+
+            Map<String, Object> message = new HashMap<>();
+            message.put("type", "ANSWER");
+            message.put("callId", callId);
+            message.put("answer", answer);
+            message.put("senderId", sender.getId());
+            message.put("senderName", sender.getFullName());
+
+            // Send answer to the caller
+            messagingTemplate.convertAndSendToUser(
+                recipientId.toString(),
+                "/queue/call.signal",
+                message
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendCallError(principal, "Failed to send answer: " + e.getMessage());
+        }
+    }
+
+    /**
+     * WebRTC ICE Candidate - Exchange ICE candidates for NAT traversal
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "candidate": { candidate, sdpMid, sdpMLineIndex }, // ICE candidate
+     *   "recipientId": Long
+     * }
+     */
+    @MessageMapping("/call.ice-candidate")
+    public void handleIceCandidate(@Payload Map<String, Object> candidateData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User sender = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(candidateData.get("callId").toString());
+            Map<String, Object> candidate = (Map<String, Object>) candidateData.get("candidate");
+            
+            Call call = callService.findById(callId)
+                    .orElseThrow(() -> new RuntimeException("Call not found"));
+
+            Map<String, Object> message = new HashMap<>();
+            message.put("type", "ICE_CANDIDATE");
+            message.put("callId", callId);
+            message.put("candidate", candidate);
+            message.put("senderId", sender.getId());
+
+            if (call.isDirectCall()) {
+                // Direct call - send to specific recipient
+                Long recipientId = Long.valueOf(candidateData.get("recipientId").toString());
+                messagingTemplate.convertAndSendToUser(
+                    recipientId.toString(),
+                    "/queue/call.signal",
+                    message
+                );
+            } else {
+                // Group call - broadcast to all participants except sender
+                String destination = "/topic/chatroom." + call.getChatRoom().getId() + ".signal";
+                messagingTemplate.convertAndSend((String)destination, (Object)message);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Join an ongoing call
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long
+     * }
+     */
+    @MessageMapping("/call.join")
+    public void joinCall(@Payload Map<String, Object> joinData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(joinData.get("callId").toString());
+            
+            // Add user to call participants
+            callService.addParticipantToCall(callId, user.getId());
+
+            Call call = callService.findById(callId).orElseThrow();
+
+            // Notify other participants that someone joined
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "USER_JOINED");
+            notification.put("callId", callId);
+            notification.put("userId", user.getId());
+            notification.put("userName", user.getFullName());
+
+            if (call.isGroupCall()) {
+                String destination = "/topic/chatroom." + call.getChatRoom().getId() + ".call";
+                messagingTemplate.convertAndSend((String)destination, (Object)notification);
+            } else {
+                // For direct calls, notify the other participant
+                Long otherUserId = call.getCaller().getId().equals(user.getId()) 
+                    ? call.getConversation().getOtherParticipant(user).getId()
+                    : call.getCaller().getId();
+                
+                messagingTemplate.convertAndSendToUser(
+                    otherUserId.toString(),
+                    "/queue/call",
+                    notification
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendCallError(principal, "Failed to join call: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Leave a call
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long
+     * }
+     */
+    @MessageMapping("/call.leave")
+    public void leaveCall(@Payload Map<String, Object> leaveData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(leaveData.get("callId").toString());
+            
+            // Remove user from call
+            callService.removeParticipantFromCall(callId, user.getId());
+
+            Call call = callService.findById(callId).orElseThrow();
+
+            // Notify other participants that someone left
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "USER_LEFT");
+            notification.put("callId", callId);
+            notification.put("userId", user.getId());
+            notification.put("userName", user.getFullName());
+
+            if (call.isGroupCall()) {
+                String destination = "/topic/chatroom." + call.getChatRoom().getId() + ".call";
+                messagingTemplate.convertAndSend((String)destination, (Object)notification);
+            } else {
+                // For direct calls, notify the other participant and end call
+                Long otherUserId = call.getCaller().getId().equals(user.getId()) 
+                    ? call.getConversation().getOtherParticipant(user).getId()
+                    : call.getCaller().getId();
+                
+                messagingTemplate.convertAndSendToUser(
+                    otherUserId.toString(),
+                    "/queue/call",
+                    notification
+                );
+
+                // End the direct call when one person leaves
+                callService.endCall(callId, user.getId());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendCallError(principal, "Failed to leave call: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Reject incoming call
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "callerId": Long // To notify the caller
+     * }
+     */
+    @MessageMapping("/call.reject")
+    public void rejectCall(@Payload Map<String, Object> rejectData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(rejectData.get("callId").toString());
+            Long callerId = Long.valueOf(rejectData.get("callerId").toString());
+            
+            // Mark call as rejected
+            callService.rejectCall(callId, user.getId());
+
+            // Notify caller that call was rejected
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "CALL_REJECTED");
+            notification.put("callId", callId);
+            notification.put("userId", user.getId());
+            notification.put("userName", user.getFullName());
+
+            messagingTemplate.convertAndSendToUser(
+                callerId.toString(),
+                "/queue/call",
+                notification
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendCallError(principal, "Failed to reject call: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Toggle microphone (mute/unmute)
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "enabled": Boolean
+     * }
+     */
+    @MessageMapping("/call.toggleMicrophone")
+    public void toggleMicrophone(@Payload Map<String, Object> micData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(micData.get("callId").toString());
+            
+            callService.toggleMicrophone(callId, user.getId());
+
+            Call call = callService.findById(callId).orElseThrow();
+
+            // Notify other participants about mic status change
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "MIC_TOGGLED");
+            notification.put("callId", callId);
+            notification.put("userId", user.getId());
+            notification.put("enabled", micData.get("enabled"));
+
+            broadcastToCallParticipants(call, notification);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Toggle camera (on/off)
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "enabled": Boolean
+     * }
+     */
+    @MessageMapping("/call.toggleCamera")
+    public void toggleCamera(@Payload Map<String, Object> cameraData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(cameraData.get("callId").toString());
+            
+            callService.toggleCamera(callId, user.getId());
+
+            Call call = callService.findById(callId).orElseThrow();
+
+            // Notify other participants about camera status change
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "CAMERA_TOGGLED");
+            notification.put("callId", callId);
+            notification.put("userId", user.getId());
+            notification.put("enabled", cameraData.get("enabled"));
+
+            broadcastToCallParticipants(call, notification);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Toggle screen sharing
+     * 
+     * Payload structure:
+     * {
+     *   "callId": Long,
+     *   "enabled": Boolean
+     * }
+     */
+    @MessageMapping("/call.toggleScreenShare")
+    public void toggleScreenShare(@Payload Map<String, Object> screenData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElseThrow();
+
+            Long callId = Long.valueOf(screenData.get("callId").toString());
+            
+            callService.toggleScreenShare(callId, user.getId());
+
+            Call call = callService.findById(callId).orElseThrow();
+
+            // Notify other participants about screen share status
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "SCREEN_SHARE_TOGGLED");
+            notification.put("callId", callId);
+            notification.put("userId", user.getId());
+            notification.put("userName", user.getFullName());
+            notification.put("enabled", screenData.get("enabled"));
+
+            broadcastToCallParticipants(call, notification);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ============================================================================
+    // HELPER METHODS
+    // ============================================================================
+
+    /**
+     * Create a standardized call notification object
+     */
+    private Map<String, Object> createCallNotification(Call call, String notificationType, User caller) {
+        Map<String, Object> notification = new HashMap<>();
+        notification.put("type", notificationType);
+        notification.put("callId", call.getId());
+        notification.put("callType", call.getCallType().toString());
+        notification.put("callMode", call.getCallMode().toString());
+        notification.put("callerId", caller.getId());
+        notification.put("callerName", caller.getFullName());
+        notification.put("roomId", call.getRoomId());
+        
+        if (call.isDirectCall()) {
+            notification.put("conversationId", call.getConversation().getId());
+        } else {
+            notification.put("chatRoomId", call.getChatRoom().getId());
+            notification.put("chatRoomName", call.getChatRoom().getName());
+        }
+        
+        return notification;
+    }
+
+    /**
+     * Broadcast message to all participants in a call
+     */
+    private void broadcastToCallParticipants(Call call, Map<String, Object> message) {
+        if (call.isGroupCall()) {
+            String destination = "/topic/chatroom." + call.getChatRoom().getId() + ".call";
+            messagingTemplate.convertAndSend((String)destination, (Object)message);
+        } else {
+            // For direct calls, send to both participants
+            Long callerId = call.getCaller().getId();
+            Long otherUserId = call.getConversation().getOtherParticipant(call.getCaller()).getId();
+            
+            messagingTemplate.convertAndSendToUser(callerId.toString(), "/queue/call", message);
+            messagingTemplate.convertAndSendToUser(otherUserId.toString(), "/queue/call", message);
+        }
+    }
+
+    /**
+     * Send error notification to user
+     */
+    private void sendCallError(Principal principal, String errorMessage) {
+        if (principal == null) return;
+
+        try {
+            String username = principal.getName();
+            User user = userService.findByUsername(username).orElse(null);
+            
+            if (user != null) {
+                Map<String, Object> error = Map.of(
+                    "type", "CALL_ERROR",
+                    "message", errorMessage
+                );
+                
+                messagingTemplate.convertAndSendToUser(
+                    user.getId().toString(),
+                    "/queue/errors",
+                    error
+                );
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

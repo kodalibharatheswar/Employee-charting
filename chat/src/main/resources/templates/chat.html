@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Chat - CRM Module</title>
+    
     <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    
     <style>
         /* Modern CRM Style Palette */
         :root {
@@ -20,6 +22,7 @@
             --border: #e2e8f0;
             --sent-msg: #3b82f6;
             --danger: #ef4444;
+            --success: #10b981;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
@@ -61,6 +64,12 @@
         .chat-header-info { cursor: pointer; transition: opacity 0.2s; flex: 1; margin-right: 20px; }
         .chat-header-info:hover { opacity: 0.7; }
         .chat-header h4 { font-size: 16px; font-weight: 600; }
+
+        /* Call Buttons in Header */
+        .call-buttons { display: flex; gap: 8px; margin-right: 20px; }
+        .btn-call { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-call:hover { background: var(--bg-light); border-color: var(--primary); color: var(--primary); }
+        .btn-call .icon { font-size: 16px; }
         
         .messages-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
 
@@ -71,7 +80,7 @@
         .message .file-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: 600; }
         .message.received .file-link { color: var(--primary); }
 
-       /* Enhanced Typing Indicator Styles */
+        /* Typing Indicator */
         .typing-wrapper {
             padding: 8px 24px;
             background: transparent;
@@ -98,7 +107,6 @@
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
         }
-
 
         /* Input Area */
         .input-area { padding: 20px; background: white; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
@@ -131,10 +139,9 @@
         .user-select-item div { font-size: 13px; font-weight: 500; }
         .user-select-item span { font-size: 11px; color: var(--text-muted); display: block; }
 
-        /* Member Info List inside info modal */
+        /* Member Info List */
         .info-list { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; max-height: 250px; overflow-y: auto; }
         .info-user-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--bg-light); }
-
 
         .role-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
         .role-admin { background: #fee2e2; color: #ef4444; }
@@ -149,6 +156,51 @@
 
         .btn-outline { width: 100%; padding: 10px; background: white; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; margin-top: 15px; transition: 0.2s; }
         .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* ==================================================================== */
+        /* WEBRTC CALL STYLES */
+        /* ==================================================================== */
+
+        /* Incoming Call Modal */
+        .call-modal-content { width: 400px; text-align: center; }
+        .call-modal-content h3 { font-size: 20px; margin-bottom: 10px; color: var(--secondary); }
+        .call-modal-content p { font-size: 16px; color: var(--text-muted); margin-bottom: 20px; }
+        .call-modal-content .caller-avatar { width: 80px; height: 80px; background: var(--primary); border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 40px; color: white; }
+        
+        .call-actions { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
+        .btn-accept { background: var(--success); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .btn-accept:hover { background: #059669; transform: scale(1.05); }
+        .btn-reject { background: var(--danger); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .btn-reject:hover { background: #dc2626; transform: scale(1.05); }
+
+        /* Active Call Modal */
+        .active-call-content { width: 90vw; max-width: 1200px; height: 85vh; background: #0f172a; border-radius: 16px; padding: 0; overflow: hidden; position: relative; }
+        
+        #remote-video-container { width: 100%; height: calc(100% - 150px); background: #1e293b; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 10px; position: relative; }
+        #remote-video-container video { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        
+        /* Audio only mode */
+        #remote-video-container.audio-only { display: flex; align-items: center; justify-content: center; }
+        #remote-video-container.audio-only::before { content: "🎵"; font-size: 80px; color: rgba(255,255,255,0.3); }
+
+        #local-video-container { position: absolute; top: 20px; right: 20px; width: 200px; height: 150px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.5); background: #1e293b; z-index: 10; }
+        #local-video-container video { width: 100%; height: 100%; object-fit: cover; }
+
+        .call-info-bar { position: absolute; top: 20px; left: 20px; background: rgba(15, 23, 42, 0.8); padding: 10px 20px; border-radius: 8px; color: white; backdrop-filter: blur(10px); z-index: 10; }
+        #call-status { font-size: 14px; opacity: 0.8; }
+        #call-duration { font-size: 18px; font-weight: 600; margin-left: 15px; }
+
+        .call-controls-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent); display: flex; align-items: center; justify-content: center; gap: 15px; padding: 20px; }
+        
+        .call-control-btn { width: 55px; height: 55px; border-radius: 50%; border: none; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: relative; }
+        .call-control-btn:hover { transform: scale(1.1); }
+        .call-control-btn.muted { background: var(--danger); }
+        .call-control-btn.camera-off { background: var(--danger); }
+
+        #btn-mute { background: rgba(255,255,255,0.2); color: white; }
+        #btn-camera { background: rgba(255,255,255,0.2); color: white; }
+        #btn-toggle-screen-share { background: rgba(255,255,255,0.2); color: white; }
+        #btn-end-call { background: var(--danger); color: white; width: 65px; height: 65px; font-size: 24px; }
 
         .hidden { display: none !important; }
 
@@ -214,12 +266,29 @@
                         <h4 id="chat-title">Recipient Name</h4>
                         <span id="chat-subtitle" style="font-size: 11px; color: var(--text-muted); display: block; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Syncing...</span>
                     </div>
+
+                    <!-- Call Buttons -->
+                    <div class="call-buttons">
+                        <button id="btn-audio-call" class="btn-call" title="Audio Call">
+                            <span class="icon">📞</span>
+                            <span>Audio</span>
+                        </button>
+                        <button id="btn-video-call" class="btn-call" title="Video Call">
+                            <span class="icon">📹</span>
+                            <span>Video</span>
+                        </button>
+                        <button id="btn-screen-share" class="btn-call" title="Screen Share">
+                            <span class="icon">🖥️</span>
+                            <span>Share</span>
+                        </button>
+                    </div>
+
                     <button onclick="closeChat()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px;">✕</button>
                 </div>
 
                 <div class="messages-container" id="messages-container"></div>
 
-                    <!-- Typing Indicator Wrapper -->
+                <!-- Typing Indicator -->
                 <div id="typing-indicator" class="typing-wrapper">
                     <div class="typing-dots">
                         <span></span><span></span><span></span>
@@ -228,7 +297,6 @@
                 </div>
 
                 <div class="input-area">
-                    <!-- File Upload Interaction -->
                     <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(this)">
                     <button class="btn-upload" onclick="document.getElementById('file-input').click()" title="Upload File">📎</button>
                     
@@ -261,16 +329,13 @@
             <div class="form-group">
                 <label>Add Teammates</label>
                 <input type="text" id="group-search-members" placeholder="Search employees..." style="margin-bottom: 10px; font-size: 12px;">
-                <div id="members-checkbox-list" class="checkbox-container">
-                    <!-- Employees loaded here -->
-                </div>
+                <div id="members-checkbox-list" class="checkbox-container"></div>
             </div>
             <button class="btn-submit" id="btn-create-group" onclick="createGroup()">Create Group</button>
         </div>
     </div>
 
-
-    <!-- Enhanced Group Info Modal -->
+    <!-- Modal: Group Info -->
     <div id="group-info-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModals()">×</span>
@@ -289,7 +354,7 @@
         </div>
     </div>
 
-    <!-- Modal: Add New Members to Existing Group -->
+    <!-- Modal: Add Members to Group -->
     <div id="add-member-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModals()">×</span>
@@ -298,11 +363,62 @@
             
             <div class="form-group">
                 <input type="text" id="add-member-search" placeholder="Search employees..." style="margin-bottom: 10px;">
-                <div id="add-member-checkbox-list" class="checkbox-container">
-                    <!-- Employees not in group loaded here -->
-                </div>
+                <div id="add-member-checkbox-list" class="checkbox-container"></div>
             </div>
             <button class="btn-submit" id="btn-save-new-members" onclick="addNewMembersToGroup()">Add to Group</button>
+        </div>
+    </div>
+
+    <!-- Modal: Incoming Call -->
+    <div id="incoming-call-modal" class="modal">
+        <div class="modal-content call-modal-content">
+            <div class="caller-avatar">📞</div>
+            <h3>Incoming <span id="call-type">Video Call</span></h3>
+            <p><strong><span id="caller-name">John Doe</span></strong> is calling you...</p>
+            
+            <div class="call-actions">
+                <button id="btn-accept-call" class="btn-accept">
+                    <span>✅</span>
+                    <span>Accept</span>
+                </button>
+                <button id="btn-reject-call" class="btn-reject">
+                    <span>❌</span>
+                    <span>Decline</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Active Call -->
+    <div id="active-call-modal" class="modal">
+        <div class="modal-content active-call-content">
+            <!-- Call Info -->
+            <div class="call-info-bar">
+                <span id="call-status">Connected</span>
+                <span id="call-duration">00:00</span>
+            </div>
+
+            <!-- Local Video (Picture-in-Picture) -->
+            <div id="local-video-container"></div>
+
+            <!-- Remote Video Container -->
+            <div id="remote-video-container"></div>
+
+            <!-- Call Controls -->
+            <div class="call-controls-bar">
+                <button id="btn-mute" class="call-control-btn" title="Mute/Unmute">
+                    🎤
+                </button>
+                <button id="btn-camera" class="call-control-btn" title="Camera On/Off">
+                    📹
+                </button>
+                <button id="btn-toggle-screen-share" class="call-control-btn" title="Share Screen">
+                    🖥️
+                </button>
+                <button id="btn-end-call" class="call-control-btn" title="End Call">
+                    ✕
+                </button>
+            </div>
         </div>
     </div>
 
@@ -310,20 +426,69 @@
     <input type="hidden" id="currentUserId" th:value="${currentUser.id}">
     <input type="hidden" id="currentUsername" th:value="${currentUser.username}">
 
+    <!-- Load WebRTC Scripts -->
+    <script src="/js/webrtc.js"></script>
+    <script src="/js/call-ui.js"></script>
+
     <script>
+        // Global variables
         let stompClient = null;
+        let webrtcManager = null;
+        let callUIManager = null;
         let currentId = null;
         let currentType = null;
+        let currentConversationId = null;
         let currentGroupAdminId = null;
-        let isCreatingConversation = false;  // ADD THIS
-        let conversationCreationTimeout = null;  // ADD THIS
-        let currentGroupMembers = []; 
+        let isCreatingConversation = false;
+        let conversationCreationTimeout = null;
+        let currentGroupMembers = [];
         let subscriptions = [];
         let typingTimeout = null;
         const myId = document.getElementById('currentUserId').value;
 
         /**
-         * Logic Helpers
+         * Initialization
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            initWebSocket();
+            loadConversations();
+            loadChatRooms();
+            
+            document.getElementById('send-button').onclick = sendMessage;
+            document.getElementById('message-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+            document.getElementById('message-input').addEventListener('input', sendTypingStatus);
+            document.getElementById('search-users').oninput = (e) => searchUsers(e.target.value);
+            document.getElementById('group-search-members').oninput = (e) => filterList('members-checkbox-list', e.target.value);
+            document.getElementById('add-member-search').oninput = (e) => filterList('add-member-checkbox-list', e.target.value);
+        });
+
+        /**
+         * WebSocket & WebRTC Initialization
+         */
+        function initWebSocket() {
+            stompClient = Stomp.over(new SockJS('/ws'));
+            stompClient.debug = null;
+            
+            stompClient.connect({}, () => {
+                console.log("WebSocket Connected");
+                
+                // Initialize WebRTC Manager
+                webrtcManager = new WebRTCManager();
+                webrtcManager.initialize(stompClient);
+                
+                // Initialize Call UI Manager
+                callUIManager = new CallUIManager();
+                callUIManager.initialize(webrtcManager);
+                
+                // Make callUIManager globally accessible
+                window.callUIManager = callUIManager;
+                
+                console.log("WebRTC and Call UI initialized");
+            });
+        }
+
+        /**
+         * Helper Functions
          */
         function getApiUrl(path) {
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return path;
@@ -348,45 +513,15 @@
         }
 
         /**
-         * Initialization & WebSockets
-         */
-        document.addEventListener('DOMContentLoaded', () => {
-            initWebSocket();
-            loadConversations();
-            loadChatRooms();
-            
-            document.getElementById('send-button').onclick = sendMessage;
-            document.getElementById('message-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-
-            // Add typing indicator event
-            document.getElementById('message-input').addEventListener('input', sendTypingStatus);
-
-            document.getElementById('search-users').oninput = (e) => searchUsers(e.target.value);
-            document.getElementById('group-search-members').oninput = (e) => filterList('members-checkbox-list', e.target.value);
-            document.getElementById('add-member-search').oninput = (e) => filterList('add-member-checkbox-list', e.target.value);
-        });
-
-        function initWebSocket() {
-            stompClient = Stomp.over(new SockJS('/ws'));
-            stompClient.debug = null; 
-            stompClient.connect({}, () => console.log("System Ready"));
-        }
-
-
-        /**
-         * Typing Logic
+         * Typing Indicator
          */
         function sendTypingStatus() {
             if (!stompClient || !currentId) return;
-
-            // Send 'isTyping: true'
             stompClient.send("/app/chat.typing", {}, JSON.stringify({
                 chatType: currentType === 'direct' ? 'conversation' : 'chatroom',
                 chatId: currentId,
                 isTyping: true
             }));
-
-            // Debounce: Clear existing timeout and set new one to stop typing status
             clearTimeout(typingTimeout);
             typingTimeout = setTimeout(() => {
                 stompClient.send("/app/chat.typing", {}, JSON.stringify({
@@ -394,18 +529,13 @@
                     chatId: currentId,
                     isTyping: false
                 }));
-            }, 1500); // 1.5 second of inactivity means stopped typing
+            }, 1500);
         }
 
         function handleTypingNotification(data) {
-            console.log("Received typing notification:", data);
-            
-            // Safety check for user ID (compare as strings)
             if (String(data.userId) === String(myId)) return;
-
             const wrapper = document.getElementById('typing-indicator');
             const textEl = document.getElementById('typing-text');
-            
             if (data.isTyping) {
                 textEl.innerText = `${data.fullName} is typing...`;
                 wrapper.classList.add('visible');
@@ -413,7 +543,6 @@
                 wrapper.classList.remove('visible');
             }
         }
-
 
         /**
          * Navigation
@@ -471,9 +600,8 @@
             } catch (e) { }
         }
 
-
         /**
-         * Search Logic
+         * Search
          */
         async function searchUsers(query) {
             if(!query) { document.getElementById('users-list-modal').innerHTML = ''; return; }
@@ -502,56 +630,51 @@
         async function handleFileUpload(input) {
             const file = input.files[0];
             if (!file || !currentId) return;
-
             const formData = new FormData();
             formData.append("file", file);
             formData.append("chatId", currentId);
             formData.append("chatType", currentType);
-
             try {
                 const messageData = await fetchJson(getApiUrl('/api/chat/upload'), {
                     method: 'POST',
                     body: formData
                 });
                 displayMessage(messageData);
-                input.value = ""; 
+                input.value = "";
             } catch (err) {
                 alert("File upload failed.");
             }
         }
 
-
+        /**
+         * Chat Functions
+         */
         async function startDirectChat(userId, name) {
-    // Prevent multiple simultaneous conversation creation requests
-    if (isCreatingConversation) {
-        console.log('Already creating conversation, please wait...');
-        return;
-    }
-    
-    // Clear any pending timeout
-    if (conversationCreationTimeout) {
-        clearTimeout(conversationCreationTimeout);
-    }
-    
-    // Set flag to prevent duplicate requests
-    isCreatingConversation = true;
-    
-    try {
-        const res = await fetchJson(getApiUrl('/api/conversations?recipientId=' + userId), { method: 'POST' });
-        closeModals();
-        switchTab('direct');
-        openChat(res.conversationId, name, 'direct');
-        await loadConversations();
-    } catch (e) { 
-        console.error('Error starting chat:', e);
-        alert("Could not start chat. Please try again."); 
-    } finally {
-        // Reset flag after a short delay to allow for UI updates
-        conversationCreationTimeout = setTimeout(() => {
-            isCreatingConversation = false;
-        }, 1000);
-    }
-}
+            if (isCreatingConversation) {
+                console.log('Already creating conversation, please wait...');
+                return;
+            }
+            if (conversationCreationTimeout) clearTimeout(conversationCreationTimeout);
+            isCreatingConversation = true;
+            try {
+                const res = await fetchJson(getApiUrl('/api/conversations?recipientId=' + userId), { method: 'POST' });
+                closeModals();
+                switchTab('direct');
+                
+                // Store conversation ID for calls
+                currentConversationId = res.conversationId;
+                
+                openChat(res.conversationId, name, 'direct');
+                await loadConversations();
+            } catch (e) {
+                console.error('Error starting chat:', e);
+                alert("Could not start chat. Please try again.");
+            } finally {
+                conversationCreationTimeout = setTimeout(() => {
+                    isCreatingConversation = false;
+                }, 1000);
+            }
+        }
 
         async function createGroup() {
             const name = document.getElementById('group-name-input').value.trim();
@@ -568,20 +691,23 @@
                         body: JSON.stringify({ userId: uid, role: 'MEMBER' })
                     });
                 }
-                closeModals(); switchTab('groups'); await loadChatRooms();
+                closeModals(); 
+                switchTab('groups'); 
+                await loadChatRooms();
                 openChat(room.id, room.name, 'group', myId);
             } catch (e) { alert("Error creating group."); }
         }
 
-        
-
-        /**
-         * Chat Engagement
-         */
-
         async function openChat(id, title, type, creatorId) {
-            currentId = id; currentType = type;
+            currentId = id; 
+            currentType = type;
             currentGroupAdminId = creatorId || null;
+            
+            // Store conversation ID for direct calls
+            if (type === 'direct') {
+                currentConversationId = id;
+            }
+            
             document.getElementById('typing-indicator').classList.remove('visible');
             document.getElementById('welcome-screen').classList.add('hidden');
             document.getElementById('chat-window').classList.remove('hidden');
@@ -589,28 +715,36 @@
             document.getElementById('chat-subtitle').innerText = 'Syncing...';
             document.getElementById('messages-container').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Loading...</p>';
             highlightActive();
+            
+            // Show/hide call buttons
+            if (callUIManager) {
+                callUIManager.updateCallButtonsVisibility();
+            }
+            
             try {
                 const msgUrl = type === 'direct' ? getApiUrl(`/api/conversations/${id}/messages`) : getApiUrl(`/api/chatrooms/${id}/messages`);
                 const msgs = await fetchJson(msgUrl);
                 const container = document.getElementById('messages-container');
                 container.innerHTML = '';
                 if(msgs && msgs.length > 0) msgs.forEach(displayMessage);
-                if (type === 'group') await refreshGroupMembersDisplay();
-                else document.getElementById('chat-subtitle').innerText = 'Active now';
+                if (type === 'group') {
+                    await refreshGroupMembersDisplay();
+                    // Subscribe to group call channels
+                    if (webrtcManager) {
+                        webrtcManager.subscribeToGroupCall(id);
+                    }
+                } else {
+                    document.getElementById('chat-subtitle').innerText = 'Active now';
+                }
                 subscriptions.forEach(s => s.unsubscribe());
                 subscriptions = [];
                 const dest = type === 'direct' ? `conversation.${id}` : `chatroom.${id}`;
                 subscriptions.push(stompClient.subscribe(`/topic/${dest}`, (m) => {
                     const data = JSON.parse(m.body);
-                    // Handle different message types
                     if (data.type === 'ROLE_UPDATE') {
-                        // Role update notification
                         refreshGroupMembersDisplay();
-                        // Show a brief notification
-                        const notifText = data.message || `${data.userName} role updated to ${data.newRole}`;
-                        showNotification(notifText);
+                        showNotification(data.message || `${data.userName} role updated to ${data.newRole}`);
                     } else {
-                        // Regular chat message
                         displayMessage(data);
                         document.getElementById('typing-indicator').classList.remove('visible');
                     }
@@ -618,7 +752,6 @@
                 subscriptions.push(stompClient.subscribe(`/topic/${dest}.typing`, (m) => handleTypingNotification(JSON.parse(m.body))));
             } catch (e) { document.getElementById('chat-subtitle').innerText = 'Offline'; }
         }
-
 
         async function refreshGroupMembersDisplay() {
             const memberUrl = getApiUrl(`/api/chatrooms/${currentId}/members`);
@@ -628,32 +761,20 @@
                 document.getElementById('chat-subtitle').innerText = members.map(m => m.fullName).join(", ");
             }
         }
- 
 
         function showGroupInfoIfApplicable() {
             if(currentType !== 'group') return;
-            
-            // Fetch latest members to get updated roles
             fetch(`/api/chatrooms/${currentId}/members`)
                 .then(response => response.json())
                 .then(members => {
                     currentGroupMembers = members;
-                    
                     document.getElementById('info-modal-title').innerText = document.getElementById('chat-title').innerText;
-                    
-                    // ROLE-BASED ADMIN CHECK
                     const myRecord = currentGroupMembers.find(m => String(m.id) === String(myId));
                     const isAdmin = myRecord && myRecord.role === 'ADMIN';
-                    
                     document.getElementById('group-admin-tools').classList.toggle('hidden', !isAdmin);
                     if (isAdmin) document.getElementById('edit-group-name').value = document.getElementById('chat-title').innerText;
-                    
-                    // Show/hide add members button for admins only
                     const addMemberBtn = document.getElementById('btn-add-more-trigger');
-                    if (addMemberBtn) {
-                        addMemberBtn.style.display = isAdmin ? 'block' : 'none';
-                    }
-                    
+                    if (addMemberBtn) addMemberBtn.style.display = isAdmin ? 'block' : 'none';
                     const list = document.getElementById('info-members-list');
                     list.innerHTML = `<p style="font-weight:bold; font-size:12px; margin-bottom:10px; color:var(--text-muted)">MEMBERS LIST</p>` + 
                     currentGroupMembers.map(m => {
@@ -662,53 +783,30 @@
                         return `
                         <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f1f5f9">
                             <div>
-                                <span style="font-weight:500">${m.fullName} ${isSelf?'(You)':''}</span><br>
-                                <small class="role-badge role-${role.toLowerCase()}">${role}</small>
+                                <div style="font-weight:500; font-size:14px">${m.fullName} ${isSelf ? '<span style="font-size:11px; opacity:0.6">(You)</span>' : ''}</div>
+                                <span class="role-badge role-${role.toLowerCase()}">${role}</span>
                             </div>
-                            <div style="display:flex; gap:8px;">
-                                ${isAdmin && !isSelf ? `
-                                    <select onchange="updateRole(${m.id}, this.value)" style="font-size:11px; padding:4px; border-radius:4px; border:1px solid var(--border)">
-                                        <option value="MEMBER" ${role==='MEMBER'?'selected':''}>Member</option>
-                                        <option value="ADMIN" ${role==='ADMIN'?'selected':''}>Admin</option>
-                                    </select>
-                                    <button onclick="removeMember(${m.id}, '${m.fullName}')" style="background:none; border:none; color:var(--danger); cursor:pointer;">✕</button>
-                                ` : ''}
-                            </div>
-                        </div>`;
+                            ${!isSelf && isAdmin ? `<button class="btn-remove-member" onclick="removeMember(${m.id}, '${m.fullName}')">✕</button>` : ''}
+                        </div>
+                        `;
                     }).join('');
                     showModal('group-info-modal');
-                })
-                .catch(error => {
-                    console.error('Error fetching members:', error);
-                    alert('Error loading group members');
                 });
         }
 
         async function renameGroup() {
             const newName = document.getElementById('edit-group-name').value.trim();
-            if (!newName) return;
+            if (!newName) return alert("Enter a group name");
             try {
-                await fetchJson(getApiUrl(`/api/chatrooms/${currentId}`), {
+                await fetchJson(getApiUrl(`/api/chatrooms/${currentId}/name`), {
                     method: 'PUT', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ name: newName })
                 });
                 document.getElementById('chat-title').innerText = newName;
                 await loadChatRooms();
-                alert("Group renamed successfully.");
-            } catch (e) { alert("Error updating group name."); }
+                closeModals();
+            } catch (e) { alert("Error renaming group."); }
         }
-
-        async function updateRole(userId, newRole) {
-            try {
-                await fetchJson(getApiUrl(`/api/chatrooms/${currentId}/members/${userId}/role`), {
-                    method: 'PUT', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ role: newRole })
-                });
-                await refreshGroupMembersDisplay();
-                showGroupInfoIfApplicable();
-            } catch (e) { alert("Error updating role."); }
-        }
-
 
         async function removeMemberFromGroup(userId, fullName) {
             if (!confirm(`Are you sure you want to remove ${fullName} from the group?`)) return;
@@ -722,30 +820,23 @@
             } catch (e) { alert("Error removing member"); }
         }
 
-        // Alias function for removeMember (used in the new UI)
         async function removeMember(userId, fullName) {
-            // Check if current user is admin
             const myRecord = currentGroupMembers.find(m => String(m.id) === String(myId));
             const isAdmin = myRecord && myRecord.role === 'ADMIN';
-            
             if (!isAdmin) {
                 alert('Only admins can remove members from the group.');
                 return;
             }
-            
             await removeMemberFromGroup(userId, fullName);
         }
 
         async function showAddMemberToGroupModal() {
-            // Check if current user is admin
             const myRecord = currentGroupMembers.find(m => String(m.id) === String(myId));
             const isAdmin = myRecord && myRecord.role === 'ADMIN';
-            
             if (!isAdmin) {
                 alert('Only admins can add new members to the group.');
                 return;
             }
-            
             document.getElementById('group-info-modal').classList.remove('active');
             document.getElementById('add-member-modal').classList.add('active');
             try {
@@ -776,8 +867,8 @@
                 }
                 closeModals();
                 await refreshGroupMembersDisplay();
-                await loadChatRooms(); 
-                showGroupInfoIfApplicable(); 
+                await loadChatRooms();
+                showGroupInfoIfApplicable();
             } catch (e) { alert("Error adding members"); }
             finally { btn.disabled = false; btn.innerText = "Add to Group"; }
         }
@@ -787,12 +878,13 @@
             const val = input.value.trim();
             if(!val || !currentId) return;
             const payload = { content: val, type: 'TEXT' };
-            if(currentType === 'direct') payload.conversationId = currentId; else payload.chatRoomId = currentId;
+            if(currentType === 'direct') payload.conversationId = currentId; 
+            else payload.chatRoomId = currentId;
             stompClient.send(currentType === 'direct' ? '/app/chat.sendDirectMessage' : '/app/chat.sendGroupMessage', {}, JSON.stringify(payload));
             input.value = '';
         }
 
-       function displayMessage(msg) {
+        function displayMessage(msg) {
             const container = document.getElementById('messages-container');
             const isMe = String(msg.senderId) === String(myId);
             const div = document.createElement('div');
@@ -818,32 +910,34 @@
             if(el) el.classList.add('active');
         }
 
-        function showModal(id) { 
-            document.getElementById(id).classList.add('active'); 
+        function showModal(id) {
+            document.getElementById(id).classList.add('active');
             if(id === 'new-group-modal') loadMembersForGroup();
         }
 
-        function closeModals() { 
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             document.getElementById('group-name-input').value = '';
             document.getElementById('search-users').value = '';
             document.getElementById('add-member-search').value = '';
         }
 
-        function closeChat() { 
+        function closeChat() {
             document.getElementById('chat-window').classList.add('hidden');
             document.getElementById('welcome-screen').classList.remove('hidden');
-            currentId = null; highlightActive();
+            currentId = null;
+            currentConversationId = null;
+            highlightActive();
         }
 
-        function showNotification(message) {
-            // Create a temporary notification toast
+        function showNotification(message, type = 'info') {
             const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'var(--danger)' : 'var(--primary)';
             toast.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: var(--primary);
+                background: ${bgColor};
                 color: white;
                 padding: 12px 20px;
                 border-radius: 8px;
@@ -853,7 +947,6 @@
             `;
             toast.textContent = message;
             document.body.appendChild(toast);
-            
             setTimeout(() => {
                 toast.style.animation = 'slideOut 0.3s ease-in';
                 setTimeout(() => toast.remove(), 300);
