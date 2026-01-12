@@ -60,23 +60,210 @@
         .welcome { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-muted); }
         .welcome h2 { font-size: 24px; color: var(--secondary); margin-bottom: 8px; }
         
+        /* Chat Header with Action Buttons */
         .chat-header { padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .chat-header-info { cursor: pointer; transition: opacity 0.2s; flex: 1; margin-right: 20px; }
         .chat-header-info:hover { opacity: 0.7; }
         .chat-header h4 { font-size: 16px; font-weight: 600; }
 
-        /* Call Buttons in Header */
-        .call-buttons { display: flex; gap: 8px; margin-right: 20px; }
-        .btn-call { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
-        .btn-call:hover { background: var(--bg-light); border-color: var(--primary); color: var(--primary); }
-        .btn-call .icon { font-size: 16px; }
+        /* Header Action Buttons (Right Side) */
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        
+        /* Search Button */
+        .btn-search {
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .btn-search:hover {
+            background: var(--bg-light);
+            color: var(--primary);
+        }
+        .btn-search svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Phone/Call Menu Button */
+        .btn-phone {
+            background: none;
+            border: 1px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: 0.2s;
+            position: relative;
+        }
+        .btn-phone:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+        .btn-phone svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Three Dots More Menu Button */
+        .btn-more {
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .btn-more:hover {
+            background: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        /* Dropdown Menu for Calls */
+        .call-dropdown {
+            position: absolute;
+            top: 48px;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+        .call-dropdown.active {
+            display: block;
+            animation: dropdownFadeIn 0.2s ease-out;
+        }
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .call-dropdown-item {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border: none;
+            background: white;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: 0.15s;
+            border-bottom: 1px solid var(--bg-light);
+        }
+        .call-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .call-dropdown-item:hover {
+            background: var(--bg-light);
+        }
+        .call-dropdown-item svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            padding: 12px 24px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: none;
+        }
+        .search-bar.active {
+            display: block;
+        }
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 40px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: var(--text-muted);
+        }
+        .search-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+        .btn-close-search {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .btn-close-search:hover {
+            background: var(--bg-light);
+            color: var(--danger);
+        }
+        .btn-close-search svg {
+            width: 16px;
+            height: 16px;
+        }
+        .search-results {
+            padding: 8px 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: none;
+        }
+        .search-results.active {
+            display: block;
+        }
         
         .messages-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
 
         /* Message Bubbles */
-        .message { max-width: 65%; padding: 10px 14px; border-radius: 12px; font-size: 14px; position: relative; word-wrap: break-word; }
+        .message { max-width: 65%; padding: 10px 14px; border-radius: 12px; font-size: 14px; position: relative; word-wrap: break-word; transition: background 0.3s; }
         .message.sent { align-self: flex-end; background: var(--sent-msg); color: white; border-bottom-right-radius: 2px; }
         .message.received { align-self: flex-start; background: white; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+        .message.highlight { background: #fef3c7; border: 2px solid #fbbf24; }
         .message .file-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: 600; }
         .message.received .file-link { color: var(--primary); }
 
@@ -113,8 +300,9 @@
         input#message-input { flex: 1; padding: 12px 18px; border: 1px solid var(--border); border-radius: 24px; outline: none; background: var(--bg-light); transition: 0.2s; }
         input#message-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         
-        .btn-upload { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.2s; }
+        .btn-upload { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-upload:hover { background: #e2e8f0; color: var(--primary); }
+        .btn-upload svg { width: 20px; height: 20px; }
 
         button#send-button { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 24px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         button#send-button:hover { background: var(--primary-dark); transform: translateY(-1px); }
@@ -267,23 +455,84 @@
                         <span id="chat-subtitle" style="font-size: 11px; color: var(--text-muted); display: block; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Syncing...</span>
                     </div>
 
-                    <!-- Call Buttons -->
-                    <div class="call-buttons">
-                        <button id="btn-audio-call" class="btn-call" title="Audio Call">
-                            <span class="icon">📞</span>
-                            <span>Audio</span>
+                    <!-- Header Actions (Search + Phone + More) -->
+                    <div class="header-actions">
+                        <!-- Search Button -->
+                        <button id="btn-search" class="btn-search" onclick="toggleSearch()" title="Search Messages">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
                         </button>
-                        <button id="btn-video-call" class="btn-call" title="Video Call">
-                            <span class="icon">📹</span>
-                            <span>Video</span>
+
+                        <!-- Phone Call Button with Dropdown -->
+                        <div style="position: relative;">
+                            <button id="btn-phone" class="btn-phone" onclick="toggleCallMenu()" title="Make a Call">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Call Dropdown Menu -->
+                            <div id="call-dropdown" class="call-dropdown">
+                                <button class="call-dropdown-item" onclick="handleCallClick('audio')">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                    </svg>
+                                    <span>Audio Call</span>
+                                </button>
+                                <button class="call-dropdown-item" onclick="handleCallClick('video')">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>Video Call</span>
+                                </button>
+                                <button class="call-dropdown-item" onclick="handleCallClick('screen')">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>Screen Share</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Three Dots Menu (for future options) -->
+                        <button class="btn-more" onclick="toggleMoreMenu()" title="More Options">
+                            <svg fill="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;">
+                                <circle cx="12" cy="5" r="2"></circle>
+                                <circle cx="12" cy="12" r="2"></circle>
+                                <circle cx="12" cy="19" r="2"></circle>
+                            </svg>
                         </button>
-                        <button id="btn-screen-share" class="btn-call" title="Screen Share">
-                            <span class="icon">🖥️</span>
-                            <span>Share</span>
+
+                        <!-- Close Button -->
+                        <button onclick="closeChat()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.2s;">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
                         </button>
                     </div>
+                </div>
 
-                    <button onclick="closeChat()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 20px;">✕</button>
+                <!-- Search Bar -->
+                <div id="search-bar" class="search-bar">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </span>
+                        <input type="text" id="search-input" class="search-input" placeholder="Search messages..." oninput="searchMessages(this.value)">
+                        <button class="btn-close-search" onclick="closeSearch()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Search Results Info -->
+                <div id="search-results" class="search-results">
+                    <span id="search-results-text"></span>
                 </div>
 
                 <div class="messages-container" id="messages-container"></div>
@@ -298,7 +547,11 @@
 
                 <div class="input-area">
                     <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(this)">
-                    <button class="btn-upload" onclick="document.getElementById('file-input').click()" title="Upload File">📎</button>
+                    <button class="btn-upload" onclick="document.getElementById('file-input').click()" title="Upload File">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                        </svg>
+                    </button>
                     
                     <input type="text" id="message-input" placeholder="Write a message..." autocomplete="off">
                     <button id="send-button">Send</button>
@@ -444,6 +697,7 @@
         let currentGroupMembers = [];
         let subscriptions = [];
         let typingTimeout = null;
+        let allMessages = []; // Store all messages for search
         const myId = document.getElementById('currentUserId').value;
 
         /**
@@ -460,6 +714,15 @@
             document.getElementById('search-users').oninput = (e) => searchUsers(e.target.value);
             document.getElementById('group-search-members').oninput = (e) => filterList('members-checkbox-list', e.target.value);
             document.getElementById('add-member-search').oninput = (e) => filterList('add-member-checkbox-list', e.target.value);
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                const dropdown = document.getElementById('call-dropdown');
+                const phoneBtn = document.getElementById('btn-phone');
+                if (dropdown && !dropdown.contains(e.target) && !phoneBtn.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
         });
 
         /**
@@ -484,6 +747,110 @@
                 window.callUIManager = callUIManager;
                 
                 console.log("WebRTC and Call UI initialized");
+            });
+        }
+
+        /**
+         * Call Menu Functions
+         */
+        function toggleCallMenu() {
+            const dropdown = document.getElementById('call-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        function toggleMoreMenu() {
+            // Future feature - can add more options here
+            alert('More options coming soon!');
+        }
+
+        function handleCallClick(type) {
+            // Close dropdown
+            document.getElementById('call-dropdown').classList.remove('active');
+            
+            // Trigger call based on type
+            if (callUIManager) {
+                if (type === 'audio') {
+                    callUIManager.initiateCall('AUDIO');
+                } else if (type === 'video') {
+                    callUIManager.initiateCall('VIDEO');
+                } else if (type === 'screen') {
+                    callUIManager.initiateCall('SCREEN_SHARE');
+                }
+            }
+        }
+
+        /**
+         * Search Functions
+         */
+        function toggleSearch() {
+            const searchBar = document.getElementById('search-bar');
+            const searchInput = document.getElementById('search-input');
+            
+            if (searchBar.classList.contains('active')) {
+                closeSearch();
+            } else {
+                searchBar.classList.add('active');
+                searchInput.focus();
+            }
+        }
+
+        function closeSearch() {
+            const searchBar = document.getElementById('search-bar');
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+            
+            searchBar.classList.remove('active');
+            searchResults.classList.remove('active');
+            searchInput.value = '';
+            
+            // Remove all highlights
+            clearHighlights();
+        }
+
+        function searchMessages(query) {
+            const searchResults = document.getElementById('search-results');
+            const searchResultsText = document.getElementById('search-results-text');
+            
+            if (!query || query.trim() === '') {
+                searchResults.classList.remove('active');
+                clearHighlights();
+                return;
+            }
+            
+            // Search through messages
+            const messages = document.querySelectorAll('.message');
+            let matchCount = 0;
+            let firstMatch = null;
+            
+            clearHighlights();
+            
+            messages.forEach(msg => {
+                const text = msg.textContent.toLowerCase();
+                if (text.includes(query.toLowerCase())) {
+                    msg.classList.add('highlight');
+                    matchCount++;
+                    if (!firstMatch) firstMatch = msg;
+                }
+            });
+            
+            // Show results
+            if (matchCount > 0) {
+                searchResults.classList.add('active');
+                searchResultsText.textContent = `Found ${matchCount} message${matchCount > 1 ? 's' : ''}`;
+                
+                // Scroll to first match
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                searchResults.classList.add('active');
+                searchResultsText.textContent = 'No messages found';
+            }
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.message.highlight').forEach(msg => {
+                msg.classList.remove('highlight');
             });
         }
 
@@ -660,10 +1027,7 @@
                 const res = await fetchJson(getApiUrl('/api/conversations?recipientId=' + userId), { method: 'POST' });
                 closeModals();
                 switchTab('direct');
-                
-                // Store conversation ID for calls
                 currentConversationId = res.conversationId;
-                
                 openChat(res.conversationId, name, 'direct');
                 await loadConversations();
             } catch (e) {
@@ -703,10 +1067,12 @@
             currentType = type;
             currentGroupAdminId = creatorId || null;
             
-            // Store conversation ID for direct calls
             if (type === 'direct') {
                 currentConversationId = id;
             }
+            
+            // Close search if open
+            closeSearch();
             
             document.getElementById('typing-indicator').classList.remove('visible');
             document.getElementById('welcome-screen').classList.add('hidden');
@@ -716,20 +1082,18 @@
             document.getElementById('messages-container').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Loading...</p>';
             highlightActive();
             
-            // Show/hide call buttons
-            if (callUIManager) {
-                callUIManager.updateCallButtonsVisibility();
-            }
-            
             try {
                 const msgUrl = type === 'direct' ? getApiUrl(`/api/conversations/${id}/messages`) : getApiUrl(`/api/chatrooms/${id}/messages`);
                 const msgs = await fetchJson(msgUrl);
                 const container = document.getElementById('messages-container');
                 container.innerHTML = '';
+                
+                // Store messages for search
+                allMessages = msgs || [];
+                
                 if(msgs && msgs.length > 0) msgs.forEach(displayMessage);
                 if (type === 'group') {
                     await refreshGroupMembersDisplay();
-                    // Subscribe to group call channels
                     if (webrtcManager) {
                         webrtcManager.subscribeToGroupCall(id);
                     }
@@ -746,6 +1110,7 @@
                         showNotification(data.message || `${data.userName} role updated to ${data.newRole}`);
                     } else {
                         displayMessage(data);
+                        allMessages.push(data);
                         document.getElementById('typing-indicator').classList.remove('visible');
                     }
                 }));
@@ -889,6 +1254,7 @@
             const isMe = String(msg.senderId) === String(myId);
             const div = document.createElement('div');
             div.className = `message ${isMe ? 'sent' : 'received'}`;
+            div.dataset.messageId = msg.id || '';
             let contentHtml = '';
             if (msg.type === 'FILE' || msg.type === 'IMAGE') {
                 contentHtml = `<a href="${msg.content}" target="_blank" class="file-link"><span>📄</span> <span>${msg.content.split('_').pop() || 'Download'}</span></a>`;
@@ -927,6 +1293,7 @@
             document.getElementById('welcome-screen').classList.remove('hidden');
             currentId = null;
             currentConversationId = null;
+            closeSearch();
             highlightActive();
         }
 
