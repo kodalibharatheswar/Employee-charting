@@ -2,10 +2,14 @@ package com.crm.chat.controller;
 
 import com.crm.chat.dto.CallDTO;
 import com.crm.chat.entity.Call;
+import com.crm.chat.entity.User;
 import com.crm.chat.service.CallService;
+import com.crm.chat.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 public class CallController {
 
     private final CallService callService;
+    private final UserService userService;
 
     /**
      * Get current user ID from authentication
@@ -31,6 +36,13 @@ public class CallController {
         // Adjust based on your security configuration
         return Long.valueOf(authentication.getName());
     }
+
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findByUsername(username).orElseThrow();
+    }
+
 
     // ==================== CALL INITIATION ====================
 
@@ -180,20 +192,15 @@ public class CallController {
      * GET /api/calls/history?limit=20
      */
     @GetMapping("/history")
-    public ResponseEntity<List<CallDTO>> getCallHistory(
-            @RequestParam(defaultValue = "20") int limit,
-            Authentication authentication) {
-        try {
-            Long userId = getCurrentUserId(authentication);
-            List<Call> calls = callService.getUserCallHistory(userId, limit);
-            List<CallDTO> callDTOs = calls.stream()
-                    .map(CallDTO::fromEntity)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(callDTOs);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<List<CallDTO>> getCallHistory(@RequestParam(defaultValue = "50") int limit) {
+        User currentUser = getCurrentUser();
+        List<Call> calls = callService.getUserCallHistory(currentUser.getId(), limit);
+        List<CallDTO> callDTOs = calls.stream()
+                .map(CallDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(callDTOs);
     }
+    
 
     /**
      * Get call history for a conversation
@@ -287,6 +294,15 @@ public class CallController {
         }
     }
 
+
+    @GetMapping("/check-availability/{userId}")
+    public ResponseEntity<Boolean> checkAvailability(@PathVariable Long userId) {
+        User user = userService.findById(userId).orElseThrow();
+        // User is available if ONLINE and not currently in a call status
+        return ResponseEntity.ok(user.getStatus() == User.UserStatus.ONLINE);
+    }
+
+    
     // ==================== STATISTICS ====================
 
     /**
