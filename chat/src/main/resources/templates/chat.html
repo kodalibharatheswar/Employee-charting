@@ -563,33 +563,35 @@
             right: 0;
             width: 12px;
             height: 12px;
-            background: var(--success);
+            /* background: var(--success); */
+            background: var(--status-available);
             border: 2px solid var(--bg-secondary-sidebar);
             border-radius: 50%;
         }
 
         .online-indicator.available {
-            background: var(--status-available);
+            background: var(--status-available) !important;
         }
 
         .online-indicator.away {
-            background: var(--status-away);
+            background: var(--status-away) !important;
         }
 
         .online-indicator.busy {
-            background: var(--status-busy);
+            background: var(--status-busy) !important;
         }
 
         .online-indicator.invisible {
-            background: var(--status-invisible);
+            background: var(--status-invisible) !important;
+            display: none; /* Hide when invisible */
         }
 
         .online-indicator.dnd {
-            background: var(--status-dnd);
+            background: var(--status-dnd) !important;
         }
 
-       /* ✅ NEW: Chat header indicator (white background) */ 
-       .chat-header-avatar .online-indicator {
+        /* ✅ NEW: Chat header indicator (white background) */
+        .chat-header-avatar .online-indicator {
             border: 2px solid white;
             /* White border for white background */
         }
@@ -770,7 +772,7 @@
             right: 0;
             width: 12px;
             height: 12px;
-            background: var(--success);
+            /* background: var(--success); */
             border: 2px solid white;
             border-radius: 50%;
         }
@@ -1749,8 +1751,10 @@
             const statusTextEl = document.getElementById('chat-header-status');
 
             if (indicator) {
-                indicator.className = `online-indicator ${statusInfo.dotClass}`;
-            }
+        indicator.className = `online-indicator ${statusInfo.dotClass}`;
+        console.log('🔍 Chat header indicator class:', indicator.className); // ← ADD THIS LINE
+        console.log('🔍 Computed background:', window.getComputedStyle(indicator).background); // ← ADD THIS LINE
+    }
             if (statusContainer) {
                 statusContainer.className = `chat-header-status ${statusInfo.textClass}`;
             }
@@ -2028,6 +2032,8 @@
         }
 
         function openChatWindow(userId, fullName, status) {
+            console.log('🔍 Opening chat with status:', status); // ← ADD THIS LINE
+
             document.getElementById('welcome-screen').classList.add('hidden');
             document.getElementById('chat-window').classList.remove('hidden');
 
