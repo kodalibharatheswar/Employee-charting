@@ -583,7 +583,8 @@
 
         .online-indicator.invisible {
             background: var(--status-invisible) !important;
-            display: none; /* Hide when invisible */
+            display: none;
+            /* Hide when invisible */
         }
 
         .online-indicator.dnd {
@@ -855,6 +856,266 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+        }
+
+        /* ============================================
+   NOTIFICATION TOAST STYLES
+   ============================================ */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 400px;
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+}
+
+        /* .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        } */
+
+        @keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+        /* @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        } */
+
+        .notification-toast.hiding {
+    animation: slideOut 0.3s ease;
+}
+        /* .notification-toast.hiding {
+            animation: slideOutRight 0.3s ease forwards;
+        } */
+
+
+        @keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+@keyframes highlight {
+    0%, 100% {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    50% {
+        background: rgba(59, 130, 246, 0.15);
+    }
+}
+
+.has-unread {
+    background: rgba(59, 130, 246, 0.08) !important;
+}
+
+.unread-badge {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+        /* @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        } */
+
+        .notification-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+}
+        /* .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+        } */
+
+        .notification-content {
+    flex: 1;
+}
+
+        /* .notification-content {
+            flex: 1;
+            min-width: 0;
+        } */
+
+        .notification-sender {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+        /* .notification-sender {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--secondary);
+            margin-bottom: 4px;
+        } */
+
+        .notification-message {
+    font-size: 13px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+        /* .notification-message {
+            font-size: 13px;
+            color: var(--text-main);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        } */
+
+        .notification-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+        /* .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 4px;
+            line-height: 1;
+            transition: 0.2s;
+        } */
+
+        .notification-close:hover {
+    color: #64748b;
+}
+
+        /* .notification-close:hover {
+            color: var(--secondary);
+        } */
+
+        /* ============================================
+   MESSAGE STATUS TICKS - WhatsApp Style
+   ============================================ */
+
+   .msg-status {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 14px;
+    line-height: 1;
+}
+        /* .msg-status {
+            font-size: 14px;
+            margin-left: 4px;
+            display: inline-flex;
+            align-items: center;
+        } */
+
+        .msg-status.sent {
+            color: #94a3b8;
+            /* Gray single tick */
+        }
+
+        .msg-status.delivered {
+            color: #94a3b8;
+            /* Gray double tick */
+        }
+
+        .msg-status.read {
+            color: #3b82f6;
+            /* Blue double tick */
+        }
+
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* Date Separator */
@@ -1572,6 +1833,13 @@
         let allUsers = [];
         let pinnedUsers = new Set();
         let currentUserStatus = 'AVAILABLE';
+        // ============================================
+        // MESSAGE TRACKING & DELIVERY RECEIPTS
+        // ============================================
+        let messageTracker = new Map(); // Track message delivery status
+        let tempMessageId = 1;
+        let pendingMessages = new Map(); // Track messages being sent
+
         const myId = document.getElementById('currentUserId').value;
         const myUsername = document.getElementById('currentUsername').value;
 
@@ -1609,15 +1877,239 @@
             stompClient.debug = null;
 
             stompClient.connect({}, () => {
-                console.log("WebSocket Connected");
+                console.log("✅ WebSocket Connected");
 
                 // Subscribe to status updates
                 stompClient.subscribe('/topic/user.status', (message) => {
                     const statusUpdate = JSON.parse(message.body);
                     handleStatusUpdate(statusUpdate);
                 });
+
+                // Subscribe to public updates (user online/offline)
+                stompClient.subscribe('/topic/public', (message) => {
+                    const data = JSON.parse(message.body);
+                    if (data.type === 'USER_ONLINE') {
+                        handleUserOnline(data);
+                    }
+                });
+
+                // ✅ Subscribe to delivery acknowledgments
+                stompClient.subscribe('/user/queue/delivery', (message) => {
+                    const ack = JSON.parse(message.body);
+                    handleDeliveryAcknowledgment(ack);
+                });
+
+                // ✅ Subscribe to read receipts
+                stompClient.subscribe('/user/queue/read-receipts', (message) => {
+                    const receipt = JSON.parse(message.body);
+                    handleReadReceipt(receipt);
+                });
+
+                // ✅ Subscribe to notifications
+                // NEW VERSION:
+stompClient.subscribe('/user/queue/notifications', (notification) => {
+    const data = JSON.parse(notification.body);
+    
+    if (data.type === 'NEW_MESSAGE') {
+        console.log('🔔 New message notification:', data);
+        
+        // Show notification
+        showNotification(data.senderName, data.content, data.senderId);
+        
+        // Update conversation list with new message
+        if (data.conversationId) {
+            updateConversationListAfterMessage({
+                conversationId: data.conversationId,
+                senderId: data.senderId,
+                content: data.content,
+                createdAt: data.timestamp
             });
         }
+    }
+});
+                // stompClient.subscribe('/user/queue/notifications', (notification) => {
+                //     const data = JSON.parse(notification.body);
+
+                //     if (data.type === 'NEW_MESSAGE') {
+                //         showNotification(data.senderName, data.content, data.senderId);
+
+                //         // Update conversation list with unread indicator
+                //         if (data.conversationId) {
+                //             updateConversationUnreadCount(data.conversationId);
+                //         }
+                //     }
+                // });
+
+                // Notify server that user is online
+                stompClient.send("/app/chat.addUser", {}, JSON.stringify({
+                    username: myUsername
+                }));
+
+                console.log("✅ All subscriptions active");
+            }, (error) => {
+                console.error("❌ WebSocket connection error:", error);
+                setTimeout(initWebSocket, 5000); // Retry after 5 seconds
+            });
+        }
+
+
+       /**
+ * 🆕 NEW: Show Browser Notification
+ */
+function showNotification(senderName, message, senderId) {
+    // Don't show notification for current chat if it's already open
+    if (currentId && String(currentRecipient?.id) === String(senderId)) {
+        return;
+    }
+
+    // Create notification toast
+    const notification = document.createElement('div');
+    notification.className = 'notification-toast';
+
+    const initial = senderName.charAt(0).toUpperCase();
+
+    notification.innerHTML = `
+        <div class="notification-avatar">${initial}</div>
+        <div class="notification-content">
+            <div class="notification-sender">${senderName}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.add('hiding');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+
+    // Play notification sound (optional)
+    playNotificationSound();
+    
+    console.log('🔔 Notification shown for:', senderName);
+}
+ 
+
+        // ============================================
+        // NOTIFICATION DISPLAY
+        // ============================================
+
+    //     function showNotification(senderName, message, senderId) {
+    //         // Don't show notification for current chat if it's already open
+    //         if (currentId && String(currentId) === String(senderId)) {
+    //             return;
+    //         }
+
+    //         // Create notification element
+    //         const notification = document.createElement('div');
+    //         notification.className = 'notification-toast';
+
+    //         const initial = senderName.charAt(0).toUpperCase();
+
+    //         notification.innerHTML = `
+    //     <div class="notification-avatar">${initial}</div>
+    //     <div class="notification-content">
+    //         <div class="notification-sender">${senderName}</div>
+    //         <div class="notification-message">${message}</div>
+    //     </div>
+    //     <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+    // `;
+
+    //         document.body.appendChild(notification);
+
+    //         // Auto-remove after 5 seconds
+    //         setTimeout(() => {
+    //             notification.classList.add('hiding');
+    //             setTimeout(() => notification.remove(), 300);
+    //         }, 5000);
+
+    //         // Play notification sound (optional)
+    //         playNotificationSound();
+    //     }
+
+        function playNotificationSound() {
+            // Optional: Add a subtle notification sound
+            // const audio = new Audio('/sounds/notification.mp3');
+            // audio.volume = 0.3;
+            // audio.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        /**
+ * 🆕 NEW: Update Conversation Unread Count
+ */
+function updateConversationUnreadCount(conversationId) {
+    // Add unread indicator to conversation in sidebar
+    const conversationEl = document.querySelector(`[data-conversation-id="${conversationId}"]`);
+    if (conversationEl && !conversationEl.classList.contains('active')) {
+        conversationEl.classList.add('has-unread');
+        
+        // Show unread badge
+        let badge = conversationEl.querySelector('.unread-badge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.className = 'unread-badge';
+            badge.textContent = '1';
+            conversationEl.querySelector('.conversation-content').appendChild(badge);
+        } else {
+            const count = parseInt(badge.textContent) || 0;
+            badge.textContent = count + 1;
+        }
+    }
+}
+        // function updateConversationUnreadCount(conversationId) {
+        //     // Add unread indicator to conversation in sidebar
+        //     const conversationEl = document.querySelector(`[data-conversation-id="${conversationId}"]`);
+        //     if (conversationEl && !conversationEl.classList.contains('active')) {
+        //         conversationEl.classList.add('has-unread');
+        //         // Optionally show unread count badge
+        //     }
+        // }
+
+
+        // ============================================
+        // RENDER MESSAGE WITH STATUS
+        // ============================================
+
+        function renderMessageStatus(message, isOwnMessage) {
+            if (!isOwnMessage) return ''; // Only show status for own messages
+
+            const status = message.deliveryStatus || 'SENT';
+
+            if (status === 'READ') {
+                return '<span class="msg-status read">✓✓</span>'; // Blue double tick
+            } else if (status === 'DELIVERED') {
+                return '<span class="msg-status delivered">✓✓</span>'; // Gray double tick
+            } else {
+                return '<span class="msg-status sent">✓</span>'; // Single gray tick
+            }
+        }
+
+
+        // ============================================
+        // HANDLE USER ONLINE STATUS
+        // ============================================
+
+        function handleUserOnline(data) {
+            console.log('User online:', data);
+
+            // Update user status in sidebar
+            const userEl = document.querySelector(`[data-user-id="${data.userId}"]`);
+            if (userEl) {
+                const indicator = userEl.querySelector('.online-indicator');
+                if (indicator && data.status) {
+                    const statusClass = STATUS_MAP[data.status]?.dotClass || 'available';
+                    indicator.className = `online-indicator ${statusClass}`;
+                }
+            }
+
+            // Update chat header if this is current chat
+            if (currentRecipient && currentRecipient.id == data.userId) {
+                updateChatHeaderStatus(data.status || 'AVAILABLE');
+            }
+        }
+
 
         // ============================================
         // STATUS MANAGEMENT
@@ -1751,10 +2243,10 @@
             const statusTextEl = document.getElementById('chat-header-status');
 
             if (indicator) {
-        indicator.className = `online-indicator ${statusInfo.dotClass}`;
-        console.log('🔍 Chat header indicator class:', indicator.className); // ← ADD THIS LINE
-        console.log('🔍 Computed background:', window.getComputedStyle(indicator).background); // ← ADD THIS LINE
-    }
+                indicator.className = `online-indicator ${statusInfo.dotClass}`;
+                console.log('🔍 Chat header indicator class:', indicator.className); // ← ADD THIS LINE
+                console.log('🔍 Computed background:', window.getComputedStyle(indicator).background); // ← ADD THIS LINE
+            }
             if (statusContainer) {
                 statusContainer.className = `chat-header-status ${statusInfo.textClass}`;
             }
@@ -1848,15 +2340,540 @@
             }
         }
 
-        async function loadConversations() {
+        /**
+ * 🆕 NEW FUNCTION: Load Recent Conversations
+ * This loads all users who have had conversations with you
+ */
+async function loadConversations() {
+    try {
+        console.log('📋 Loading conversations...');
+        
+        // Fetch all active users
+        const usersResponse = await fetch('/api/users');
+        const users = await usersResponse.json();
+        
+        const conversationListEl = document.getElementById('conversation-list');
+        if (!conversationListEl) {
+            console.error('❌ conversation-list element not found');
+            return;
+        }
+        
+        conversationListEl.innerHTML = ''; // Clear existing
+        
+        if (users.length === 0) {
+            conversationListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">No users available</div>';
+            return;
+        }
+        
+        // For each user, try to get conversation and check for messages
+        const conversationsData = [];
+        
+        for (const user of users) {
             try {
-                const users = await fetchJson('/api/users');
-                allUsers = users;
-                renderPinnedUsers(users);
-                renderConversations(users);
-            } catch (e) {
-                console.error('Error loading conversations:', e);
+                // Try to create/get conversation
+                const convResponse = await fetch('/api/conversations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `recipientId=${user.id}`
+                });
+                
+                if (convResponse.ok) {
+                    const convData = await convResponse.json();
+                    const conversationId = convData.conversationId;
+                    
+                    // Get messages for this conversation
+                    const messagesResponse = await fetch(`/api/conversations/${conversationId}/messages`);
+                    if (messagesResponse.ok) {
+                        const messages = await messagesResponse.json();
+                        
+                        if (messages.length > 0) {
+                            const lastMessage = messages[messages.length - 1];
+                            const unreadCount = messages.filter(m => !m.isRead && m.senderId !== myId).length;
+                            
+                            conversationsData.push({
+                                user: user,
+                                conversationId: conversationId,
+                                lastMessage: lastMessage,
+                                unreadCount: unreadCount,
+                                timestamp: new Date(lastMessage.createdAt)
+                            });
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading conversation for user', user.id, err);
             }
+        }
+        
+        // Sort by most recent message
+        conversationsData.sort((a, b) => b.timestamp - a.timestamp);
+        
+        if (conversationsData.length === 0) {
+            conversationListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b; font-size: 13px;">No conversations yet<br><span style="font-size: 11px; color: #94a3b8;">Click + to start chatting</span></div>';
+            return;
+        }
+        
+        // Render conversations
+        conversationsData.forEach(convData => {
+            const conversationItem = createConversationItem(convData);
+            conversationListEl.appendChild(conversationItem);
+        });
+        
+        console.log(`✅ Loaded ${conversationsData.length} conversations`);
+        
+    } catch (error) {
+        console.error('❌ Error loading conversations:', error);
+        const conversationListEl = document.getElementById('conversation-list');
+        if (conversationListEl) {
+            conversationListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444; font-size: 13px;">Error loading conversations</div>';
+        }
+    }
+}
+//async function loadConversations() {
+//     try {
+//         // Load all active users
+//         const users = await fetchJson('/api/users');
+        
+//         // Filter out pinned users (they're already shown in pins section)
+//         const unpinnedUsers = users.filter(u => !pinnedUsers.has(String(u.id)));
+        
+//         // Render them in the conversation list
+//         renderConversations(unpinnedUsers);
+        
+//         console.log('✅ Conversations loaded:', users.length, 'users');
+//     } catch (error) {
+//         console.error('❌ Error loading conversations:', error);
+//     }
+// }
+
+// ============================================
+// 2. CREATE CONVERSATION ITEM ELEMENT
+// ============================================
+
+function createConversationItem(convData) {
+    const { user, conversationId, lastMessage, unreadCount } = convData;
+    
+    const div = document.createElement('div');
+    div.className = 'conversation-item';
+    div.setAttribute('data-conversation-id', conversationId);
+    div.setAttribute('data-user-id', user.id);
+    
+    if (unreadCount > 0) {
+        div.classList.add('has-unread');
+    }
+    
+    // Get status color
+    const statusClass = getStatusClass(user.status || 'AVAILABLE');
+    
+    // Format last message time
+    const timeStr = formatMessageTime(lastMessage.createdAt);
+    
+    // Last message preview
+    let messagePreview = truncateText(lastMessage.content, 35);
+    if (lastMessage.senderId === myId) {
+        messagePreview = 'You: ' + messagePreview;
+    }
+    
+    // Unread badge
+    const unreadBadge = unreadCount > 0 ? 
+        `<span class="unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</span>` : '';
+    
+    div.innerHTML = `
+        <div class="conversation-avatar">
+            <span>${getInitials(user.fullName)}</span>
+            <div class="online-indicator ${statusClass}"></div>
+        </div>
+        <div class="conversation-info">
+            <div class="conversation-header">
+                <span class="conversation-name">${escapeHtml(user.fullName)}</span>
+                <span class="conversation-time">${timeStr}</span>
+            </div>
+            <div class="conversation-preview">
+                <span class="preview-text">${escapeHtml(messagePreview)}</span>
+                ${unreadBadge}
+            </div>
+        </div>
+    `;
+    
+    // Add click handler
+    div.onclick = (event) => {
+        event.stopPropagation();
+        openDirectConversation(conversationId, user);
+    };
+    
+    return div;
+}
+
+// ============================================
+// 3. OPEN DIRECT CONVERSATION (ENHANCED)
+// ============================================
+
+async function openDirectConversation(conversationId, user) {
+    try {
+        currentId = conversationId;
+        currentType = 'direct';
+        
+        console.log(`💬 Opening conversation ${conversationId} with ${user.fullName}`);
+        
+        // Hide welcome, show chat
+        document.getElementById('welcome-screen').style.display = 'none';
+        document.getElementById('chat-window').style.display = 'flex';
+        
+        // Update chat header
+        document.getElementById('chat-header-name').textContent = user.fullName;
+        document.getElementById('chat-avatar-initial').textContent = getInitials(user.fullName);
+        
+        const statusInfo = statusMap[user.status] || statusMap['AVAILABLE'];
+        document.getElementById('chat-header-status').textContent = statusInfo.text;
+        
+        const indicator = document.getElementById('chat-header-indicator');
+        indicator.className = 'online-indicator ' + statusInfo.dotClass;
+        
+        // Clear previous messages
+        document.getElementById('messages-container').innerHTML = '';
+        allMessages = [];
+        
+        // Load messages
+        const response = await fetch(`/api/conversations/${conversationId}/messages`);
+        const messages = await response.json();
+        
+        messages.forEach(msg => {
+            allMessages.push(msg);
+            displayNewMessage(msg);
+        });
+        
+        // Subscribe to conversation
+        // subscribeToConversation(conversationId);
+        /*
+ * ============================================
+ * 7. ENHANCED CONVERSATION SUBSCRIPTION
+ * ============================================
+ * FIND THE subscribeToConversation FUNCTION in your code
+ * REPLACE the message handler inside it with this:
+ */
+
+// Inside subscribeToConversation function:
+const subscription = stompClient.subscribe(`/topic/conversation.${conversationId}`, (message) => {
+    const msg = JSON.parse(message.body);
+    
+    console.log('📨 Received message via WebSocket:', msg);
+    
+    // Check if message already exists (avoid duplicates)
+    const existingMsg = allMessages.find(m => m.id === msg.id);
+    if (existingMsg) {
+        console.log('⚠️ Message already exists, updating status');
+        // Update the message status if it changed
+        if (existingMsg.deliveryStatus !== msg.deliveryStatus) {
+            existingMsg.deliveryStatus = msg.deliveryStatus;
+            existingMsg.isRead = msg.isRead;
+            existingMsg.isDelivered = msg.isDelivered;
+            
+            // Update UI
+            const msgEl = document.querySelector(`[data-message-id="${msg.id}"]`);
+            if (msgEl) {
+                updateMessageStatusDisplay(msgEl, msg.deliveryStatus);
+            }
+        }
+        return;
+    }
+    
+    // Add to messages array
+    allMessages.push(msg);
+    
+    // Display the message
+    displayNewMessage(msg);
+    
+    // Auto-mark as read if conversation is active and message is not from me
+    if (msg.senderId !== myId && currentId == conversationId && currentType === 'direct') {
+        setTimeout(() => {
+            if (stompClient && stompClient.connected) {
+                stompClient.send("/app/chat.messageRead", {}, JSON.stringify({
+                    messageId: msg.id
+                }));
+            }
+        }, 500);
+    }
+    
+    // Update conversation list
+    updateConversationListAfterMessage(msg);
+    
+    // Scroll to bottom
+    scrollToBottom();
+});
+
+
+
+        
+        // ✅ Mark conversation as read via WebSocket
+        if (stompClient && stompClient.connected) {
+            stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
+                conversationId: conversationId
+            }));
+        }
+        
+        // Update UI - mark as active and remove unread
+        document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
+        const activeConv = document.querySelector(`[data-conversation-id="${conversationId}"]`);
+        if (activeConv) {
+            activeConv.classList.add('active');
+            activeConv.classList.remove('has-unread');
+            
+            // Remove unread badge
+            const badge = activeConv.querySelector('.unread-badge');
+            if (badge) badge.remove();
+        }
+        
+        // Scroll to bottom
+        setTimeout(scrollToBottom, 100);
+        
+        console.log('✅ Conversation opened:', conversationId);
+        
+    } catch (error) {
+        console.error('❌ Error opening conversation:', error);
+    }
+}
+
+
+// ============================================
+// 4. UPDATE CONVERSATION LIST AFTER MESSAGE
+// ============================================
+
+function updateConversationListAfterMessage(message) {
+    const conversationId = message.conversationId;
+    if (!conversationId) return;
+    
+    // Check if conversation item exists
+    let convItem = document.querySelector(`[data-conversation-id="${conversationId}"]`);
+    
+    if (!convItem) {
+        // Conversation doesn't exist in list - reload all conversations
+        console.log('🔄 Conversation not in list, reloading...');
+        loadConversations();
+        return;
+    }
+    
+    // Update last message preview
+    const previewText = convItem.querySelector('.preview-text');
+    if (previewText) {
+        let preview = truncateText(message.content, 35);
+        if (message.senderId === myId) {
+            preview = 'You: ' + preview;
+        }
+        previewText.textContent = preview;
+    }
+    
+    // Update time
+    const timeEl = convItem.querySelector('.conversation-time');
+    if (timeEl) {
+        timeEl.textContent = formatMessageTime(message.createdAt);
+    }
+    
+    // If message is not from current user and conversation is not active, add unread indicator
+    if (message.senderId !== myId && !convItem.classList.contains('active')) {
+        convItem.classList.add('has-unread');
+        
+        // Add or update unread badge
+        let badge = convItem.querySelector('.unread-badge');
+        const previewDiv = convItem.querySelector('.conversation-preview');
+        
+        if (!badge && previewDiv) {
+            badge = document.createElement('span');
+            badge.className = 'unread-badge';
+            badge.textContent = '1';
+            previewDiv.appendChild(badge);
+        } else if (badge) {
+            const count = parseInt(badge.textContent) || 0;
+            badge.textContent = count + 1;
+        }
+    }
+    
+    // Move conversation to top of list
+    const conversationList = document.getElementById('conversation-list');
+    if (conversationList && convItem.parentNode === conversationList) {
+        conversationList.insertBefore(convItem, conversationList.firstChild);
+    }
+}
+
+// ============================================
+// 5. HELPER FUNCTIONS
+// ============================================
+
+function getInitials(name) {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+}
+
+function getStatusClass(status) {
+    if (!status) return 'available';
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('available') || statusLower === 'online') return 'available';
+    if (statusLower === 'away') return 'away';
+    if (statusLower === 'busy' || statusLower === 'engaged') return 'busy';
+    if (statusLower === 'dnd' || statusLower.includes('meeting')) return 'dnd';
+    if (statusLower === 'invisible' || statusLower === 'offline') return 'invisible';
+    return 'available';
+}
+
+
+function formatMessageTime(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'now';
+    if (diffMins < 60) return `${diffMins}m`;
+    if (diffHours < 24) return `${diffHours}h`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays}d`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * 🔧 UPDATED: Load Conversation - Mark messages as read
+ */
+async function loadConversation(conversationId, recipient) {
+    try {
+        currentId = conversationId;
+        currentType = 'direct';
+        currentConversationId = conversationId;
+        currentRecipient = recipient;
+
+        // Show chat window
+        document.getElementById('welcome-screen').classList.add('hidden');
+        document.getElementById('chat-window').classList.remove('hidden');
+
+        // Update chat header
+        updateChatHeader(recipient);
+
+        // Load messages
+        const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
+        allMessages = messages || [];
+        renderMessages(allMessages);
+
+        // Subscribe to conversation
+        subscribeToConversation(conversationId);
+
+        // ✅ Mark conversation as read via WebSocket
+        if (stompClient && stompClient.connected) {
+            stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
+                conversationId: conversationId
+            }));
+        }
+
+        // Update UI - mark as active and remove unread indicator
+        document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
+        const activeConv = document.querySelector(`#conv-${recipient.id}`);
+        if (activeConv) {
+            activeConv.classList.add('active');
+            activeConv.classList.remove('has-unread');
+            
+            // Remove unread badge
+            const badge = activeConv.querySelector('.unread-badge');
+            if (badge) badge.remove();
+        }
+
+        console.log('✅ Conversation loaded:', conversationId);
+    } catch (error) {
+        console.error('❌ Error loading conversation:', error);
+    }
+}
+
+        // async function loadConversation(conversationId, recipient) {
+        //     try {
+        //         currentId = conversationId;
+        //         currentType = 'direct';
+        //         currentConversationId = conversationId;
+        //         currentRecipient = recipient;
+
+        //         // Show chat window
+        //         document.getElementById('welcome-screen').classList.add('hidden');
+        //         document.getElementById('chat-window').classList.remove('hidden');
+
+        //         // Update chat header
+        //         updateChatHeader(recipient);
+
+        //         // Load messages
+        //         const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
+        //         allMessages = messages || [];
+        //         renderMessages(allMessages);
+
+        //         // Subscribe to conversation
+        //         subscribeToConversation(conversationId);
+
+        //         // ✅ Mark conversation as read via WebSocket
+        //         if (stompClient && stompClient.connected) {
+        //             stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
+        //                 conversationId: conversationId
+        //             }));
+        //         }
+
+        //         // Update UI
+        //         document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
+        //         const activeConv = document.querySelector(`[data-conversation-id="${conversationId}"]`);
+        //         if (activeConv) {
+        //             activeConv.classList.add('active');
+        //             activeConv.classList.remove('has-unread');
+        //         }
+
+        //         console.log('✅ Conversation loaded:', conversationId);
+        //     } catch (error) {
+        //         console.error('❌ Error loading conversation:', error);
+        //     }
+        // }
+
+        function updateChatHeader(recipient) {
+            const initial = recipient.fullName.charAt(0).toUpperCase();
+            document.getElementById('chat-avatar-initial').textContent = initial;
+            document.getElementById('chat-header-name').textContent = recipient.fullName;
+
+            // Update status
+            const status = recipient.status || 'AVAILABLE';
+            const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
+
+            const statusEl = document.getElementById('chat-header-status');
+            const statusContainer = document.getElementById('chat-header-status-container');
+            const indicator = document.getElementById('chat-header-indicator');
+
+            statusEl.textContent = statusInfo.text;
+            statusContainer.className = `chat-header-status ${statusInfo.textClass}`;
+            indicator.className = `online-indicator ${statusInfo.dotClass}`;
         }
 
         function renderConversations(users) {
@@ -2003,31 +3020,25 @@
             });
         }
 
-        async function startDirectChat(userId, fullName, department, email, username, status, event) {
-            if (event && (event.target.closest('.conversation-actions') ||
-                event.target.closest('.more-menu') ||
-                event.target.closest('.btn-unpin'))) {
-                return;
-            }
-
+        async function startDirectChat(userId, fullName, department, email, username, status) {
             try {
-                const res = await fetchJson(`/api/conversations?recipientId=${userId}`, { method: 'POST' });
-                currentConversationId = res.conversationId;
-                currentId = res.conversationId;
-                currentType = 'direct';
-                currentRecipient = { id: userId, fullName, department, email, username, status };
+                const response = await fetchJson(`/api/conversations?recipientId=${userId}`, {
+                    method: 'POST'
+                });
 
-                document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
-                const convEl = document.getElementById(`conv-${userId}`);
-                const pinEl = document.getElementById(`pin-${userId}`);
-                if (convEl) convEl.classList.add('active');
-                if (pinEl) pinEl.classList.add('active');
+                const recipient = {
+                    id: userId,
+                    fullName: fullName,
+                    department: department,
+                    email: email,
+                    username: username,
+                    status: status || 'AVAILABLE'
+                };
 
-                openChatWindow(userId, fullName, status);
-                loadMessages(currentConversationId);
-                subscribeToConversation(currentConversationId);
-            } catch (e) {
-                console.error('Error starting chat:', e);
+                loadConversation(response.conversationId, recipient);
+
+            } catch (error) {
+                console.error('Error starting conversation:', error);
             }
         }
 
@@ -2047,15 +3058,28 @@
             document.getElementById('messages-container').innerHTML = '';
         }
 
+        // ============================================
+        // UPDATE loadMessages TO MARK AS READ
+        // ============================================
+
         async function loadMessages(conversationId) {
             try {
                 const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
                 allMessages = messages || [];
                 renderMessages(messages);
+
+                // Mark conversation as read when opening
+                setTimeout(() => {
+                    markConversationAsRead();
+                }, 1000);
             } catch (e) {
                 console.error('Error loading messages:', e);
             }
         }
+
+        // ============================================
+        // UPDATE renderMessages TO USE NEW FORMAT
+        // ============================================
 
         function renderMessages(messages) {
             const container = document.getElementById('messages-container');
@@ -2078,7 +3102,7 @@
                 const isSent = String(msg.senderId) === String(myId);
                 const showSender = lastSender !== msg.senderId;
 
-                const messageGroup = createMessageElement(msg, isSent, showSender);
+                const messageGroup = createMessageElementWithStatus(msg, isSent, showSender);
                 container.appendChild(messageGroup);
 
                 lastSender = msg.senderId;
@@ -2086,6 +3110,7 @@
 
             container.scrollTop = container.scrollHeight;
         }
+
 
         function createDateSeparator(timestamp) {
             const div = document.createElement('div');
@@ -2180,49 +3205,526 @@
             }));
         }
 
-        function displayNewMessage(msgData) {
-            allMessages.push(msgData);
 
-            const container = document.getElementById('messages-container');
-            const isSent = String(msgData.senderId) === String(myId);
+        /**
+ * 🔧 UPDATED: Display New Message with Conversation List Update
+ * Replace the existing displayNewMessage function with this
+ */
+function displayNewMessage(msgData) {
+    // Check if message already exists (avoid duplicates)
+    const existingMsg = allMessages.find(m =>
+        (m.id && m.id === msgData.id) ||
+        (m.tempId && m.tempId === msgData.tempId)
+    );
 
-            const lastGroup = container.lastElementChild;
-            let needNewGroup = true;
-
-            if (lastGroup && lastGroup.classList.contains('message-group')) {
-                const lastSender = lastGroup.querySelector('.message-sender-name');
-                if (lastSender && lastSender.textContent === msgData.senderName) {
-                    needNewGroup = false;
-                }
-            }
-
-            if (needNewGroup) {
-                const messageGroup = createMessageElement(msgData, isSent, true);
-                container.appendChild(messageGroup);
-            } else {
-                const bubble = document.createElement('div');
-                bubble.className = 'message-bubble';
-                bubble.textContent = msgData.content;
-                lastGroup.appendChild(bubble);
-            }
-
-            container.scrollTop = container.scrollHeight;
+    if (existingMsg && msgData.id) {
+        // Update existing message with real ID
+        existingMsg.id = msgData.id;
+        existingMsg.deliveryStatus = msgData.deliveryStatus || existingMsg.deliveryStatus;
+        
+        // Update the visual display
+        const msgElement = document.querySelector(`[data-temp-id="${msgData.tempId}"]`) ||
+                          document.querySelector(`[data-message-id="${msgData.id}"]`);
+        if (msgElement) {
+            msgElement.setAttribute('data-message-id', msgData.id);
+            msgElement.removeAttribute('data-temp-id');
+            updateMessageStatusDisplay(msgElement, msgData.deliveryStatus || 'SENT');
         }
+        return;
+    }
+
+    allMessages.push(msgData);
+
+    const container = document.getElementById('messages-container');
+    const isSent = String(msgData.senderId) === String(myId);
+
+    const messageGroup = createMessageElementWithStatus(msgData, isSent, true);
+    container.appendChild(messageGroup);
+
+    container.scrollTop = container.scrollHeight;
+
+    // ✅ Update conversation list - move this conversation to top
+    if (!isSent) {
+        updateConversationListOrder(msgData.senderId, msgData.senderName);
+        
+        // Add unread indicator if not currently viewing this conversation
+        if (!currentId || String(currentId) !== String(msgData.conversationId)) {
+            const convEl = document.querySelector(`#conv-${msgData.senderId}`);
+            if (convEl) {
+                convEl.classList.add('has-unread');
+            }
+        }
+    }
+
+    // ✅ Send read receipt if message is from someone else and chat is open
+    if (!isSent && currentId && msgData.id) {
+        // Only send read receipt if we're currently viewing this conversation
+        if ((currentType === 'direct' && msgData.conversationId == currentId) ||
+            (currentType === 'group' && msgData.chatRoomId == currentId)) {
+            setTimeout(() => {
+                sendReadReceipt(msgData.id);
+            }, 500);
+        }
+    }
+}
+
+/**
+ * 🆕 NEW FUNCTION: Update Conversation List Order
+ * Move conversation to top when new message arrives
+ */
+function updateConversationListOrder(userId, userName) {
+    const convEl = document.querySelector(`#conv-${userId}`);
+    if (convEl) {
+        const conversationList = document.getElementById('conversation-list');
+        // Move to top
+        conversationList.insertBefore(convEl, conversationList.firstChild);
+        
+        // Add a subtle highlight animation
+        convEl.style.animation = 'none';
+        setTimeout(() => {
+            convEl.style.animation = 'highlight 1s ease';
+        }, 10);
+    }
+}
+
+        // ============================================
+        // UPDATE displayNewMessage TO USE NEW FORMAT
+        // ============================================
+
+        // function displayNewMessage(msgData) {
+        //     // Check if message already exists (avoid duplicates)
+        //     const existingMsg = allMessages.find(m =>
+        //         (m.id && m.id === msgData.id) ||
+        //         (m.tempId && m.tempId === msgData.tempId)
+        //     );
+
+        //     if (existingMsg && msgData.id) {
+        //         // Update existing message with real ID
+        //         existingMsg.id = msgData.id;
+        //         existingMsg.deliveryStatus = msgData.deliveryStatus || existingMsg.deliveryStatus;
+        //         return;
+        //     }
+
+        //     allMessages.push(msgData);
+
+        //     const container = document.getElementById('messages-container');
+        //     const isSent = String(msgData.senderId) === String(myId);
+
+        //     const messageGroup = createMessageElementWithStatus(msgData, isSent, true);
+        //     container.appendChild(messageGroup);
+
+        //     container.scrollTop = container.scrollHeight;
+
+        //     // ✅ Send read receipt if message is from someone else and chat is open
+        //     if (!isSent && currentId && msgData.id) {
+        //         setTimeout(() => {
+        //             sendReadReceipt(msgData.id);
+        //         }, 500);
+        //     }
+        // }
+
 
         function sendMessage() {
             const input = document.getElementById('message-input');
             const msg = input.value.trim();
             if (!msg || !currentId) return;
 
+            // Generate temporary ID for tracking
+            const tempId = `temp-${Date.now()}`;
+
+            // Create optimistic message object
+            const optimisticMessage = {
+                tempId: tempId,
+                id: null,
+                senderId: myId,
+                senderName: 'You',
+                conversationId: currentType === 'direct' ? currentId : null,
+                chatRoomId: currentType === 'group' ? currentId : null,
+                content: msg,
+                type: 'TEXT',
+                isRead: false,
+                deliveryStatus: 'SENT', // Initial status
+                createdAt: new Date().toISOString()
+            };
+
+            // Display message immediately
+            allMessages.push(optimisticMessage);
+            displayNewMessage(optimisticMessage);
+
+            // Send to server
             const payload = {
-                chatType: 'conversation',
+                chatType: currentType === 'direct' ? 'conversation' : 'chatroom',
                 chatId: currentId,
-                content: msg
+                content: msg,
+                tempId: tempId
             };
 
             stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
             input.value = '';
+
+            console.log('📤 Message sent:', tempId);
         }
+
+
+        function updateMessageWithId(tempId, messageId, deliveryStatus) {
+            // Find message by tempId and update with real ID and status
+            const messageEl = document.querySelector(`[data-temp-id="${tempId}"]`);
+            if (messageEl) {
+                messageEl.setAttribute('data-message-id', messageId);
+                messageEl.removeAttribute('data-temp-id');
+
+                // Update status indicator
+                const statusEl = messageEl.querySelector('.msg-status');
+                if (statusEl) {
+                    if (deliveryStatus === 'DELIVERED') {
+                        statusEl.className = 'msg-status delivered';
+                        statusEl.textContent = '✓✓';
+                    } else if (deliveryStatus === 'READ') {
+                        statusEl.className = 'msg-status read';
+                        statusEl.textContent = '✓✓';
+                    }
+                }
+            }
+        }
+        
+
+        // ============================================
+        // DISPLAY OPTIMISTIC MESSAGE
+        // ============================================
+
+        function displayOptimisticMessage(msgData) {
+            const container = document.getElementById('messages-container');
+            const isSent = true; // Always true for messages we send
+
+            const messageGroup = createMessageElementWithStatus(msgData, isSent, true);
+            container.appendChild(messageGroup);
+            container.scrollTop = container.scrollHeight;
+        }
+
+
+        // ============================================
+        // CREATE MESSAGE WITH STATUS TICKS
+        // ============================================
+
+        function createMessageElementWithStatus(msg, isSent, showSender) {
+            const div = document.createElement('div');
+            div.className = `message-group ${isSent ? 'sent' : 'received'}`;
+
+            if (msg.tempId) {
+                div.setAttribute('data-temp-id', msg.tempId);
+            }
+            if (msg.id) {
+                div.setAttribute('data-message-id', msg.id);
+            }
+
+            let html = '';
+
+            if (!isSent && showSender) {
+                const initial = msg.senderName.charAt(0).toUpperCase();
+                html += `
+            <div class="message-sender">
+                <div class="message-sender-avatar">${initial}</div>
+                <div class="message-sender-name">${msg.senderName}</div>
+            </div>
+        `;
+            }
+
+            if (msg.type === 'FILE') {
+                html += createFileAttachment(msg);
+            } else {
+                html += `
+            <div class="message-bubble">
+                ${msg.content}
+            </div>
+        `;
+            }
+
+            const time = new Date(msg.createdAt).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+
+            // Add delivery status ticks for sent messages
+            const statusHtml = isSent ? renderMessageStatus(msg, true) : '';
+
+            html += `
+        <div class="message-time">
+            ${time}
+            ${statusHtml}
+        </div>
+    `;
+
+            div.innerHTML = html;
+            return div;
+        }
+
+
+        /**
+ * 🔧 UPDATED: Handle Delivery Acknowledgment
+ * Replace the existing handleDeliveryAcknowledgment function
+ */
+function handleDeliveryAcknowledgment(ack) {
+    console.log('📨 Delivery acknowledgment:', ack);
+
+    if (ack.type === 'MESSAGE_DELIVERED') {
+        const tempId = ack.tempId;
+        const messageId = ack.messageId;
+        const deliveryStatus = ack.deliveryStatus || 'DELIVERED'; // Changed default to DELIVERED
+
+        // Find message by temp ID
+        const messageElement = document.querySelector(`[data-temp-id="${tempId}"]`);
+        if (messageElement) {
+            // Update to real ID
+            messageElement.setAttribute('data-message-id', messageId);
+            messageElement.removeAttribute('data-temp-id');
+
+            // Update status indicator
+            updateMessageStatusDisplay(messageElement, deliveryStatus);
+            
+            console.log(`✅ Message ${messageId} status updated to: ${deliveryStatus}`);
+        }
+
+        // Update message in allMessages array
+        const msgIndex = allMessages.findIndex(m => m.tempId === tempId);
+        if (msgIndex !== -1) {
+            allMessages[msgIndex].id = messageId;
+            allMessages[msgIndex].deliveryStatus = deliveryStatus;
+            delete allMessages[msgIndex].tempId;
+        }
+    }
+}
+
+        // ============================================
+        // DELIVERY STATUS HANDLING
+        // ============================================
+
+        // function handleDeliveryAcknowledgment(ack) {
+        //     console.log('📨 Delivery acknowledgment:', ack);
+
+        //     if (ack.type === 'MESSAGE_DELIVERED') {
+        //         const tempId = ack.tempId;
+        //         const messageId = ack.messageId;
+        //         const deliveryStatus = ack.deliveryStatus || 'SENT';
+
+        //         // Find message by temp ID
+        //         const messageElement = document.querySelector(`[data-temp-id="${tempId}"]`);
+        //         if (messageElement) {
+        //             // Update to real ID
+        //             messageElement.setAttribute('data-message-id', messageId);
+        //             messageElement.removeAttribute('data-temp-id');
+
+        //             // Update status indicator
+        //             updateMessageStatusDisplay(messageElement, deliveryStatus);
+        //         }
+
+        //         // Update message in allMessages array
+        //         const msgIndex = allMessages.findIndex(m => m.tempId === tempId);
+        //         if (msgIndex !== -1) {
+        //             allMessages[msgIndex].id = messageId;
+        //             allMessages[msgIndex].deliveryStatus = deliveryStatus;
+        //             delete allMessages[msgIndex].tempId;
+        //         }
+        //     }
+        // }
+
+
+        // ============================================
+        // STATUS ICONS (TEAMS-LIKE)
+        // ============================================
+
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'SENDING':
+                    return '🕐'; // Clock (sending)
+                case 'SENT':
+                    return '✓'; // Single tick (delivered to server)
+                case 'DELIVERED':
+                    return '✓✓'; // Double tick (delivered to recipient)
+                case 'READ':
+                    return '<span style="color: #0078d4;">✓✓</span>'; // Blue double tick (read)
+                default:
+                    return '';
+            }
+        }
+
+
+        /**
+ * 🔧 UPDATED: Handle Read Receipt
+ * Replace the existing handleReadReceipt function
+ */
+function handleReadReceipt(receipt) {
+    console.log('👁️ Read receipt received:', receipt);
+
+    if (receipt.type === 'MESSAGE_READ') {
+        const messageId = receipt.messageId;
+        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+
+        if (messageElement) {
+            updateMessageStatusDisplay(messageElement, 'READ');
+            console.log(`✅ Message ${messageId} marked as READ (blue ticks)`);
+        }
+
+        // Update in allMessages array
+        const msg = allMessages.find(m => m.id === messageId);
+        if (msg) {
+            msg.deliveryStatus = 'READ';
+            msg.isRead = true;
+        }
+
+    } else if (receipt.type === 'CONVERSATION_READ') {
+        // Mark all sent messages in conversation as read
+        const conversationId = receipt.conversationId;
+        if (currentId == conversationId && currentType === 'direct') {
+            document.querySelectorAll('.message-group.sent').forEach(msgEl => {
+                updateMessageStatusDisplay(msgEl, 'READ');
+            });
+
+            // Update all messages in array
+            allMessages.forEach(msg => {
+                if (msg.conversationId == conversationId && msg.senderId == myId) {
+                    msg.deliveryStatus = 'READ';
+                    msg.isRead = true;
+                }
+            });
+            
+            console.log(`✅ All messages in conversation ${conversationId} marked as READ`);
+        }
+    }
+}
+
+
+        // function handleReadReceipt(receipt) {
+        //     console.log('👁️ Read receipt:', receipt);
+
+        //     if (receipt.type === 'MESSAGE_READ') {
+        //         const messageId = receipt.messageId;
+        //         const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+
+        //         if (messageElement) {
+        //             updateMessageStatusDisplay(messageElement, 'READ');
+        //         }
+
+        //         // Update in allMessages array
+        //         const msg = allMessages.find(m => m.id === messageId);
+        //         if (msg) {
+        //             msg.deliveryStatus = 'READ';
+        //             msg.isRead = true;
+        //         }
+
+        //     } else if (receipt.type === 'CONVERSATION_READ') {
+        //         // Mark all sent messages in conversation as read
+        //         const conversationId = receipt.conversationId;
+        //         if (currentId == conversationId && currentType === 'direct') {
+        //             document.querySelectorAll('.message-group.sent').forEach(msgEl => {
+        //                 updateMessageStatusDisplay(msgEl, 'READ');
+        //             });
+
+        //             // Update all messages in array
+        //             allMessages.forEach(msg => {
+        //                 if (msg.conversationId == conversationId && msg.senderId == myId) {
+        //                     msg.deliveryStatus = 'READ';
+        //                     msg.isRead = true;
+        //                 }
+        //             });
+        //         }
+        //     }
+        // }
+
+
+        /**
+ * 🔧 UPDATED: Update Message Status Display with proper colors
+ * Replace the existing updateMessageStatusDisplay function
+ */
+function updateMessageStatusDisplay(messageElement, status) {
+    const statusIcon = messageElement.querySelector('.msg-status');
+    if (statusIcon) {
+        statusIcon.className = `msg-status ${status.toLowerCase()}`;
+
+        if (status === 'READ') {
+            statusIcon.textContent = '✓✓';
+            statusIcon.style.color = '#3b82f6'; // Blue double tick
+            console.log('🔵 Set blue double tick');
+        } else if (status === 'DELIVERED') {
+            statusIcon.textContent = '✓✓';
+            statusIcon.style.color = '#94a3b8'; // Gray double tick
+            console.log('⚪ Set gray double tick');
+        } else {
+            statusIcon.textContent = '✓';
+            statusIcon.style.color = '#94a3b8'; // Gray single tick
+            console.log('⚪ Set gray single tick');
+        }
+    } else {
+        console.warn('❌ No .msg-status element found in message');
+    }
+}
+
+        // function updateMessageStatusDisplay(messageElement, status) {
+        //     const statusIcon = messageElement.querySelector('.msg-status');
+        //     if (statusIcon) {
+        //         statusIcon.className = `msg-status ${status.toLowerCase()}`;
+
+        //         if (status === 'READ') {
+        //             statusIcon.textContent = '✓✓';
+        //             statusIcon.style.color = '#3b82f6'; // Blue
+        //         } else if (status === 'DELIVERED') {
+        //             statusIcon.textContent = '✓✓';
+        //             statusIcon.style.color = '#94a3b8'; // Gray
+        //         } else {
+        //             statusIcon.textContent = '✓';
+        //             statusIcon.style.color = '#94a3b8'; // Gray
+        //         }
+        //     }
+        // }
+
+        // ============================================
+        // UPDATE MESSAGE STATUS
+        // ============================================
+
+        function updateMessageStatus(messageElement, newStatus) {
+            const statusIcon = messageElement.querySelector('.message-status-icon');
+            if (statusIcon) {
+                statusIcon.setAttribute('data-status', newStatus);
+                statusIcon.innerHTML = getStatusIcon(newStatus);
+            }
+        }
+
+
+        // ============================================
+        // SEND READ RECEIPTS
+        // ============================================
+
+        function sendReadReceipt(messageId) {
+            if (!stompClient || !stompClient.connected || !messageId) return;
+
+            stompClient.send("/app/chat.messageRead", {}, JSON.stringify({
+                messageId: messageId
+            }));
+
+            console.log('✅ Read receipt sent for message:', messageId);
+        }
+
+        function markConversationAsRead() {
+            if (!stompClient || !stompClient.connected || !currentId || currentType !== 'direct') return;
+
+            stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
+                conversationId: currentId
+            }));
+        }
+
+        // function sendMessage() {
+        //     const input = document.getElementById('message-input');
+        //     const msg = input.value.trim();
+        //     if (!msg || !currentId) return;
+
+        //     const payload = {
+        //         chatType: 'conversation',
+        //         chatId: currentId,
+        //         content: msg
+        //     };
+
+        //     stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
+        //     input.value = '';
+        // }
 
         async function handleFileUpload(input) {
             const file = input.files[0];

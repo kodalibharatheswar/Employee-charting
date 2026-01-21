@@ -40,7 +40,9 @@ public class MessageService {
         message.setContent(content);
         message.setType(Message.MessageType.TEXT);
         message.setIsRead(false);
+         message.setIsDelivered(false);  // Add this
         message.setDeleted(false);
+         message.setDeliveryStatus(Message.DeliveryStatus.SENT);  // Add this
         message.setCreatedAt(LocalDateTime.now());
 
         message = messageRepository.save(message);
@@ -55,7 +57,8 @@ public class MessageService {
     public Message sendGroupMessage(Long senderId, Long chatRoomId, String content) {
         User sender = userService.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
-        ChatRoom chatRoom = chatRoomService.findById(chatRoomId).orElseThrow(() -> new RuntimeException("Chat room not found"));
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
 
         // Verify sender is member
         if (!chatRoomService.isMember(chatRoomId, senderId)) {
@@ -68,7 +71,9 @@ public class MessageService {
         message.setContent(content);
         message.setType(Message.MessageType.TEXT);
         message.setIsRead(false);
+         message.setIsDelivered(false);  // Add this
         message.setDeleted(false);
+        message.setDeliveryStatus(Message.DeliveryStatus.SENT);  // Add this
         message.setCreatedAt(LocalDateTime.now());
 
         message = messageRepository.save(message);
@@ -141,5 +146,18 @@ public class MessageService {
     // Find message by ID
     public Optional<Message> findById(Long messageId) {
         return messageRepository.findById(messageId);
+    }
+
+    // Update message (for delivery status changes)
+    public Message updateMessage(Message message) {
+        return messageRepository.save(message);
+    }
+
+    // Mark message as delivered
+    public void markMessageAsDelivered(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.markAsDelivered();
+        messageRepository.save(message);
     }
 }

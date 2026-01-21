@@ -53,6 +53,16 @@ public class Message {
     @Column
     private LocalDateTime readAt;
 
+    @Column(nullable = false)
+    private Boolean isDelivered = false;
+
+    @Column
+    private LocalDateTime deliveredAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private DeliveryStatus deliveryStatus = DeliveryStatus.SENT;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -62,6 +72,15 @@ public class Message {
 
     public enum MessageType {
         TEXT, IMAGE, FILE, SYSTEM
+    }
+
+    /**
+     * WhatsApp-style delivery status
+     */
+    public enum DeliveryStatus {
+        SENT,       // Single tick (✓) - Sent to server
+        DELIVERED,  // Double tick gray (✓✓) - Delivered to recipient
+        READ        // Double tick blue (✓✓) - Read by recipient
     }
 
     // Helper methods
@@ -76,7 +95,17 @@ public class Message {
     public void markAsRead() {
         this.isRead = true;
         this.readAt = LocalDateTime.now();
+        this.deliveryStatus = DeliveryStatus.READ;  // ← ADD THIS LINE
     }
+
+    public void markAsDelivered() {
+        this.isDelivered = true;
+        this.deliveredAt = LocalDateTime.now();
+        if (this.deliveryStatus == DeliveryStatus.SENT) {
+            this.deliveryStatus = DeliveryStatus.DELIVERED;
+        }
+    }
+
 
     @Override
     public boolean equals(Object o) {

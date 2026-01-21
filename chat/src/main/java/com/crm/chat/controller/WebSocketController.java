@@ -4,9 +4,12 @@ import com.crm.chat.dto.MessageDTO;
 import com.crm.chat.entity.Message;
 import com.crm.chat.entity.User;
 import com.crm.chat.entity.Call;
+import com.crm.chat.entity.Conversation;
 import com.crm.chat.service.MessageService;
 import com.crm.chat.service.UserService;
 import com.crm.chat.service.CallService;
+import com.crm.chat.service.ConversationService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -26,6 +29,7 @@ public class WebSocketController {
     private final MessageService messageService;
     private final UserService userService;
     private final CallService callService;
+    private final ConversationService conversationService; // ✅ ADDED THIS
 
     // ============================================================================
     // EXISTING CHAT MESSAGING METHODS (UNCHANGED)
@@ -34,33 +38,33 @@ public class WebSocketController {
     /**
      * Handle direct messages (one-to-one)
      */
-    @MessageMapping("/chat.sendDirectMessage")
-    public void sendDirectMessage(@Payload Map<String, Object> messageData, Principal principal) {
-        try {
-            if (principal == null) {
-                System.err.println("Principal is null in sendDirectMessage");
-                return;
-            }
+    // @MessageMapping("/chat.sendDirectMessage")
+    // public void sendDirectMessage(@Payload Map<String, Object> messageData, Principal principal) {
+    //     try {
+    //         if (principal == null) {
+    //             System.err.println("Principal is null in sendDirectMessage");
+    //             return;
+    //         }
 
-            String username = principal.getName();
-            User sender = userService.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+    //         String username = principal.getName();
+    //         User sender = userService.findByUsername(username)
+    //                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-            Long conversationId = Long.valueOf(messageData.get("conversationId").toString());
-            String content = messageData.get("content").toString();
+    //         Long conversationId = Long.valueOf(messageData.get("conversationId").toString());
+    //         String content = messageData.get("content").toString();
 
-            // Save message to database
-            Message message = messageService.sendDirectMessage(sender.getId(), conversationId, content);
-            MessageDTO messageDTO = MessageDTO.fromEntity(message);
+    //         // Save message to database
+    //         Message message = messageService.sendDirectMessage(sender.getId(), conversationId, content);
+    //         MessageDTO messageDTO = MessageDTO.fromEntity(message);
 
-            // Broadcast to conversation subscribers
-            String destination = "/topic/conversation." + conversationId;
-            messagingTemplate.convertAndSend(destination, (Object) messageDTO);
+    //         // Broadcast to conversation subscribers
+    //         String destination = "/topic/conversation." + conversationId;
+    //         messagingTemplate.convertAndSend(destination, (Object) messageDTO);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     /**
      * Handle group messages
@@ -104,19 +108,15 @@ public class WebSocketController {
             String username;
             User user;
 
-            // Check if principal is null (user not authenticated via WebSocket)
             if (principal == null) {
-                // Try to get username from the payload
                 username = (String) userData.get("username");
                 if (username == null || username.isEmpty()) {
-                    System.err.println("Principal is null and no username in payload");
+                    System.err.println("❌ Principal is null and no username in payload");
                     return;
                 }
-
                 user = userService.findByUsername(username)
                         .orElseThrow(() -> new RuntimeException("User not found: " + username));
             } else {
-                // Principal is available
                 username = principal.getName();
                 user = userService.findByUsername(username)
                         .orElseThrow(() -> new RuntimeException("User not found"));
@@ -133,16 +133,20 @@ public class WebSocketController {
                     "type", "USER_ONLINE",
                     "userId", user.getId(),
                     "username", user.getUsername(),
-                    "fullName", user.getFullName()
+                    "fullName", user.getFullName(),
+                    "status", user.getStatus().name()
             );
 
             String destination = "/topic/public";
             messagingTemplate.convertAndSend(destination, (Object) notification);
+            
+            System.out.println("✅ User online: " + user.getFullName());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Handle typing indicator
@@ -151,7 +155,7 @@ public class WebSocketController {
     public void handleTyping(@Payload Map<String, Object> typingData, Principal principal) {
         try {
             if (principal == null) {
-                System.err.println("Principal is null in handleTyping");
+                System.err.println("❌ Principal is null in handleTyping");
                 return;
             }
 
@@ -159,7 +163,7 @@ public class WebSocketController {
             User user = userService.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            String chatType = typingData.get("chatType").toString(); // "conversation" or "chatroom"
+            String chatType = typingData.get("chatType").toString();
             Long chatId = Long.valueOf(typingData.get("chatId").toString());
             Boolean isTyping = Boolean.valueOf(typingData.get("isTyping").toString());
 
@@ -176,7 +180,7 @@ public class WebSocketController {
             } else if ("chatroom".equals(chatType)) {
                 destination = "/topic/chatroom." + chatId + ".typing";
             } else {
-                return; // Invalid chat type
+                return;
             }
 
             messagingTemplate.convertAndSend(destination, (Object) notification);
@@ -189,30 +193,30 @@ public class WebSocketController {
     /**
      * Handle message read receipt
      */
-    @MessageMapping("/chat.markAsRead")
-    public void markAsRead(@Payload Map<String, Object> readData, Principal principal) {
-        try {
-            Long messageId = Long.valueOf(readData.get("messageId").toString());
-            messageService.markMessageAsRead(messageId);
+    // @MessageMapping("/chat.markAsRead")
+    // public void markAsRead(@Payload Map<String, Object> readData, Principal principal) {
+    //     try {
+    //         Long messageId = Long.valueOf(readData.get("messageId").toString());
+    //         messageService.markMessageAsRead(messageId);
 
-            // Optionally notify sender that message was read
-            Message message = messageService.findById(messageId).orElse(null);
-            if (message != null && message.getReadAt() != null) {
-                Map<String, Object> notification = Map.of(
-                        "messageId", messageId,
-                        "readAt", message.getReadAt().toString()
-                );
+    //         // Optionally notify sender that message was read
+    //         Message message = messageService.findById(messageId).orElse(null);
+    //         if (message != null && message.getReadAt() != null) {
+    //             Map<String, Object> notification = Map.of(
+    //                     "messageId", messageId,
+    //                     "readAt", message.getReadAt().toString()
+    //             );
 
-                if (message.isDirectMessage()) {
-                    String destination = "/topic/conversation." + message.getConversation().getId() + ".read";
-                    messagingTemplate.convertAndSend(destination, (Object) notification);
-                }
-            }
+    //             if (message.isDirectMessage()) {
+    //                 String destination = "/topic/conversation." + message.getConversation().getId() + ".read";
+    //                 messagingTemplate.convertAndSend(destination, (Object) notification);
+    //             }
+    //         }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     // ============================================================================
     // NEW WEBRTC SIGNALING METHODS FOR AUDIO/VIDEO CALLS
@@ -763,4 +767,220 @@ public class WebSocketController {
             e.printStackTrace();
         }
     }
+
+
+/**
+     * SINGLE unified message handler for both direct and group messages
+     * This replaces the old sendDirectMessage and sendGroupMessage methods
+     * Handles: /app/chat.sendMessage
+     */
+    @MessageMapping("/chat.sendMessage")
+    public void sendMessage(@Payload Map<String, Object> messageData, Principal principal) {
+        try {
+            if (principal == null) {
+                System.err.println("❌ Principal is null in sendMessage");
+                return;
+            }
+
+            String username = principal.getName();
+            User sender = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            String chatType = messageData.get("chatType").toString();
+            Long chatId = Long.valueOf(messageData.get("chatId").toString());
+            String content = messageData.get("content").toString();
+
+            Message message;
+            String destination;
+            User recipient = null;
+
+            if ("conversation".equals(chatType) || "direct".equals(chatType)) {
+                // Direct message
+                message = messageService.sendDirectMessage(sender.getId(), chatId, content);
+                destination = "/topic/conversation." + chatId;
+                
+                // Get recipient for status check
+                Conversation conversation = conversationService.findById(chatId);
+                recipient = conversation.getOtherParticipant(sender);
+                
+                // Check if recipient is online and mark as delivered immediately
+                if (recipient != null && userService.isUserOnline(recipient.getId())) {
+                    message.markAsDelivered();
+                    messageService.updateMessage(message);
+                }
+                
+            } else if ("group".equals(chatType) || "chatroom".equals(chatType)) {
+                // Group message
+                message = messageService.sendGroupMessage(sender.getId(), chatId, content);
+                destination = "/topic/chatroom." + chatId;
+                
+                // Group messages are marked as delivered immediately
+                message.markAsDelivered();
+                messageService.updateMessage(message);
+            } else {
+                System.err.println("❌ Invalid chat type: " + chatType);
+                return;
+            }
+
+            // Create message DTO with delivery status
+            MessageDTO messageDTO = MessageDTO.fromEntity(message);
+            
+            // Broadcast to conversation/chatroom subscribers
+            messagingTemplate.convertAndSend(destination, (Object) messageDTO);
+            
+            // Send delivery acknowledgment back to sender
+            Map<String, Object> deliveryAck = new HashMap<>();
+            deliveryAck.put("type", "MESSAGE_DELIVERED");
+            deliveryAck.put("messageId", message.getId());
+            deliveryAck.put("tempId", messageData.get("tempId")); // For client-side tracking
+            deliveryAck.put("timestamp", message.getCreatedAt().toString());
+            deliveryAck.put("deliveryStatus", message.getDeliveryStatus().name());
+            
+            messagingTemplate.convertAndSendToUser(
+                sender.getId().toString(),
+                "/queue/delivery",
+                deliveryAck
+            );
+
+            // Send notification to recipient if it's a direct message
+            if (recipient != null) {
+                sendMessageNotification(recipient, sender, message);
+            }
+
+            System.out.println("✅ Message sent successfully: " + message.getId() + " Status: " + message.getDeliveryStatus());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error in sendMessage: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * Send notification to recipient about new message
+     */
+    private void sendMessageNotification(User recipient, User sender, Message message) {
+        try {
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "NEW_MESSAGE");
+            notification.put("messageId", message.getId());
+            notification.put("senderId", sender.getId());
+            notification.put("senderName", sender.getFullName());
+            notification.put("content", message.getContent());
+            notification.put("timestamp", message.getCreatedAt().toString());
+            
+            if (message.getConversation() != null) {
+                notification.put("conversationId", message.getConversation().getId());
+            } else if (message.getChatRoom() != null) {
+                notification.put("chatRoomId", message.getChatRoom().getId());
+                notification.put("chatRoomName", message.getChatRoom().getName());
+            }
+            
+            messagingTemplate.convertAndSendToUser(
+                recipient.getId().toString(),
+                "/queue/notifications",
+                notification
+            );
+            
+            System.out.println("🔔 Notification sent to user: " + recipient.getId());
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error sending notification: " + e.getMessage());
+        }
+    }
+
+/**
+     * Handle message read receipts
+     * When a user reads a message, update status to READ (double tick blue)
+     * Handles: /app/chat.messageRead
+     */
+    @MessageMapping("/chat.messageRead")
+    public void handleMessageRead(@Payload Map<String, Object> readData, Principal principal) {
+        try {
+            if (principal == null) {
+                System.err.println("❌ Principal is null in handleMessageRead");
+                return;
+            }
+
+            String username = principal.getName();
+            User reader = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Long messageId = Long.valueOf(readData.get("messageId").toString());
+            
+            // Mark message as read (sets deliveryStatus to READ)
+            messageService.markMessageAsRead(messageId);
+            
+            // Get the message to find sender
+            Message message = messageService.findById(messageId)
+                    .orElseThrow(() -> new RuntimeException("Message not found"));
+            
+            // Send read receipt to message sender (double tick blue)
+            Map<String, Object> readReceipt = new HashMap<>();
+            readReceipt.put("type", "MESSAGE_READ");
+            readReceipt.put("messageId", messageId);
+            readReceipt.put("readBy", reader.getId());
+            readReceipt.put("readByName", reader.getFullName());
+            readReceipt.put("readAt", message.getReadAt().toString());
+            readReceipt.put("deliveryStatus", "READ"); // Double tick blue
+            
+            // Send to original sender
+            messagingTemplate.convertAndSendToUser(
+                message.getSender().getId().toString(),
+                "/queue/read-receipts",
+                readReceipt
+            );
+            
+            System.out.println("✅ Read receipt sent for message: " + messageId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error in handleMessageRead: " + e.getMessage());
+        }
+    }
+
+/**
+     * Batch mark messages as read (when opening a conversation)
+     * Handles: /app/chat.markConversationRead
+     */
+    @MessageMapping("/chat.markConversationRead")
+    public void markConversationRead(@Payload Map<String, Object> readData, Principal principal) {
+        try {
+            if (principal == null) return;
+
+            String username = principal.getName();
+            User reader = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Long conversationId = Long.valueOf(readData.get("conversationId").toString());
+            
+            // Mark all messages as read
+            messageService.markConversationMessagesAsRead(conversationId, reader.getId());
+            
+            // Get conversation to find other participant
+            Conversation conversation = conversationService.findById(conversationId);
+            User otherUser = conversation.getOtherParticipant(reader);
+            
+            // Send batch read receipt to other participant
+            Map<String, Object> batchReadReceipt = new HashMap<>();
+            batchReadReceipt.put("type", "CONVERSATION_READ");
+            batchReadReceipt.put("conversationId", conversationId);
+            batchReadReceipt.put("readBy", reader.getId());
+            batchReadReceipt.put("readByName", reader.getFullName());
+            batchReadReceipt.put("timestamp", java.time.LocalDateTime.now().toString());
+            batchReadReceipt.put("deliveryStatus", "READ");
+            
+            messagingTemplate.convertAndSendToUser(
+                otherUser.getId().toString(),
+                "/queue/read-receipts",
+                batchReadReceipt
+            );
+
+            System.out.println("✅ Conversation marked as read: " + conversationId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
