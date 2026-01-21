@@ -878,24 +878,6 @@
     animation: slideIn 0.3s ease;
 }
 
-        /* .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 300px;
-            max-width: 400px;
-            z-index: 10000;
-            animation: slideInRight 0.3s ease;
-        } */
-
         @keyframes slideIn {
     from {
         transform: translateX(400px);
@@ -907,24 +889,11 @@
     }
 }
 
-        /* @keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        } */
 
         .notification-toast.hiding {
     animation: slideOut 0.3s ease;
 }
-        /* .notification-toast.hiding {
-            animation: slideOutRight 0.3s ease forwards;
-        } */
+        
 
 
         @keyframes slideOut {
@@ -966,17 +935,6 @@
     text-align: center;
 }
 
-        /* @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        } */
 
         .notification-avatar {
     width: 40px;
@@ -990,28 +948,11 @@
     font-weight: 600;
     font-size: 16px;
 }
-        /* .notification-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            flex-shrink: 0;
-        } */
-
+        
         .notification-content {
     flex: 1;
 }
 
-        /* .notification-content {
-            flex: 1;
-            min-width: 0;
-        } */
 
         .notification-sender {
     font-weight: 600;
@@ -1020,12 +961,6 @@
     margin-bottom: 4px;
 }
 
-        /* .notification-sender {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--secondary);
-            margin-bottom: 4px;
-        } */
 
         .notification-message {
     font-size: 13px;
@@ -1034,14 +969,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-        /* .notification-message {
-            font-size: 13px;
-            color: var(--text-main);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        } */
 
         .notification-close {
     background: none;
@@ -1057,24 +984,11 @@
     justify-content: center;
 }
 
-        /* .notification-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 20px;
-            padding: 4px;
-            line-height: 1;
-            transition: 0.2s;
-        } */
 
         .notification-close:hover {
     color: #64748b;
 }
 
-        /* .notification-close:hover {
-            color: var(--secondary);
-        } */
 
         /* ============================================
    MESSAGE STATUS TICKS - WhatsApp Style
@@ -1086,12 +1000,7 @@
     font-size: 14px;
     line-height: 1;
 }
-        /* .msg-status {
-            font-size: 14px;
-            margin-left: 4px;
-            display: inline-flex;
-            align-items: center;
-        } */
+
 
         .msg-status.sent {
             color: #94a3b8;
@@ -1927,18 +1836,6 @@ stompClient.subscribe('/user/queue/notifications', (notification) => {
         }
     }
 });
-                // stompClient.subscribe('/user/queue/notifications', (notification) => {
-                //     const data = JSON.parse(notification.body);
-
-                //     if (data.type === 'NEW_MESSAGE') {
-                //         showNotification(data.senderName, data.content, data.senderId);
-
-                //         // Update conversation list with unread indicator
-                //         if (data.conversationId) {
-                //             updateConversationUnreadCount(data.conversationId);
-                //         }
-                //     }
-                // });
 
                 // Notify server that user is online
                 stompClient.send("/app/chat.addUser", {}, JSON.stringify({
@@ -1989,45 +1886,7 @@ function showNotification(senderName, message, senderId) {
     playNotificationSound();
     
     console.log('🔔 Notification shown for:', senderName);
-}
- 
-
-        // ============================================
-        // NOTIFICATION DISPLAY
-        // ============================================
-
-    //     function showNotification(senderName, message, senderId) {
-    //         // Don't show notification for current chat if it's already open
-    //         if (currentId && String(currentId) === String(senderId)) {
-    //             return;
-    //         }
-
-    //         // Create notification element
-    //         const notification = document.createElement('div');
-    //         notification.className = 'notification-toast';
-
-    //         const initial = senderName.charAt(0).toUpperCase();
-
-    //         notification.innerHTML = `
-    //     <div class="notification-avatar">${initial}</div>
-    //     <div class="notification-content">
-    //         <div class="notification-sender">${senderName}</div>
-    //         <div class="notification-message">${message}</div>
-    //     </div>
-    //     <button class="notification-close" onclick="this.parentElement.remove()">×</button>
-    // `;
-
-    //         document.body.appendChild(notification);
-
-    //         // Auto-remove after 5 seconds
-    //         setTimeout(() => {
-    //             notification.classList.add('hiding');
-    //             setTimeout(() => notification.remove(), 300);
-    //         }, 5000);
-
-    //         // Play notification sound (optional)
-    //         playNotificationSound();
-    //     }
+}       
 
         function playNotificationSound() {
             // Optional: Add a subtle notification sound
@@ -2058,14 +1917,6 @@ function updateConversationUnreadCount(conversationId) {
         }
     }
 }
-        // function updateConversationUnreadCount(conversationId) {
-        //     // Add unread indicator to conversation in sidebar
-        //     const conversationEl = document.querySelector(`[data-conversation-id="${conversationId}"]`);
-        //     if (conversationEl && !conversationEl.classList.contains('active')) {
-        //         conversationEl.classList.add('has-unread');
-        //         // Optionally show unread count badge
-        //     }
-        // }
 
 
         // ============================================
@@ -2429,22 +2280,6 @@ async function loadConversations() {
         }
     }
 }
-//async function loadConversations() {
-//     try {
-//         // Load all active users
-//         const users = await fetchJson('/api/users');
-        
-//         // Filter out pinned users (they're already shown in pins section)
-//         const unpinnedUsers = users.filter(u => !pinnedUsers.has(String(u.id)));
-        
-//         // Render them in the conversation list
-//         renderConversations(unpinnedUsers);
-        
-//         console.log('✅ Conversations loaded:', users.length, 'users');
-//     } catch (error) {
-//         console.error('❌ Error loading conversations:', error);
-//     }
-// }
 
 // ============================================
 // 2. CREATE CONVERSATION ITEM ELEMENT
@@ -2751,20 +2586,6 @@ function escapeHtml(text) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * 🔧 UPDATED: Load Conversation - Mark messages as read
  */
@@ -2814,50 +2635,7 @@ async function loadConversation(conversationId, recipient) {
         console.error('❌ Error loading conversation:', error);
     }
 }
-
-        // async function loadConversation(conversationId, recipient) {
-        //     try {
-        //         currentId = conversationId;
-        //         currentType = 'direct';
-        //         currentConversationId = conversationId;
-        //         currentRecipient = recipient;
-
-        //         // Show chat window
-        //         document.getElementById('welcome-screen').classList.add('hidden');
-        //         document.getElementById('chat-window').classList.remove('hidden');
-
-        //         // Update chat header
-        //         updateChatHeader(recipient);
-
-        //         // Load messages
-        //         const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
-        //         allMessages = messages || [];
-        //         renderMessages(allMessages);
-
-        //         // Subscribe to conversation
-        //         subscribeToConversation(conversationId);
-
-        //         // ✅ Mark conversation as read via WebSocket
-        //         if (stompClient && stompClient.connected) {
-        //             stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
-        //                 conversationId: conversationId
-        //             }));
-        //         }
-
-        //         // Update UI
-        //         document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
-        //         const activeConv = document.querySelector(`[data-conversation-id="${conversationId}"]`);
-        //         if (activeConv) {
-        //             activeConv.classList.add('active');
-        //             activeConv.classList.remove('has-unread');
-        //         }
-
-        //         console.log('✅ Conversation loaded:', conversationId);
-        //     } catch (error) {
-        //         console.error('❌ Error loading conversation:', error);
-        //     }
-        // }
-
+       
         function updateChatHeader(recipient) {
             const initial = recipient.fullName.charAt(0).toUpperCase();
             document.getElementById('chat-avatar-initial').textContent = initial;
@@ -3287,43 +3065,6 @@ function updateConversationListOrder(userId, userName) {
     }
 }
 
-        // ============================================
-        // UPDATE displayNewMessage TO USE NEW FORMAT
-        // ============================================
-
-        // function displayNewMessage(msgData) {
-        //     // Check if message already exists (avoid duplicates)
-        //     const existingMsg = allMessages.find(m =>
-        //         (m.id && m.id === msgData.id) ||
-        //         (m.tempId && m.tempId === msgData.tempId)
-        //     );
-
-        //     if (existingMsg && msgData.id) {
-        //         // Update existing message with real ID
-        //         existingMsg.id = msgData.id;
-        //         existingMsg.deliveryStatus = msgData.deliveryStatus || existingMsg.deliveryStatus;
-        //         return;
-        //     }
-
-        //     allMessages.push(msgData);
-
-        //     const container = document.getElementById('messages-container');
-        //     const isSent = String(msgData.senderId) === String(myId);
-
-        //     const messageGroup = createMessageElementWithStatus(msgData, isSent, true);
-        //     container.appendChild(messageGroup);
-
-        //     container.scrollTop = container.scrollHeight;
-
-        //     // ✅ Send read receipt if message is from someone else and chat is open
-        //     if (!isSent && currentId && msgData.id) {
-        //         setTimeout(() => {
-        //             sendReadReceipt(msgData.id);
-        //         }, 500);
-        //     }
-        // }
-
-
         function sendMessage() {
             const input = document.getElementById('message-input');
             const msg = input.value.trim();
@@ -3495,40 +3236,6 @@ function handleDeliveryAcknowledgment(ack) {
 }
 
         // ============================================
-        // DELIVERY STATUS HANDLING
-        // ============================================
-
-        // function handleDeliveryAcknowledgment(ack) {
-        //     console.log('📨 Delivery acknowledgment:', ack);
-
-        //     if (ack.type === 'MESSAGE_DELIVERED') {
-        //         const tempId = ack.tempId;
-        //         const messageId = ack.messageId;
-        //         const deliveryStatus = ack.deliveryStatus || 'SENT';
-
-        //         // Find message by temp ID
-        //         const messageElement = document.querySelector(`[data-temp-id="${tempId}"]`);
-        //         if (messageElement) {
-        //             // Update to real ID
-        //             messageElement.setAttribute('data-message-id', messageId);
-        //             messageElement.removeAttribute('data-temp-id');
-
-        //             // Update status indicator
-        //             updateMessageStatusDisplay(messageElement, deliveryStatus);
-        //         }
-
-        //         // Update message in allMessages array
-        //         const msgIndex = allMessages.findIndex(m => m.tempId === tempId);
-        //         if (msgIndex !== -1) {
-        //             allMessages[msgIndex].id = messageId;
-        //             allMessages[msgIndex].deliveryStatus = deliveryStatus;
-        //             delete allMessages[msgIndex].tempId;
-        //         }
-        //     }
-        // }
-
-
-        // ============================================
         // STATUS ICONS (TEAMS-LIKE)
         // ============================================
 
@@ -3592,46 +3299,7 @@ function handleReadReceipt(receipt) {
     }
 }
 
-
-        // function handleReadReceipt(receipt) {
-        //     console.log('👁️ Read receipt:', receipt);
-
-        //     if (receipt.type === 'MESSAGE_READ') {
-        //         const messageId = receipt.messageId;
-        //         const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
-
-        //         if (messageElement) {
-        //             updateMessageStatusDisplay(messageElement, 'READ');
-        //         }
-
-        //         // Update in allMessages array
-        //         const msg = allMessages.find(m => m.id === messageId);
-        //         if (msg) {
-        //             msg.deliveryStatus = 'READ';
-        //             msg.isRead = true;
-        //         }
-
-        //     } else if (receipt.type === 'CONVERSATION_READ') {
-        //         // Mark all sent messages in conversation as read
-        //         const conversationId = receipt.conversationId;
-        //         if (currentId == conversationId && currentType === 'direct') {
-        //             document.querySelectorAll('.message-group.sent').forEach(msgEl => {
-        //                 updateMessageStatusDisplay(msgEl, 'READ');
-        //             });
-
-        //             // Update all messages in array
-        //             allMessages.forEach(msg => {
-        //                 if (msg.conversationId == conversationId && msg.senderId == myId) {
-        //                     msg.deliveryStatus = 'READ';
-        //                     msg.isRead = true;
-        //                 }
-        //             });
-        //         }
-        //     }
-        // }
-
-
-        /**
+/**
  * 🔧 UPDATED: Update Message Status Display with proper colors
  * Replace the existing updateMessageStatusDisplay function
  */
@@ -3657,24 +3325,6 @@ function updateMessageStatusDisplay(messageElement, status) {
         console.warn('❌ No .msg-status element found in message');
     }
 }
-
-        // function updateMessageStatusDisplay(messageElement, status) {
-        //     const statusIcon = messageElement.querySelector('.msg-status');
-        //     if (statusIcon) {
-        //         statusIcon.className = `msg-status ${status.toLowerCase()}`;
-
-        //         if (status === 'READ') {
-        //             statusIcon.textContent = '✓✓';
-        //             statusIcon.style.color = '#3b82f6'; // Blue
-        //         } else if (status === 'DELIVERED') {
-        //             statusIcon.textContent = '✓✓';
-        //             statusIcon.style.color = '#94a3b8'; // Gray
-        //         } else {
-        //             statusIcon.textContent = '✓';
-        //             statusIcon.style.color = '#94a3b8'; // Gray
-        //         }
-        //     }
-        // }
 
         // ============================================
         // UPDATE MESSAGE STATUS
@@ -3711,20 +3361,6 @@ function updateMessageStatusDisplay(messageElement, status) {
             }));
         }
 
-        // function sendMessage() {
-        //     const input = document.getElementById('message-input');
-        //     const msg = input.value.trim();
-        //     if (!msg || !currentId) return;
-
-        //     const payload = {
-        //         chatType: 'conversation',
-        //         chatId: currentId,
-        //         content: msg
-        //     };
-
-        //     stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
-        //     input.value = '';
-        // }
 
         async function handleFileUpload(input) {
             const file = input.files[0];

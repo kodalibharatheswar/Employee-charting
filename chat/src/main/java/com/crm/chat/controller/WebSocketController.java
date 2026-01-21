@@ -31,40 +31,6 @@ public class WebSocketController {
     private final CallService callService;
     private final ConversationService conversationService; // ✅ ADDED THIS
 
-    // ============================================================================
-    // EXISTING CHAT MESSAGING METHODS (UNCHANGED)
-    // ============================================================================
-
-    /**
-     * Handle direct messages (one-to-one)
-     */
-    // @MessageMapping("/chat.sendDirectMessage")
-    // public void sendDirectMessage(@Payload Map<String, Object> messageData, Principal principal) {
-    //     try {
-    //         if (principal == null) {
-    //             System.err.println("Principal is null in sendDirectMessage");
-    //             return;
-    //         }
-
-    //         String username = principal.getName();
-    //         User sender = userService.findByUsername(username)
-    //                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-    //         Long conversationId = Long.valueOf(messageData.get("conversationId").toString());
-    //         String content = messageData.get("content").toString();
-
-    //         // Save message to database
-    //         Message message = messageService.sendDirectMessage(sender.getId(), conversationId, content);
-    //         MessageDTO messageDTO = MessageDTO.fromEntity(message);
-
-    //         // Broadcast to conversation subscribers
-    //         String destination = "/topic/conversation." + conversationId;
-    //         messagingTemplate.convertAndSend(destination, (Object) messageDTO);
-
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    // }
 
     /**
      * Handle group messages
@@ -190,34 +156,7 @@ public class WebSocketController {
         }
     }
 
-    /**
-     * Handle message read receipt
-     */
-    // @MessageMapping("/chat.markAsRead")
-    // public void markAsRead(@Payload Map<String, Object> readData, Principal principal) {
-    //     try {
-    //         Long messageId = Long.valueOf(readData.get("messageId").toString());
-    //         messageService.markMessageAsRead(messageId);
-
-    //         // Optionally notify sender that message was read
-    //         Message message = messageService.findById(messageId).orElse(null);
-    //         if (message != null && message.getReadAt() != null) {
-    //             Map<String, Object> notification = Map.of(
-    //                     "messageId", messageId,
-    //                     "readAt", message.getReadAt().toString()
-    //             );
-
-    //             if (message.isDirectMessage()) {
-    //                 String destination = "/topic/conversation." + message.getConversation().getId() + ".read";
-    //                 messagingTemplate.convertAndSend(destination, (Object) notification);
-    //             }
-    //         }
-
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
+   
     // ============================================================================
     // NEW WEBRTC SIGNALING METHODS FOR AUDIO/VIDEO CALLS
     // ============================================================================
