@@ -158,30 +158,12 @@
         }
 
         /* Status color variants for user avatar */
-        .user-avatar.status-available::after {
-            background: var(--status-available);
-        }
-
-        .user-avatar.status-away::after {
-            background: var(--status-away);
-        }
-
-        .user-avatar.status-busy::after {
-            background: var(--status-busy);
-        }
-
-        .user-avatar.status-invisible::after {
-            background: var(--status-invisible);
-        }
-
-        .user-avatar.status-dnd::after {
-            background: var(--status-dnd);
-        }
-
-        /* Hide indicator when invisible */
-        .user-avatar.status-invisible::after {
-            display: none;
-        }
+        .user-avatar.status-available::after { background: var(--status-available); }
+        .user-avatar.status-away::after { background: var(--status-away); }
+        .user-avatar.status-busy::after { background: var(--status-busy); }
+        .user-avatar.status-invisible::after { background: var(--status-invisible); }
+        .user-avatar.status-dnd::after { background: var(--status-dnd); }
+        .user-avatar.status-invisible::after { display: none; }
 
         /* Content Sidebar */
         .content-sidebar {
@@ -234,25 +216,11 @@
             flex-shrink: 0;
         }
 
-        .status-dot.available {
-            background: var(--status-available);
-        }
-
-        .status-dot.away {
-            background: var(--status-away);
-        }
-
-        .status-dot.busy {
-            background: var(--status-busy);
-        }
-
-        .status-dot.invisible {
-            background: var(--status-invisible);
-        }
-
-        .status-dot.dnd {
-            background: var(--status-dnd);
-        }
+        .status-dot.available { background: var(--status-available); }
+        .status-dot.away { background: var(--status-away); }
+        .status-dot.busy { background: var(--status-busy); }
+        .status-dot.invisible { background: var(--status-invisible); }
+        .status-dot.dnd { background: var(--status-dnd); }
 
         .status-text {
             flex: 1;
@@ -307,13 +275,8 @@
             color: var(--text-main);
         }
 
-        .status-menu-item:hover {
-            background: var(--bg-light);
-        }
-
-        .status-menu-item.selected {
-            background: #dbeafe;
-        }
+        .status-menu-item:hover { background: var(--bg-light); }
+        .status-menu-item.selected { background: #dbeafe; }
 
         .status-menu-item .status-dot {
             width: 12px;
@@ -330,20 +293,15 @@
             font-size: 16px;
         }
 
-        /* My Pins Section - keeping existing styles */
+        /* My Pins Section */
         .my-pins-section {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             max-height: 250px;
             overflow-y: auto;
         }
 
-        .my-pins-section.has-pins {
-            padding: 16px 0;
-        }
-
-        .my-pins-section.empty {
-            display: none;
-        }
+        .my-pins-section.has-pins { padding: 16px 0; }
+        .my-pins-section.empty { display: none; }
 
         .my-pins-header {
             display: flex;
@@ -382,10 +340,7 @@
             margin: 2px 0;
         }
 
-        .pin-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
+        .pin-item:hover { background: rgba(255, 255, 255, 0.08); }
         .pin-item.active {
             background: rgba(59, 130, 246, 0.15);
             border-left-color: var(--primary);
@@ -405,10 +360,7 @@
             position: relative;
         }
 
-        .pin-content {
-            flex: 1;
-            min-width: 0;
-        }
+        .pin-content { flex: 1; min-width: 0; }
 
         .pin-name {
             font-weight: 500;
@@ -440,13 +392,8 @@
             transition: 0.2s;
         }
 
-        .pin-item:hover .btn-unpin {
-            opacity: 1;
-        }
-
-        .btn-unpin:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
+        .pin-item:hover .btn-unpin { opacity: 1; }
+        .btn-unpin:hover { background: rgba(239, 68, 68, 0.2); }
 
         /* Conversations Section */
         .conversations-section {
@@ -487,9 +434,7 @@
             transition: 0.2s;
         }
 
-        .btn-add-conversation:hover {
-            background: var(--primary);
-        }
+        .btn-add-conversation:hover { background: var(--primary); }
 
         .sidebar-search {
             padding: 12px 20px;
@@ -508,10 +453,7 @@
             transition: 0.2s;
         }
 
-        .sidebar-search-input::placeholder {
-            color: #64748b;
-        }
-
+        .sidebar-search-input::placeholder { color: #64748b; }
         .sidebar-search-input:focus {
             background: rgba(255, 255, 255, 0.08);
             border-color: var(--primary);
@@ -534,10 +476,7 @@
             position: relative;
         }
 
-        .conversation-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
+        .conversation-item:hover { background: rgba(255, 255, 255, 0.05); }
         .conversation-item.active {
             background: rgba(59, 130, 246, 0.15);
             border-left-color: var(--primary);
@@ -563,44 +502,22 @@
             right: 0;
             width: 12px;
             height: 12px;
-            /* background: var(--success); */
             background: var(--status-available);
             border: 2px solid var(--bg-secondary-sidebar);
             border-radius: 50%;
         }
 
-        .online-indicator.available {
-            background: var(--status-available) !important;
-        }
+        .online-indicator.available { background: var(--status-available) !important; }
+        .online-indicator.away { background: var(--status-away) !important; }
+        .online-indicator.busy { background: var(--status-busy) !important; }
+        .online-indicator.invisible { display: none; }
+        .online-indicator.dnd { background: var(--status-dnd) !important; }
 
-        .online-indicator.away {
-            background: var(--status-away) !important;
-        }
-
-        .online-indicator.busy {
-            background: var(--status-busy) !important;
-        }
-
-        .online-indicator.invisible {
-            background: var(--status-invisible) !important;
-            display: none;
-            /* Hide when invisible */
-        }
-
-        .online-indicator.dnd {
-            background: var(--status-dnd) !important;
-        }
-
-        /* ✅ NEW: Chat header indicator (white background) */
         .chat-header-avatar .online-indicator {
             border: 2px solid white;
-            /* White border for white background */
         }
 
-        .conversation-content {
-            flex: 1;
-            min-width: 0;
-        }
+        .conversation-content { flex: 1; min-width: 0; }
 
         .conversation-name {
             font-weight: 500;
@@ -631,9 +548,7 @@
             transform: translateY(-50%);
         }
 
-        .conversation-item:hover .conversation-actions {
-            display: flex;
-        }
+        .conversation-item:hover .conversation-actions { display: flex; }
 
         .btn-conv-action {
             background: rgba(255, 255, 255, 0.1);
@@ -654,10 +569,7 @@
             color: white;
         }
 
-        .btn-conv-action svg {
-            width: 16px;
-            height: 16px;
-        }
+        .btn-conv-action svg { width: 16px; height: 16px; }
 
         /* More Menu Dropdown */
         .more-menu {
@@ -674,9 +586,7 @@
             margin-top: 4px;
         }
 
-        .more-menu.active {
-            display: block;
-        }
+        .more-menu.active { display: block; }
 
         .more-menu-item {
             padding: 12px 16px;
@@ -694,24 +604,12 @@
             border-bottom: 1px solid var(--bg-light);
         }
 
-        .more-menu-item:last-child {
-            border-bottom: none;
-        }
+        .more-menu-item:last-child { border-bottom: none; }
+        .more-menu-item:hover { background: var(--bg-light); }
+        .more-menu-item.danger { color: var(--danger); }
+        .more-menu-item svg { width: 18px; height: 18px; }
 
-        .more-menu-item:hover {
-            background: var(--bg-light);
-        }
-
-        .more-menu-item.danger {
-            color: var(--danger);
-        }
-
-        .more-menu-item svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Main Chat Window - keeping existing styles... */
+        /* Main Chat Window */
         .main-chat {
             flex: 1;
             display: flex;
@@ -773,7 +671,6 @@
             right: 0;
             width: 12px;
             height: 12px;
-            /* background: var(--success); */
             border: 2px solid white;
             border-radius: 50%;
         }
@@ -783,9 +680,7 @@
             transition: opacity 0.2s;
         }
 
-        .chat-header-info:hover {
-            opacity: 0.7;
-        }
+        .chat-header-info:hover { opacity: 0.7; }
 
         .chat-header-name {
             font-size: 16px;
@@ -802,27 +697,12 @@
             gap: 4px;
         }
 
-        .chat-header-status.away {
-            color: var(--status-away);
-        }
+        .chat-header-status.away { color: var(--status-away); }
+        .chat-header-status.busy { color: var(--status-busy); }
+        .chat-header-status.invisible { color: var(--status-invisible); }
+        .chat-header-status.dnd { color: var(--status-dnd); }
 
-        .chat-header-status.busy {
-            color: var(--status-busy);
-        }
-
-        .chat-header-status.invisible {
-            color: var(--status-invisible);
-        }
-
-        .chat-header-status.dnd {
-            color: var(--status-dnd);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
 
         .btn-header-action {
             background: none;
@@ -843,10 +723,7 @@
             color: var(--primary);
         }
 
-        .btn-header-action svg {
-            width: 20px;
-            height: 20px;
-        }
+        .btn-header-action svg { width: 20px; height: 20px; }
 
         /* Messages Container */
         .messages-container {
@@ -858,165 +735,113 @@
             gap: 16px;
         }
 
-        /* ============================================
-   NOTIFICATION TOAST STYLES
-   ============================================ */
-.notification-toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 300px;
-    max-width: 400px;
-    z-index: 10000;
-    animation: slideIn 0.3s ease;
-}
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
 
         @keyframes slideIn {
-    from {
-        transform: translateX(400px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
 
-
-        .notification-toast.hiding {
-    animation: slideOut 0.3s ease;
-}
-        
-
+        .notification-toast.hiding { animation: slideOut 0.3s ease; }
 
         @keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(400px);
-        opacity: 0;
-    }
-}
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
 
-@keyframes highlight {
-    0%, 100% {
-        background: rgba(255, 255, 255, 0.03);
-    }
-    50% {
-        background: rgba(59, 130, 246, 0.15);
-    }
-}
+        @keyframes highlight {
+            0%, 100% { background: rgba(255, 255, 255, 0.03); }
+            50% { background: rgba(59, 130, 246, 0.15); }
+        }
 
-.has-unread {
-    background: rgba(59, 130, 246, 0.08) !important;
-}
+        .has-unread { background: rgba(59, 130, 246, 0.08) !important; }
 
-.unread-badge {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #ef4444;
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 10px;
-    min-width: 18px;
-    text-align: center;
-}
-
+        .unread-badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
 
         .notification-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-    font-size: 16px;
-}
-        
-        .notification-content {
-    flex: 1;
-}
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
 
-
+        .notification-content { flex: 1; }
         .notification-sender {
-    font-weight: 600;
-    font-size: 14px;
-    color: #1e293b;
-    margin-bottom: 4px;
-}
-
-
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
         .notification-message {
-    font-size: 13px;
-    color: #64748b;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+            font-size: 13px;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
         .notification-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #94a3b8;
-    cursor: pointer;
-    padding: 0;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-        .notification-close:hover {
-    color: #64748b;
-}
-
-
-        /* ============================================
-   MESSAGE STATUS TICKS - WhatsApp Style
-   ============================================ */
-
-   .msg-status {
-    display: inline-block;
-    margin-left: 4px;
-    font-size: 14px;
-    line-height: 1;
-}
-
-
-        .msg-status.sent {
+            background: none;
+            border: none;
+            font-size: 24px;
             color: #94a3b8;
-            /* Gray single tick */
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .msg-status.delivered {
-            color: #94a3b8;
-            /* Gray double tick */
+        .notification-close:hover { color: #64748b; }
+
+        /* Message status ticks */
+        .msg-status {
+            display: inline-block;
+            margin-left: 4px;
+            font-size: 14px;
+            line-height: 1;
         }
 
-        .msg-status.read {
-            color: #3b82f6;
-            /* Blue double tick */
-        }
-
+        .msg-status.sent { color: #94a3b8; }
+        .msg-status.delivered { color: #94a3b8; }
+        .msg-status.read { color: #3b82f6; }
 
         .message-time {
             font-size: 11px;
@@ -1049,19 +874,9 @@
         }
 
         /* Message Group */
-        .message-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .message-group.sent {
-            align-items: flex-end;
-        }
-
-        .message-group.received {
-            align-items: flex-start;
-        }
+        .message-group { display: flex; flex-direction: column; gap: 8px; }
+        .message-group.sent { align-items: flex-end; }
+        .message-group.received { align-items: flex-start; }
 
         /* Message Sender Info */
         .message-sender {
@@ -1129,10 +944,7 @@
             max-width: 400px;
         }
 
-        .file-attachment:hover {
-            background: var(--bg-light);
-        }
-
+        .file-attachment:hover { background: var(--bg-light); }
         .file-icon {
             width: 48px;
             height: 48px;
@@ -1144,11 +956,7 @@
             font-size: 24px;
         }
 
-        .file-info {
-            flex: 1;
-            min-width: 0;
-        }
-
+        .file-info { flex: 1; min-width: 0; }
         .file-name {
             font-size: 13px;
             font-weight: 500;
@@ -1158,18 +966,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        .file-size {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* Message Time */
-        .message-time {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
+        .file-size { font-size: 11px; color: var(--text-muted); }
 
         /* Typing Indicator */
         .typing-wrapper {
@@ -1185,15 +982,9 @@
             transition: opacity 0.3s ease;
         }
 
-        .typing-wrapper.visible {
-            opacity: 1;
-        }
+        .typing-wrapper.visible { opacity: 1; }
 
-        .typing-dots {
-            display: flex;
-            gap: 3px;
-        }
-
+        .typing-dots { display: flex; gap: 3px; }
         .typing-dots span {
             width: 4px;
             height: 4px;
@@ -1201,26 +992,12 @@
             border-radius: 50%;
             animation: pulse 1.4s infinite ease-in-out;
         }
-
-        .typing-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 
         @keyframes pulse {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-            }
-
-            40% {
-                transform: scale(1);
-            }
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
 
         /* Input Area */
@@ -1246,10 +1023,7 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .input-actions-left {
-            display: flex;
-            gap: 4px;
-        }
+        .input-actions-left { display: flex; gap: 4px; }
 
         .btn-input-action {
             background: none;
@@ -1270,10 +1044,7 @@
             color: var(--primary);
         }
 
-        .btn-input-action svg {
-            width: 20px;
-            height: 20px;
-        }
+        .btn-input-action svg { width: 20px; height: 20px; }
 
         input#message-input {
             flex: 1;
@@ -1284,9 +1055,7 @@
             color: var(--text-main);
         }
 
-        input#message-input::placeholder {
-            color: var(--text-muted);
-        }
+        input#message-input::placeholder { color: var(--text-muted); }
 
         button#send-button {
             background: var(--primary);
@@ -1317,9 +1086,7 @@
             backdrop-filter: blur(4px);
         }
 
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
 
         .modal-content {
             background: white;
@@ -1342,14 +1109,10 @@
             transition: 0.2s;
         }
 
-        .close-modal:hover {
-            color: var(--secondary);
-        }
+        .close-modal:hover { color: var(--secondary); }
 
         /* User Info Modal */
-        .user-info-content {
-            text-align: center;
-        }
+        .user-info-content { text-align: center; }
 
         .user-info-avatar-large {
             width: 100px;
@@ -1372,11 +1135,7 @@
             margin-bottom: 8px;
         }
 
-        .user-info-email {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
+        .user-info-email { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
 
         .user-info-details {
             text-align: left;
@@ -1392,20 +1151,10 @@
             border-bottom: 1px solid var(--bg-light);
         }
 
-        .user-info-label {
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 13px;
-        }
+        .user-info-label { font-weight: 600; color: var(--text-muted); font-size: 13px; }
+        .user-info-value { color: var(--secondary); font-size: 13px; }
 
-        .user-info-value {
-            color: var(--secondary);
-            font-size: 13px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* Scrollbar */
         .conversation-list::-webkit-scrollbar,
@@ -1416,14 +1165,10 @@
         }
 
         .conversation-list::-webkit-scrollbar-track,
-        .my-pins-section::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
+        .my-pins-section::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
 
         .messages-container::-webkit-scrollbar-track,
-        .status-dropdown-menu::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        .status-dropdown-menu::-webkit-scrollbar-track { background: transparent; }
 
         .conversation-list::-webkit-scrollbar-thumb,
         .messages-container::-webkit-scrollbar-thumb,
@@ -1742,17 +1487,14 @@
         let allUsers = [];
         let pinnedUsers = new Set();
         let currentUserStatus = 'AVAILABLE';
-        // ============================================
-        // MESSAGE TRACKING & DELIVERY RECEIPTS
-        // ============================================
-        let messageTracker = new Map(); // Track message delivery status
+        
+        let messageTracker = new Map();
         let tempMessageId = 1;
-        let pendingMessages = new Map(); // Track messages being sent
+        let pendingMessages = new Map();
 
         const myId = document.getElementById('currentUserId').value;
         const myUsername = document.getElementById('currentUsername').value;
 
-        // Status mapping
         const STATUS_MAP = {
             'AVAILABLE': { text: 'Available', dotClass: 'available', textClass: '' },
             'AWAY': { text: 'Away', dotClass: 'away', textClass: 'away' },
@@ -1770,7 +1512,6 @@
             loadCurrentUserStatus();
             loadConversations();
 
-            // Close dropdowns when clicking outside
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.status-dropdown-container')) {
                     document.getElementById('status-dropdown-menu').classList.remove('active');
@@ -1788,183 +1529,84 @@
             stompClient.connect({}, () => {
                 console.log("✅ WebSocket Connected");
 
-                // Subscribe to status updates
                 stompClient.subscribe('/topic/user.status', (message) => {
                     const statusUpdate = JSON.parse(message.body);
                     handleStatusUpdate(statusUpdate);
                 });
 
-                // Subscribe to public updates (user online/offline)
                 stompClient.subscribe('/topic/public', (message) => {
                     const data = JSON.parse(message.body);
-                    if (data.type === 'USER_ONLINE') {
-                        handleUserOnline(data);
-                    }
+                    if (data.type === 'USER_ONLINE') handleUserOnline(data);
                 });
 
-                // ✅ Subscribe to delivery acknowledgments
                 stompClient.subscribe('/user/queue/delivery', (message) => {
                     const ack = JSON.parse(message.body);
                     handleDeliveryAcknowledgment(ack);
                 });
 
-                // ✅ Subscribe to read receipts
                 stompClient.subscribe('/user/queue/read-receipts', (message) => {
                     const receipt = JSON.parse(message.body);
                     handleReadReceipt(receipt);
                 });
 
-                // ✅ Subscribe to notifications
-                // NEW VERSION:
-stompClient.subscribe('/user/queue/notifications', (notification) => {
-    const data = JSON.parse(notification.body);
-    
-    if (data.type === 'NEW_MESSAGE') {
-        console.log('🔔 New message notification:', data);
-        
-        // Show notification
-        showNotification(data.senderName, data.content, data.senderId);
-        
-        // Update conversation list with new message
-        if (data.conversationId) {
-            updateConversationListAfterMessage({
-                conversationId: data.conversationId,
-                senderId: data.senderId,
-                content: data.content,
-                createdAt: data.timestamp
-            });
-        }
-    }
-});
+                stompClient.subscribe('/user/queue/notifications', (notification) => {
+                    const data = JSON.parse(notification.body);
+                    if (data.type === 'NEW_MESSAGE') {
+                        showNotification(data.senderName, data.content, data.senderId);
+                        if (data.conversationId) updateConversationListAfterMessage({
+                            conversationId: data.conversationId,
+                            senderId: data.senderId,
+                            content: data.content,
+                            createdAt: data.timestamp
+                        });
+                    }
+                });
 
-                // Notify server that user is online
-                stompClient.send("/app/chat.addUser", {}, JSON.stringify({
-                    username: myUsername
-                }));
-
-                console.log("✅ All subscriptions active");
+                stompClient.send("/app/chat.addUser", {}, JSON.stringify({ username: myUsername }));
             }, (error) => {
                 console.error("❌ WebSocket connection error:", error);
-                setTimeout(initWebSocket, 5000); // Retry after 5 seconds
+                setTimeout(initWebSocket, 5000);
             });
         }
 
-
-       /**
- * 🆕 NEW: Show Browser Notification
- */
-function showNotification(senderName, message, senderId) {
-    // Don't show notification for current chat if it's already open
-    if (currentId && String(currentRecipient?.id) === String(senderId)) {
-        return;
-    }
-
-    // Create notification toast
-    const notification = document.createElement('div');
-    notification.className = 'notification-toast';
-
-    const initial = senderName.charAt(0).toUpperCase();
-
-    notification.innerHTML = `
-        <div class="notification-avatar">${initial}</div>
-        <div class="notification-content">
-            <div class="notification-sender">${senderName}</div>
-            <div class="notification-message">${message}</div>
-        </div>
-        <button class="notification-close" onclick="this.parentElement.remove()">×</button>
-    `;
-
-    document.body.appendChild(notification);
-
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        notification.classList.add('hiding');
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
-
-    // Play notification sound (optional)
-    playNotificationSound();
-    
-    console.log('🔔 Notification shown for:', senderName);
-}       
-
-        function playNotificationSound() {
-            // Optional: Add a subtle notification sound
-            // const audio = new Audio('/sounds/notification.mp3');
-            // audio.volume = 0.3;
-            // audio.play().catch(e => console.log('Audio play failed:', e));
+        function showNotification(senderName, message, senderId) {
+            if (currentId && String(currentRecipient?.id) === String(senderId)) return;
+            const notification = document.createElement('div');
+            notification.className = 'notification-toast';
+            const initial = senderName.charAt(0).toUpperCase();
+            notification.innerHTML = `
+                <div class="notification-avatar">${initial}</div>
+                <div class="notification-content">
+                    <div class="notification-sender">${senderName}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.classList.add('hiding');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
         }
-
-        /**
- * 🆕 NEW: Update Conversation Unread Count
- */
-function updateConversationUnreadCount(conversationId) {
-    // Add unread indicator to conversation in sidebar
-    const conversationEl = document.querySelector(`[data-conversation-id="${conversationId}"]`);
-    if (conversationEl && !conversationEl.classList.contains('active')) {
-        conversationEl.classList.add('has-unread');
-        
-        // Show unread badge
-        let badge = conversationEl.querySelector('.unread-badge');
-        if (!badge) {
-            badge = document.createElement('div');
-            badge.className = 'unread-badge';
-            badge.textContent = '1';
-            conversationEl.querySelector('.conversation-content').appendChild(badge);
-        } else {
-            const count = parseInt(badge.textContent) || 0;
-            badge.textContent = count + 1;
-        }
-    }
-}
-
-
-        // ============================================
-        // RENDER MESSAGE WITH STATUS
-        // ============================================
 
         function renderMessageStatus(message, isOwnMessage) {
-            if (!isOwnMessage) return ''; // Only show status for own messages
-
+            if (!isOwnMessage) return '';
             const status = message.deliveryStatus || 'SENT';
-
-            if (status === 'READ') {
-                return '<span class="msg-status read">✓✓</span>'; // Blue double tick
-            } else if (status === 'DELIVERED') {
-                return '<span class="msg-status delivered">✓✓</span>'; // Gray double tick
-            } else {
-                return '<span class="msg-status sent">✓</span>'; // Single gray tick
-            }
+            if (status === 'READ') return '<span class="msg-status read">✓✓</span>';
+            if (status === 'DELIVERED') return '<span class="msg-status delivered">✓✓</span>';
+            return '<span class="msg-status sent">✓</span>';
         }
 
-
-        // ============================================
-        // HANDLE USER ONLINE STATUS
-        // ============================================
-
         function handleUserOnline(data) {
-            console.log('User online:', data);
-
-            // Update user status in sidebar
             const userEl = document.querySelector(`[data-user-id="${data.userId}"]`);
             if (userEl) {
                 const indicator = userEl.querySelector('.online-indicator');
                 if (indicator && data.status) {
-                    const statusClass = STATUS_MAP[data.status]?.dotClass || 'available';
-                    indicator.className = `online-indicator ${statusClass}`;
+                    indicator.className = `online-indicator ${STATUS_MAP[data.status]?.dotClass || 'available'}`;
                 }
             }
-
-            // Update chat header if this is current chat
-            if (currentRecipient && currentRecipient.id == data.userId) {
-                updateChatHeaderStatus(data.status || 'AVAILABLE');
-            }
+            if (currentRecipient && currentRecipient.id == data.userId) updateChatHeaderStatus(data.status || 'AVAILABLE');
         }
-
-
-        // ============================================
-        // STATUS MANAGEMENT
-        // ============================================
 
         function loadCurrentUserStatus() {
             const saved = localStorage.getItem('userStatus_' + myId);
@@ -1975,57 +1617,37 @@ function updateConversationUnreadCount(conversationId) {
         }
 
         function toggleStatusDropdown() {
-            const menu = document.getElementById('status-dropdown-menu');
-            menu.classList.toggle('active');
+            document.getElementById('status-dropdown-menu').classList.toggle('active');
         }
 
         async function changeStatus(status, statusText) {
             try {
-                // Update backend
                 const response = await fetch(`/api/users/status`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: status })
                 });
-
                 if (response.ok) {
                     currentUserStatus = status;
                     localStorage.setItem('userStatus_' + myId, status);
                     updateStatusUI(status);
-
-                    // Broadcast status change via WebSocket
-                    if (stompClient && stompClient.connected) {
+                    if (stompClient?.connected) {
                         stompClient.send("/app/user.status.update", {}, JSON.stringify({
-                            userId: myId,
-                            status: status,
-                            statusText: statusText
+                            userId: myId, status: status, statusText: statusText
                         }));
                     }
-
-                    console.log('Status changed to:', statusText);
                 }
-            } catch (e) {
-                console.error('Failed to change status:', e);
-            }
-
-            // Close dropdown
+            } catch (e) { console.error('Failed to change status:', e); }
             document.getElementById('status-dropdown-menu').classList.remove('active');
         }
 
         function updateStatusUI(status) {
             const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
-
-            // Update current status selector
             const statusDot = document.getElementById('current-status-dot');
             const statusText = document.getElementById('current-status-text');
-
             statusDot.className = `status-dot ${statusInfo.dotClass}`;
             statusText.textContent = statusInfo.text;
-
-            // ✅ NEW: Update user's own avatar (bottom-left)
             updateUserAvatarStatus(status);
-
-            // Update selected item in dropdown
             document.querySelectorAll('.status-menu-item').forEach(item => {
                 const check = item.querySelector('.status-menu-item-check');
                 if (item.dataset.status === status) {
@@ -2038,53 +1660,24 @@ function updateConversationUnreadCount(conversationId) {
             });
         }
 
-        // ✅ NEW: Update user's own avatar status indicator
         function updateUserAvatarStatus(status) {
             const userAvatar = document.getElementById('user-avatar-btn');
             if (!userAvatar) return;
-
-            // Remove all status classes
-            userAvatar.classList.remove('status-available', 'status-away', 'status-busy',
-                'status-invisible', 'status-dnd');
-
-            // Add appropriate status class
-            const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
-            userAvatar.classList.add('status-' + statusInfo.dotClass);
+            userAvatar.classList.remove('status-available', 'status-away', 'status-busy', 'status-invisible', 'status-dnd');
+            userAvatar.classList.add('status-' + (STATUS_MAP[status] || STATUS_MAP['AVAILABLE']).dotClass);
         }
 
         function handleStatusUpdate(statusUpdate) {
             const { userId, status, statusText } = statusUpdate;
-
-            // Update user in conversation list
             const convItem = document.getElementById(`conv-${userId}`);
             if (convItem) {
                 const indicator = convItem.querySelector('.online-indicator');
                 const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
-
-                if (indicator) {
-                    indicator.className = `online-indicator ${statusInfo.dotClass}`;
-                }
-
+                if (indicator) indicator.className = `online-indicator ${statusInfo.dotClass}`;
                 const statusEl = convItem.querySelector('.conversation-status');
-                if (statusEl) {
-                    statusEl.textContent = statusText || statusInfo.text;
-                }
+                if (statusEl) statusEl.textContent = statusText || statusInfo.text;
             }
-
-            // Update in pins
-            const pinItem = document.getElementById(`pin-${userId}`);
-            if (pinItem) {
-                const indicator = pinItem.querySelector('.online-indicator');
-                const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
-                if (indicator) {
-                    indicator.className = `online-indicator ${statusInfo.dotClass}`;
-                }
-            }
-
-            // Update chat header if chatting with this user
-            if (currentRecipient && currentRecipient.id === String(userId)) {
-                updateChatHeaderStatus(status, statusText);
-            }
+            if (currentRecipient && currentRecipient.id === String(userId)) updateChatHeaderStatus(status, statusText);
         }
 
         function updateChatHeaderStatus(status, statusText) {
@@ -2092,619 +1685,188 @@ function updateConversationUnreadCount(conversationId) {
             const indicator = document.getElementById('chat-header-indicator');
             const statusContainer = document.getElementById('chat-header-status-container');
             const statusTextEl = document.getElementById('chat-header-status');
-
-            if (indicator) {
-                indicator.className = `online-indicator ${statusInfo.dotClass}`;
-                console.log('🔍 Chat header indicator class:', indicator.className); // ← ADD THIS LINE
-                console.log('🔍 Computed background:', window.getComputedStyle(indicator).background); // ← ADD THIS LINE
-            }
-            if (statusContainer) {
-                statusContainer.className = `chat-header-status ${statusInfo.textClass}`;
-            }
-            if (statusTextEl) {
-                statusTextEl.textContent = statusText || statusInfo.text;
-            }
+            if (indicator) indicator.className = `online-indicator ${statusInfo.dotClass}`;
+            if (statusContainer) statusContainer.className = `chat-header-status ${statusInfo.textClass}`;
+            if (statusTextEl) statusTextEl.textContent = statusText || statusInfo.text;
         }
-
-        // ============================================
-        // PIN/UNPIN FUNCTIONALITY (keeping from previous version)
-        // ============================================
 
         function loadPinnedUsers() {
             const saved = localStorage.getItem('pinnedUsers_' + myId);
-            if (saved) {
-                pinnedUsers = new Set(JSON.parse(saved));
-            }
+            if (saved) pinnedUsers = new Set(JSON.parse(saved));
         }
 
         function savePinnedUsers() {
             localStorage.setItem('pinnedUsers_' + myId, JSON.stringify([...pinnedUsers]));
         }
 
-        function pinConversation(event, userId) {
-            event.stopPropagation();
-            pinnedUsers.add(userId);
-            savePinnedUsers();
+
+        async function pinConversation(event, userId) {
+    if (event) event.stopPropagation();
+    try {
+        const response = await fetch(`/api/conversations/pin/${userId}`, { method: 'POST' });
+        if (response.ok) {
+            pinnedUsers.add(String(userId)); // Update local state
             document.querySelectorAll('.more-menu').forEach(menu => menu.remove());
-            loadConversations();
+            await loadConversations(); // Re-fetch from DB to confirm
+        }
+    } catch (e) {
+        console.error('Failed to pin:', e);
+    }
+}
+       
+
+        async function unpinConversation(event, userId) {
+    if (event) event.stopPropagation();
+    try {
+        const response = await fetch(`/api/conversations/unpin/${userId}`, { method: 'POST' });
+        if (response.ok) {
+            pinnedUsers.delete(String(userId)); // Update local state
+            await loadConversations();
+        }
+    } catch (e) {
+        console.error('Failed to unpin:', e);
+    }
+}
+        
+
+        function switchSection(section) {
+            currentSection = section;
+            document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
+            document.getElementById(`nav-${section}`).classList.add('active');
+            if (section === 'chats') loadConversations();
         }
 
-        function unpinConversation(event, userId) {
-            event.stopPropagation();
-            pinnedUsers.delete(userId);
-            savePinnedUsers();
-            loadConversations();
+        async function loadConversations() {
+            try {
+                // 1. Fetch all users from the system
+                const users = await fetchJson('/api/users');
+                
+                // 2. Fetch pinned settings from the Database to sync our local Set
+                // This ensures the frontend knows which users are pinned on page load
+                const pinnedData = await fetchJson('/api/conversations/pinned');
+                
+                if (pinnedData && pinnedData.success) {
+                    // Clear the current local set to avoid duplicates or stale data
+                    pinnedUsers.clear();
+                    
+                    // Populate the set with otherUserId from each setting object
+                    // We convert to String to ensure matching works correctly in the filter
+                    pinnedData.pinned.forEach(settings => {
+                        if (settings.isPinned) {
+                            pinnedUsers.add(String(settings.otherUserId));
+                        }
+                    });
+                }
+
+                const convList = document.getElementById('conversation-list');
+                if (!convList) return;
+                convList.innerHTML = '';
+                
+                // 3. Render both sections now that the pinnedUsers set is synchronized
+                renderConversations(users);
+                renderPinnedUsers(users);
+                
+                console.log(`✅ Synced ${pinnedUsers.size} pins from database`);
+            } catch (error) { 
+                console.error('❌ Error loading conversations:', error); 
+            }
         }
+        
 
         function renderPinnedUsers(users) {
             const pinsSection = document.getElementById('my-pins-section');
             const pinsList = document.getElementById('pins-list');
-
+            
             const pinnedUsersList = users.filter(u => pinnedUsers.has(String(u.id)));
-
+            
             if (pinnedUsersList.length === 0) {
                 pinsSection.classList.add('empty');
                 pinsSection.classList.remove('has-pins');
                 pinsList.innerHTML = '';
                 return;
             }
-
-            pinsSection.classList.remove('empty');
-            pinsSection.classList.add('has-pins');
-
-            const html = pinnedUsersList.map(u => {
+            
+            pinsSection.classList.remove('empty').classList.add('has-pins');
+            pinsList.innerHTML = pinnedUsersList.map(u => {
                 const initial = u.fullName.charAt(0).toUpperCase();
-                const statusInfo = STATUS_MAP[u.status] || STATUS_MAP['AVAILABLE'];
-                const showIndicator = u.status && u.status !== 'INVISIBLE';
+                const status = u.status || 'AVAILABLE';
+                const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
+                
+                const escapedName = u.fullName.replace(/'/g, "\\'");
+                const escapedDept = (u.department || 'N/A').replace(/'/g, "\\'");
+                const escapedEmail = (u.email || '').replace(/'/g, "\\'");
+                const escapedUsername = (u.username || '').replace(/'/g, "\\'");
 
                 return `
-                <div class="pin-item" id="pin-${u.id}" onclick="startDirectChat('${u.id}', '${u.fullName.replace(/'/g, "\\'")}', '${u.department || ''}', '${u.email || ''}', '${u.username || ''}', '${u.status || 'AVAILABLE'}', event)">
+                <div class="pin-item" id="pin-${u.id}" 
+                     onclick="startDirectChat('${u.id}', '${escapedName}', '${escapedDept}', '${escapedEmail}', '${escapedUsername}', '${status}')">
                     <div class="pin-avatar">
                         ${initial}
-                        ${showIndicator ? `<div class="online-indicator ${statusInfo.dotClass}"></div>` : ''}
+                        <div class="online-indicator ${statusInfo.dotClass}"></div>
                     </div>
                     <div class="pin-content">
-                        <div class="pin-name">
-                            <span class="pin-indicator-icon">📌</span>${u.fullName}
-                        </div>
+                        <div class="pin-name">📌 ${u.fullName}</div>
                     </div>
-                    <button class="btn-unpin" onclick="unpinConversation(event, '${u.id}')" title="Unpin">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                `;
+                    <button class="btn-unpin" onclick="unpinConversation(event, '${u.id}')" title="Unpin">✕</button>
+                </div>`;
             }).join('');
-
-            pinsList.innerHTML = html;
         }
 
-        function switchSection(section) {
-            currentSection = section;
 
-            document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
-            document.getElementById(`nav-${section}`).classList.add('active');
-
-            if (section === 'chats') {
-                loadConversations();
-            }
-        }
-
-        /**
- * 🆕 NEW FUNCTION: Load Recent Conversations
- * This loads all users who have had conversations with you
- */
-async function loadConversations() {
-    try {
-        console.log('📋 Loading conversations...');
-        
-        // Fetch all active users
-        const usersResponse = await fetch('/api/users');
-        const users = await usersResponse.json();
-        
-        const conversationListEl = document.getElementById('conversation-list');
-        if (!conversationListEl) {
-            console.error('❌ conversation-list element not found');
-            return;
-        }
-        
-        conversationListEl.innerHTML = ''; // Clear existing
-        
-        if (users.length === 0) {
-            conversationListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">No users available</div>';
-            return;
-        }
-        
-        // For each user, try to get conversation and check for messages
-        const conversationsData = [];
-        
-        for (const user of users) {
-            try {
-                // Try to create/get conversation
-                const convResponse = await fetch('/api/conversations', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `recipientId=${user.id}`
-                });
-                
-                if (convResponse.ok) {
-                    const convData = await convResponse.json();
-                    const conversationId = convData.conversationId;
-                    
-                    // Get messages for this conversation
-                    const messagesResponse = await fetch(`/api/conversations/${conversationId}/messages`);
-                    if (messagesResponse.ok) {
-                        const messages = await messagesResponse.json();
-                        
-                        if (messages.length > 0) {
-                            const lastMessage = messages[messages.length - 1];
-                            const unreadCount = messages.filter(m => !m.isRead && m.senderId !== myId).length;
-                            
-                            conversationsData.push({
-                                user: user,
-                                conversationId: conversationId,
-                                lastMessage: lastMessage,
-                                unreadCount: unreadCount,
-                                timestamp: new Date(lastMessage.createdAt)
-                            });
-                        }
-                    }
-                }
-            } catch (err) {
-                console.error('Error loading conversation for user', user.id, err);
-            }
-        }
-        
-        // Sort by most recent message
-        conversationsData.sort((a, b) => b.timestamp - a.timestamp);
-        
-        if (conversationsData.length === 0) {
-            conversationListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b; font-size: 13px;">No conversations yet<br><span style="font-size: 11px; color: #94a3b8;">Click + to start chatting</span></div>';
-            return;
-        }
-        
-        // Render conversations
-        conversationsData.forEach(convData => {
-            const conversationItem = createConversationItem(convData);
-            conversationListEl.appendChild(conversationItem);
-        });
-        
-        console.log(`✅ Loaded ${conversationsData.length} conversations`);
-        
-    } catch (error) {
-        console.error('❌ Error loading conversations:', error);
-        const conversationListEl = document.getElementById('conversation-list');
-        if (conversationListEl) {
-            conversationListEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444; font-size: 13px;">Error loading conversations</div>';
-        }
-    }
-}
-
-// ============================================
-// 2. CREATE CONVERSATION ITEM ELEMENT
-// ============================================
-
-function createConversationItem(convData) {
-    const { user, conversationId, lastMessage, unreadCount } = convData;
-    
-    const div = document.createElement('div');
-    div.className = 'conversation-item';
-    div.setAttribute('data-conversation-id', conversationId);
-    div.setAttribute('data-user-id', user.id);
-    
-    if (unreadCount > 0) {
-        div.classList.add('has-unread');
-    }
-    
-    // Get status color
-    const statusClass = getStatusClass(user.status || 'AVAILABLE');
-    
-    // Format last message time
-    const timeStr = formatMessageTime(lastMessage.createdAt);
-    
-    // Last message preview
-    let messagePreview = truncateText(lastMessage.content, 35);
-    if (lastMessage.senderId === myId) {
-        messagePreview = 'You: ' + messagePreview;
-    }
-    
-    // Unread badge
-    const unreadBadge = unreadCount > 0 ? 
-        `<span class="unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</span>` : '';
-    
-    div.innerHTML = `
-        <div class="conversation-avatar">
-            <span>${getInitials(user.fullName)}</span>
-            <div class="online-indicator ${statusClass}"></div>
-        </div>
-        <div class="conversation-info">
-            <div class="conversation-header">
-                <span class="conversation-name">${escapeHtml(user.fullName)}</span>
-                <span class="conversation-time">${timeStr}</span>
-            </div>
-            <div class="conversation-preview">
-                <span class="preview-text">${escapeHtml(messagePreview)}</span>
-                ${unreadBadge}
-            </div>
-        </div>
-    `;
-    
-    // Add click handler
-    div.onclick = (event) => {
-        event.stopPropagation();
-        openDirectConversation(conversationId, user);
-    };
-    
-    return div;
-}
-
-// ============================================
-// 3. OPEN DIRECT CONVERSATION (ENHANCED)
-// ============================================
-
-async function openDirectConversation(conversationId, user) {
-    try {
-        currentId = conversationId;
-        currentType = 'direct';
-        
-        console.log(`💬 Opening conversation ${conversationId} with ${user.fullName}`);
-        
-        // Hide welcome, show chat
-        document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('chat-window').style.display = 'flex';
-        
-        // Update chat header
-        document.getElementById('chat-header-name').textContent = user.fullName;
-        document.getElementById('chat-avatar-initial').textContent = getInitials(user.fullName);
-        
-        const statusInfo = statusMap[user.status] || statusMap['AVAILABLE'];
-        document.getElementById('chat-header-status').textContent = statusInfo.text;
-        
-        const indicator = document.getElementById('chat-header-indicator');
-        indicator.className = 'online-indicator ' + statusInfo.dotClass;
-        
-        // Clear previous messages
-        document.getElementById('messages-container').innerHTML = '';
-        allMessages = [];
-        
-        // Load messages
-        const response = await fetch(`/api/conversations/${conversationId}/messages`);
-        const messages = await response.json();
-        
-        messages.forEach(msg => {
-            allMessages.push(msg);
-            displayNewMessage(msg);
-        });
-        
-        // Subscribe to conversation
-        // subscribeToConversation(conversationId);
-        /*
- * ============================================
- * 7. ENHANCED CONVERSATION SUBSCRIPTION
- * ============================================
- * FIND THE subscribeToConversation FUNCTION in your code
- * REPLACE the message handler inside it with this:
- */
-
-// Inside subscribeToConversation function:
-const subscription = stompClient.subscribe(`/topic/conversation.${conversationId}`, (message) => {
-    const msg = JSON.parse(message.body);
-    
-    console.log('📨 Received message via WebSocket:', msg);
-    
-    // Check if message already exists (avoid duplicates)
-    const existingMsg = allMessages.find(m => m.id === msg.id);
-    if (existingMsg) {
-        console.log('⚠️ Message already exists, updating status');
-        // Update the message status if it changed
-        if (existingMsg.deliveryStatus !== msg.deliveryStatus) {
-            existingMsg.deliveryStatus = msg.deliveryStatus;
-            existingMsg.isRead = msg.isRead;
-            existingMsg.isDelivered = msg.isDelivered;
-            
-            // Update UI
-            const msgEl = document.querySelector(`[data-message-id="${msg.id}"]`);
-            if (msgEl) {
-                updateMessageStatusDisplay(msgEl, msg.deliveryStatus);
-            }
-        }
-        return;
-    }
-    
-    // Add to messages array
-    allMessages.push(msg);
-    
-    // Display the message
-    displayNewMessage(msg);
-    
-    // Auto-mark as read if conversation is active and message is not from me
-    if (msg.senderId !== myId && currentId == conversationId && currentType === 'direct') {
-        setTimeout(() => {
-            if (stompClient && stompClient.connected) {
-                stompClient.send("/app/chat.messageRead", {}, JSON.stringify({
-                    messageId: msg.id
-                }));
-            }
-        }, 500);
-    }
-    
-    // Update conversation list
-    updateConversationListAfterMessage(msg);
-    
-    // Scroll to bottom
-    scrollToBottom();
-});
-
-
-
-        
-        // ✅ Mark conversation as read via WebSocket
-        if (stompClient && stompClient.connected) {
-            stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
-                conversationId: conversationId
-            }));
-        }
-        
-        // Update UI - mark as active and remove unread
-        document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
-        const activeConv = document.querySelector(`[data-conversation-id="${conversationId}"]`);
-        if (activeConv) {
-            activeConv.classList.add('active');
-            activeConv.classList.remove('has-unread');
-            
-            // Remove unread badge
-            const badge = activeConv.querySelector('.unread-badge');
-            if (badge) badge.remove();
-        }
-        
-        // Scroll to bottom
-        setTimeout(scrollToBottom, 100);
-        
-        console.log('✅ Conversation opened:', conversationId);
-        
-    } catch (error) {
-        console.error('❌ Error opening conversation:', error);
-    }
-}
-
-
-// ============================================
-// 4. UPDATE CONVERSATION LIST AFTER MESSAGE
-// ============================================
-
-function updateConversationListAfterMessage(message) {
-    const conversationId = message.conversationId;
-    if (!conversationId) return;
-    
-    // Check if conversation item exists
-    let convItem = document.querySelector(`[data-conversation-id="${conversationId}"]`);
-    
-    if (!convItem) {
-        // Conversation doesn't exist in list - reload all conversations
-        console.log('🔄 Conversation not in list, reloading...');
-        loadConversations();
-        return;
-    }
-    
-    // Update last message preview
-    const previewText = convItem.querySelector('.preview-text');
-    if (previewText) {
-        let preview = truncateText(message.content, 35);
-        if (message.senderId === myId) {
-            preview = 'You: ' + preview;
-        }
-        previewText.textContent = preview;
-    }
-    
-    // Update time
-    const timeEl = convItem.querySelector('.conversation-time');
-    if (timeEl) {
-        timeEl.textContent = formatMessageTime(message.createdAt);
-    }
-    
-    // If message is not from current user and conversation is not active, add unread indicator
-    if (message.senderId !== myId && !convItem.classList.contains('active')) {
-        convItem.classList.add('has-unread');
-        
-        // Add or update unread badge
-        let badge = convItem.querySelector('.unread-badge');
-        const previewDiv = convItem.querySelector('.conversation-preview');
-        
-        if (!badge && previewDiv) {
-            badge = document.createElement('span');
-            badge.className = 'unread-badge';
-            badge.textContent = '1';
-            previewDiv.appendChild(badge);
-        } else if (badge) {
-            const count = parseInt(badge.textContent) || 0;
-            badge.textContent = count + 1;
-        }
-    }
-    
-    // Move conversation to top of list
-    const conversationList = document.getElementById('conversation-list');
-    if (conversationList && convItem.parentNode === conversationList) {
-        conversationList.insertBefore(convItem, conversationList.firstChild);
-    }
-}
-
-// ============================================
-// 5. HELPER FUNCTIONS
-// ============================================
-
-function getInitials(name) {
-    if (!name) return 'U';
-    const parts = name.trim().split(' ');
-    if (parts.length >= 2) {
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-}
-
-function getStatusClass(status) {
-    if (!status) return 'available';
-    const statusLower = status.toLowerCase();
-    if (statusLower.includes('available') || statusLower === 'online') return 'available';
-    if (statusLower === 'away') return 'away';
-    if (statusLower === 'busy' || statusLower === 'engaged') return 'busy';
-    if (statusLower === 'dnd' || statusLower.includes('meeting')) return 'dnd';
-    if (statusLower === 'invisible' || statusLower === 'offline') return 'invisible';
-    return 'available';
-}
-
-
-function formatMessageTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-    
-    if (diffMins < 1) return 'now';
-    if (diffMins < 60) return `${diffMins}m`;
-    if (diffHours < 24) return `${diffHours}h`;
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays}d`;
-    
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-function truncateText(text, maxLength) {
-    if (!text) return '';
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-
-
-/**
- * 🔧 UPDATED: Load Conversation - Mark messages as read
- */
-async function loadConversation(conversationId, recipient) {
-    try {
-        currentId = conversationId;
-        currentType = 'direct';
-        currentConversationId = conversationId;
-        currentRecipient = recipient;
-
-        // Show chat window
-        document.getElementById('welcome-screen').classList.add('hidden');
-        document.getElementById('chat-window').classList.remove('hidden');
-
-        // Update chat header
-        updateChatHeader(recipient);
-
-        // Load messages
-        const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
-        allMessages = messages || [];
-        renderMessages(allMessages);
-
-        // Subscribe to conversation
-        subscribeToConversation(conversationId);
-
-        // ✅ Mark conversation as read via WebSocket
-        if (stompClient && stompClient.connected) {
-            stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
-                conversationId: conversationId
-            }));
-        }
-
-        // Update UI - mark as active and remove unread indicator
-        document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
-        const activeConv = document.querySelector(`#conv-${recipient.id}`);
-        if (activeConv) {
-            activeConv.classList.add('active');
-            activeConv.classList.remove('has-unread');
-            
-            // Remove unread badge
-            const badge = activeConv.querySelector('.unread-badge');
-            if (badge) badge.remove();
-        }
-
-        console.log('✅ Conversation loaded:', conversationId);
-    } catch (error) {
-        console.error('❌ Error loading conversation:', error);
-    }
-}
-       
-        function updateChatHeader(recipient) {
-            const initial = recipient.fullName.charAt(0).toUpperCase();
-            document.getElementById('chat-avatar-initial').textContent = initial;
-            document.getElementById('chat-header-name').textContent = recipient.fullName;
-
-            // Update status
-            const status = recipient.status || 'AVAILABLE';
-            const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
-
-            const statusEl = document.getElementById('chat-header-status');
-            const statusContainer = document.getElementById('chat-header-status-container');
-            const indicator = document.getElementById('chat-header-indicator');
-
-            statusEl.textContent = statusInfo.text;
-            statusContainer.className = `chat-header-status ${statusInfo.textClass}`;
-            indicator.className = `online-indicator ${statusInfo.dotClass}`;
-        }
 
         function renderConversations(users) {
             const unpinnedUsers = users.filter(u => !pinnedUsers.has(String(u.id)));
-
-            const html = unpinnedUsers.map(u => {
+            const convList = document.getElementById('conversation-list');
+            
+            convList.innerHTML = unpinnedUsers.map(u => {
                 const initial = u.fullName.charAt(0).toUpperCase();
                 const statusInfo = STATUS_MAP[u.status] || STATUS_MAP['AVAILABLE'];
-                const showIndicator = u.status && u.status !== 'INVISIBLE';
                 const isPinned = pinnedUsers.has(String(u.id));
+                const escapedName = u.fullName.replace(/'/g, "\\'");
+                const escapedDept = (u.department || 'N/A').replace(/'/g, "\\'");
+                const escapedEmail = (u.email || '').replace(/'/g, "\\'");
+                const escapedUsername = (u.username || '').replace(/'/g, "\\'");
+                const status = u.status || 'AVAILABLE';
 
                 return `
-                <div class="conversation-item" id="conv-${u.id}" onclick="startDirectChat('${u.id}', '${u.fullName.replace(/'/g, "\\'")}', '${u.department || ''}', '${u.email || ''}', '${u.username || ''}', '${u.status || 'AVAILABLE'}', event)">
-                    <div class="conversation-avatar">
-                        ${initial}
-                        ${showIndicator ? `<div class="online-indicator ${statusInfo.dotClass}"></div>` : ''}
-                    </div>
-                    <div class="conversation-content">
-                        <div class="conversation-name">${u.fullName}</div>
-                        <div class="conversation-status">${statusInfo.text}</div>
+                <div class="conversation-item" id="conv-${u.id}">
+                    <!-- Avatar and content area triggers the chat -->
+                    <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;" 
+                         onclick="startDirectChat('${u.id}', '${escapedName}', '${escapedDept}', '${escapedEmail}', '${escapedUsername}', '${status}')">
+                        <div class="conversation-avatar">
+                            ${initial}
+                            <div class="online-indicator ${statusInfo.dotClass}"></div>
+                        </div>
+                        <div class="conversation-content">
+                            <div class="conversation-name">${u.fullName}</div>
+                            <div class="conversation-status">${statusInfo.text}</div>
+                        </div>
                     </div>
                     
                     <div class="conversation-actions">
                         <button class="btn-conv-action" onclick="showMoreMenu(event, '${u.id}', ${isPinned})" title="More">
-                            <svg fill="currentColor" viewBox="0 0 24 24">
-                                <circle cx="12" cy="5" r="2"></circle>
-                                <circle cx="12" cy="12" r="2"></circle>
-                                <circle cx="12" cy="19" r="2"></circle>
-                            </svg>
+                            <svg fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
                         </button>
-                        <button class="btn-conv-action" onclick="showUserInfo(event, '${u.id}', '${u.fullName.replace(/'/g, "\\'")}', '${u.email || ''}', '${u.department || ''}', '${u.username || ''}', '${u.status || 'AVAILABLE'}')" title="Show Info">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                        <button class="btn-conv-action" onclick="showUserInfo(event, '${u.id}', '${escapedName}', '${escapedEmail}', '${escapedDept}', '${escapedUsername}', '${status}')" title="Info">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </button>
-                        <button class="btn-conv-action" onclick="removeConversation(event, '${u.id}', '${u.fullName.replace(/'/g, "\\'")}' )" title="Remove">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
+                        <button class="btn-conv-action" onclick="removeConversation(event, '${u.id}', '${escapedName}')" title="Remove">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
-                </div>
-                `;
+                </div>`;
             }).join('');
-            document.getElementById('conversation-list').innerHTML = html;
         }
 
-        function showMoreMenu(event, userId, isPinned) {
+        async function showMoreMenu(event, userId, isPinned) {
             event.stopPropagation();
-
             document.querySelectorAll('.more-menu').forEach(menu => menu.remove());
 
-            const convItem = document.getElementById(`conv-${userId}`);
+            // Fetch current settings for this conversation
+            const settings = await fetchJson(`/api/conversations/settings/${userId}`);
+            const isMuted = settings && settings.isMuted;
+
+            const convItem = document.getElementById(`conv-${userId}`) || document.getElementById(`pin-${userId}`);
             if (!convItem) return;
 
             const menu = document.createElement('div');
@@ -2712,32 +1874,22 @@ async function loadConversation(conversationId, recipient) {
 
             const pinText = isPinned ? 'Unpin conversation' : 'Pin conversation';
             const pinAction = isPinned ? `unpinConversation(event, '${userId}')` : `pinConversation(event, '${userId}')`;
+            
+            const muteText = isMuted ? 'Unmute' : 'Mute';
+            const muteIcon = isMuted ? '🔊' : '🔇';
 
             menu.innerHTML = `
-                <button class="more-menu-item" onclick="markAsUnread(event, '${userId}')">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                    Mark as unread
+                <button class="more-menu-item" onclick="markAsUnreadLocally(event, '${userId}')">
+                    <span style="margin-right: 8px;">✉️</span> Mark as unread
                 </button>
-                <button class="more-menu-item" onclick="muteConversation(event, '${userId}')">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
-                    </svg>
-                    Mute conversation
+                <button class="more-menu-item" onclick="toggleMute(event, '${userId}', ${isMuted})">
+                    <span style="margin-right: 8px;">${muteIcon}</span> ${muteText}
                 </button>
                 <button class="more-menu-item" onclick="${pinAction}">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                    </svg>
-                    ${pinText}
+                    <span style="margin-right: 8px;">📌</span> ${pinText}
                 </button>
                 <button class="more-menu-item danger" onclick="removeConversation(event, '${userId}', 'User')">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    Remove
+                    <span style="margin-right: 8px;">🗑️</span> Remove
                 </button>
             `;
 
@@ -2745,54 +1897,53 @@ async function loadConversation(conversationId, recipient) {
             convItem.appendChild(menu);
         }
 
-        function showUserInfo(event, userId, fullName, email, department, username, status) {
+                // Add these two helper functions
+        async function toggleMute(event, userId, currentMutedState) {
             event.stopPropagation();
+            const action = currentMutedState ? 'unmute' : 'mute';
+            try {
+                const response = await fetch(`/api/conversations/${action}/${userId}`, { method: 'POST' });
+                if (response.ok) {
+                    loadConversations(); // Refresh UI to reflect changes
+                }
+            } catch (e) {
+                console.error(`Failed to ${action} conversation:`, e);
+            }
+        }
 
-            const initial = fullName.charAt(0).toUpperCase();
-            const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
+        function markAsUnreadLocally(event, userId) {
+            event.stopPropagation();
+            const item = document.getElementById(`conv-${userId}`) || document.getElementById(`pin-${userId}`);
+            if (item) {
+                item.classList.add('has-unread');
+                // Ensure the menu closes
+                document.querySelectorAll('.more-menu').forEach(menu => menu.remove());
+            }
+            // Trigger backend call
+            fetch(`/api/conversations/unread/${userId}`, { method: 'POST' });
+        }
+        
 
-            document.getElementById('info-avatar').textContent = initial;
+        function showUserInfo(event, userId, fullName, email, department, username, status) {
+            if (event) event.stopPropagation();
+            document.getElementById('info-avatar').textContent = fullName.charAt(0).toUpperCase();
             document.getElementById('info-name').textContent = fullName;
             document.getElementById('info-email').textContent = email || 'N/A';
             document.getElementById('info-department').textContent = department || 'N/A';
-            document.getElementById('info-status').textContent = statusInfo.text;
+            document.getElementById('info-status').textContent = (STATUS_MAP[status] || STATUS_MAP['AVAILABLE']).text;
             document.getElementById('info-username').textContent = username || 'N/A';
-
             showModal('user-info-modal');
         }
 
         async function removeConversation(event, userId, userName) {
-            event.stopPropagation();
-
+            if (event) event.stopPropagation();
             if (!confirm(`Remove conversation with ${userName}?`)) return;
-
-            try {
-                const convItem = document.getElementById(`conv-${userId}`);
-                if (convItem) convItem.style.display = 'none';
-
-                if (pinnedUsers.has(String(userId))) {
-                    unpinConversation(event, userId);
-                }
-            } catch (e) {
-                console.error('Error removing conversation:', e);
-            }
-        }
-
-        function markAsUnread(event, userId) {
-            event.stopPropagation();
-            console.log('Mark as unread:', userId);
-            document.querySelectorAll('.more-menu').forEach(menu => menu.remove());
-        }
-
-        function muteConversation(event, userId) {
-            event.stopPropagation();
-            console.log('Mute conversation:', userId);
-            document.querySelectorAll('.more-menu').forEach(menu => menu.remove());
+            const item = document.getElementById(`conv-${userId}`);
+            if (item) item.style.display = 'none';
         }
 
         function filterConversations(query) {
-            const items = document.querySelectorAll('.conversation-item');
-            items.forEach(item => {
+            document.querySelectorAll('.conversation-item').forEach(item => {
                 const name = item.querySelector('.conversation-name').textContent.toLowerCase();
                 item.style.display = name.includes(query.toLowerCase()) ? 'flex' : 'none';
             });
@@ -2800,692 +1951,114 @@ async function loadConversation(conversationId, recipient) {
 
         async function startDirectChat(userId, fullName, department, email, username, status) {
             try {
-                const response = await fetchJson(`/api/conversations?recipientId=${userId}`, {
-                    method: 'POST'
-                });
-
-                const recipient = {
-                    id: userId,
-                    fullName: fullName,
-                    department: department,
-                    email: email,
-                    username: username,
-                    status: status || 'AVAILABLE'
-                };
-
-                loadConversation(response.conversationId, recipient);
-
-            } catch (error) {
-                console.error('Error starting conversation:', error);
-            }
+                const response = await fetchJson(`/api/conversations?recipientId=${userId}`, { method: 'POST' });
+                currentRecipient = { id: userId, fullName, department, email, username, status: status || 'AVAILABLE' };
+                loadConversation(response.conversationId, currentRecipient);
+            } catch (error) { console.error('Error starting conversation:', error); }
         }
 
-        function openChatWindow(userId, fullName, status) {
-            console.log('🔍 Opening chat with status:', status); // ← ADD THIS LINE
-
+        async function loadConversation(conversationId, recipient) {
+            currentId = conversationId;
+            currentType = 'direct';
+            currentRecipient = recipient;
             document.getElementById('welcome-screen').classList.add('hidden');
             document.getElementById('chat-window').classList.remove('hidden');
-
-            const initial = fullName.charAt(0).toUpperCase();
-            const statusInfo = STATUS_MAP[status] || STATUS_MAP['AVAILABLE'];
-
-            document.getElementById('chat-avatar-initial').textContent = initial;
-            document.getElementById('chat-header-name').textContent = fullName;
-            updateChatHeaderStatus(status, statusInfo.text);
-
-            document.getElementById('messages-container').innerHTML = '';
+            updateChatHeader(recipient);
+            const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
+            allMessages = messages || [];
+            renderMessages(allMessages);
+            subscribeToConversation(conversationId);
+            document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
+            const activeConv = document.getElementById(`conv-${recipient.id}`) || document.getElementById(`pin-${recipient.id}`);
+            if (activeConv) activeConv.classList.add('active');
         }
 
-        // ============================================
-        // UPDATE loadMessages TO MARK AS READ
-        // ============================================
-
-        async function loadMessages(conversationId) {
-            try {
-                const messages = await fetchJson(`/api/conversations/${conversationId}/messages`);
-                allMessages = messages || [];
-                renderMessages(messages);
-
-                // Mark conversation as read when opening
-                setTimeout(() => {
-                    markConversationAsRead();
-                }, 1000);
-            } catch (e) {
-                console.error('Error loading messages:', e);
-            }
+        function updateChatHeader(recipient) {
+            document.getElementById('chat-avatar-initial').textContent = recipient.fullName.charAt(0).toUpperCase();
+            document.getElementById('chat-header-name').textContent = recipient.fullName;
+            updateChatHeaderStatus(recipient.status || 'AVAILABLE');
         }
-
-        // ============================================
-        // UPDATE renderMessages TO USE NEW FORMAT
-        // ============================================
 
         function renderMessages(messages) {
             const container = document.getElementById('messages-container');
             container.innerHTML = '';
-
-            if (!messages || messages.length === 0) return;
-
+            if (!messages?.length) return;
             let lastDate = null;
-            let lastSender = null;
-
-            messages.forEach((msg, index) => {
+            messages.forEach(msg => {
                 const msgDate = new Date(msg.createdAt).toDateString();
-
                 if (msgDate !== lastDate) {
                     container.appendChild(createDateSeparator(msg.createdAt));
                     lastDate = msgDate;
-                    lastSender = null;
                 }
-
-                const isSent = String(msg.senderId) === String(myId);
-                const showSender = lastSender !== msg.senderId;
-
-                const messageGroup = createMessageElementWithStatus(msg, isSent, showSender);
-                container.appendChild(messageGroup);
-
-                lastSender = msg.senderId;
+                container.appendChild(createMessageElementWithStatus(msg, String(msg.senderId) === String(myId), true));
             });
-
             container.scrollTop = container.scrollHeight;
         }
-
 
         function createDateSeparator(timestamp) {
             const div = document.createElement('div');
             div.className = 'date-separator';
-
-            const date = new Date(timestamp);
-            const today = new Date();
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            let dateText;
-            if (date.toDateString() === today.toDateString()) {
-                dateText = 'Today';
-            } else if (date.toDateString() === yesterday.toDateString()) {
-                dateText = 'Yesterday';
-            } else {
-                dateText = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-            }
-
-            div.innerHTML = `
-                <div class="date-separator-line"></div>
-                <div class="date-separator-text">${dateText}</div>
-                <div class="date-separator-line"></div>
-            `;
+            div.innerHTML = `<div class="date-separator-line"></div><div class="date-separator-text">${new Date(timestamp).toLocaleDateString()}</div><div class="date-separator-line"></div>`;
             return div;
         }
-
-        function createMessageElement(msg, isSent, showSender) {
-            const div = document.createElement('div');
-            div.className = `message-group ${isSent ? 'sent' : 'received'}`;
-
-            let html = '';
-
-            if (!isSent && showSender) {
-                const initial = msg.senderName.charAt(0).toUpperCase();
-                html += `
-                    <div class="message-sender">
-                        <div class="message-sender-avatar">${initial}</div>
-                        <div class="message-sender-name">${msg.senderName}</div>
-                    </div>
-                `;
-            }
-
-            if (msg.type === 'FILE') {
-                html += createFileAttachment(msg);
-            } else {
-                html += `
-                    <div class="message-bubble">
-                        ${msg.content}
-                    </div>
-                `;
-            }
-
-            const time = new Date(msg.createdAt).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-            html += `<div class="message-time">${time}</div>`;
-
-            div.innerHTML = html;
-            return div;
-        }
-
-        function createFileAttachment(msg) {
-            const fileName = msg.content.split('/').pop();
-            const fileExt = fileName.split('.').pop().toLowerCase();
-            let fileIcon = '📎';
-
-            if (['pdf'].includes(fileExt)) fileIcon = '📄';
-            else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) fileIcon = '🖼️';
-            else if (['doc', 'docx'].includes(fileExt)) fileIcon = '📝';
-            else if (['xls', 'xlsx'].includes(fileExt)) fileIcon = '📊';
-
-            return `
-                <div class="file-attachment" onclick="window.open('${msg.content}', '_blank')">
-                    <div class="file-icon">${fileIcon}</div>
-                    <div class="file-info">
-                        <div class="file-name">${fileName}</div>
-                        <div class="file-size">5.2 KB</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function subscribeToConversation(conversationId) {
-            subscriptions.forEach(s => s.unsubscribe());
-            subscriptions = [];
-
-            subscriptions.push(stompClient.subscribe(`/topic/conversation.${conversationId}`, (message) => {
-                const data = JSON.parse(message.body);
-                displayNewMessage(data);
-            }));
-        }
-
-
-        /**
- * 🔧 UPDATED: Display New Message with Conversation List Update
- * Replace the existing displayNewMessage function with this
- */
-function displayNewMessage(msgData) {
-    // Check if message already exists (avoid duplicates)
-    const existingMsg = allMessages.find(m =>
-        (m.id && m.id === msgData.id) ||
-        (m.tempId && m.tempId === msgData.tempId)
-    );
-
-    if (existingMsg && msgData.id) {
-        // Update existing message with real ID
-        existingMsg.id = msgData.id;
-        existingMsg.deliveryStatus = msgData.deliveryStatus || existingMsg.deliveryStatus;
-        
-        // Update the visual display
-        const msgElement = document.querySelector(`[data-temp-id="${msgData.tempId}"]`) ||
-                          document.querySelector(`[data-message-id="${msgData.id}"]`);
-        if (msgElement) {
-            msgElement.setAttribute('data-message-id', msgData.id);
-            msgElement.removeAttribute('data-temp-id');
-            updateMessageStatusDisplay(msgElement, msgData.deliveryStatus || 'SENT');
-        }
-        return;
-    }
-
-    allMessages.push(msgData);
-
-    const container = document.getElementById('messages-container');
-    const isSent = String(msgData.senderId) === String(myId);
-
-    const messageGroup = createMessageElementWithStatus(msgData, isSent, true);
-    container.appendChild(messageGroup);
-
-    container.scrollTop = container.scrollHeight;
-
-    // ✅ Update conversation list - move this conversation to top
-    if (!isSent) {
-        updateConversationListOrder(msgData.senderId, msgData.senderName);
-        
-        // Add unread indicator if not currently viewing this conversation
-        if (!currentId || String(currentId) !== String(msgData.conversationId)) {
-            const convEl = document.querySelector(`#conv-${msgData.senderId}`);
-            if (convEl) {
-                convEl.classList.add('has-unread');
-            }
-        }
-    }
-
-    // ✅ Send read receipt if message is from someone else and chat is open
-    if (!isSent && currentId && msgData.id) {
-        // Only send read receipt if we're currently viewing this conversation
-        if ((currentType === 'direct' && msgData.conversationId == currentId) ||
-            (currentType === 'group' && msgData.chatRoomId == currentId)) {
-            setTimeout(() => {
-                sendReadReceipt(msgData.id);
-            }, 500);
-        }
-    }
-}
-
-/**
- * 🆕 NEW FUNCTION: Update Conversation List Order
- * Move conversation to top when new message arrives
- */
-function updateConversationListOrder(userId, userName) {
-    const convEl = document.querySelector(`#conv-${userId}`);
-    if (convEl) {
-        const conversationList = document.getElementById('conversation-list');
-        // Move to top
-        conversationList.insertBefore(convEl, conversationList.firstChild);
-        
-        // Add a subtle highlight animation
-        convEl.style.animation = 'none';
-        setTimeout(() => {
-            convEl.style.animation = 'highlight 1s ease';
-        }, 10);
-    }
-}
-
-        function sendMessage() {
-            const input = document.getElementById('message-input');
-            const msg = input.value.trim();
-            if (!msg || !currentId) return;
-
-            // Generate temporary ID for tracking
-            const tempId = `temp-${Date.now()}`;
-
-            // Create optimistic message object
-            const optimisticMessage = {
-                tempId: tempId,
-                id: null,
-                senderId: myId,
-                senderName: 'You',
-                conversationId: currentType === 'direct' ? currentId : null,
-                chatRoomId: currentType === 'group' ? currentId : null,
-                content: msg,
-                type: 'TEXT',
-                isRead: false,
-                deliveryStatus: 'SENT', // Initial status
-                createdAt: new Date().toISOString()
-            };
-
-            // Display message immediately
-            allMessages.push(optimisticMessage);
-            displayNewMessage(optimisticMessage);
-
-            // Send to server
-            const payload = {
-                chatType: currentType === 'direct' ? 'conversation' : 'chatroom',
-                chatId: currentId,
-                content: msg,
-                tempId: tempId
-            };
-
-            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(payload));
-            input.value = '';
-
-            console.log('📤 Message sent:', tempId);
-        }
-
-
-        function updateMessageWithId(tempId, messageId, deliveryStatus) {
-            // Find message by tempId and update with real ID and status
-            const messageEl = document.querySelector(`[data-temp-id="${tempId}"]`);
-            if (messageEl) {
-                messageEl.setAttribute('data-message-id', messageId);
-                messageEl.removeAttribute('data-temp-id');
-
-                // Update status indicator
-                const statusEl = messageEl.querySelector('.msg-status');
-                if (statusEl) {
-                    if (deliveryStatus === 'DELIVERED') {
-                        statusEl.className = 'msg-status delivered';
-                        statusEl.textContent = '✓✓';
-                    } else if (deliveryStatus === 'READ') {
-                        statusEl.className = 'msg-status read';
-                        statusEl.textContent = '✓✓';
-                    }
-                }
-            }
-        }
-        
-
-        // ============================================
-        // DISPLAY OPTIMISTIC MESSAGE
-        // ============================================
-
-        function displayOptimisticMessage(msgData) {
-            const container = document.getElementById('messages-container');
-            const isSent = true; // Always true for messages we send
-
-            const messageGroup = createMessageElementWithStatus(msgData, isSent, true);
-            container.appendChild(messageGroup);
-            container.scrollTop = container.scrollHeight;
-        }
-
-
-        // ============================================
-        // CREATE MESSAGE WITH STATUS TICKS
-        // ============================================
 
         function createMessageElementWithStatus(msg, isSent, showSender) {
             const div = document.createElement('div');
             div.className = `message-group ${isSent ? 'sent' : 'received'}`;
-
-            if (msg.tempId) {
-                div.setAttribute('data-temp-id', msg.tempId);
-            }
-            if (msg.id) {
-                div.setAttribute('data-message-id', msg.id);
-            }
-
-            let html = '';
-
-            if (!isSent && showSender) {
-                const initial = msg.senderName.charAt(0).toUpperCase();
-                html += `
-            <div class="message-sender">
-                <div class="message-sender-avatar">${initial}</div>
-                <div class="message-sender-name">${msg.senderName}</div>
-            </div>
-        `;
-            }
-
-            if (msg.type === 'FILE') {
-                html += createFileAttachment(msg);
-            } else {
-                html += `
-            <div class="message-bubble">
-                ${msg.content}
-            </div>
-        `;
-            }
-
-            const time = new Date(msg.createdAt).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-
-            // Add delivery status ticks for sent messages
-            const statusHtml = isSent ? renderMessageStatus(msg, true) : '';
-
-            html += `
-        <div class="message-time">
-            ${time}
-            ${statusHtml}
-        </div>
-    `;
-
+            if (msg.id) div.setAttribute('data-message-id', msg.id);
+            let html = isSent ? '' : `<div class="message-sender"><div class="message-sender-avatar">${msg.senderName.charAt(0)}</div><div class="message-sender-name">${msg.senderName}</div></div>`;
+            html += `<div class="message-bubble">${msg.content}</div>`;
+            html += `<div class="message-time">${new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${isSent ? renderMessageStatus(msg, true) : ''}</div>`;
             div.innerHTML = html;
             return div;
         }
 
-
-        /**
- * 🔧 UPDATED: Handle Delivery Acknowledgment
- * Replace the existing handleDeliveryAcknowledgment function
- */
-function handleDeliveryAcknowledgment(ack) {
-    console.log('📨 Delivery acknowledgment:', ack);
-
-    if (ack.type === 'MESSAGE_DELIVERED') {
-        const tempId = ack.tempId;
-        const messageId = ack.messageId;
-        const deliveryStatus = ack.deliveryStatus || 'DELIVERED'; // Changed default to DELIVERED
-
-        // Find message by temp ID
-        const messageElement = document.querySelector(`[data-temp-id="${tempId}"]`);
-        if (messageElement) {
-            // Update to real ID
-            messageElement.setAttribute('data-message-id', messageId);
-            messageElement.removeAttribute('data-temp-id');
-
-            // Update status indicator
-            updateMessageStatusDisplay(messageElement, deliveryStatus);
-            
-            console.log(`✅ Message ${messageId} status updated to: ${deliveryStatus}`);
-        }
-
-        // Update message in allMessages array
-        const msgIndex = allMessages.findIndex(m => m.tempId === tempId);
-        if (msgIndex !== -1) {
-            allMessages[msgIndex].id = messageId;
-            allMessages[msgIndex].deliveryStatus = deliveryStatus;
-            delete allMessages[msgIndex].tempId;
-        }
-    }
-}
-
-        // ============================================
-        // STATUS ICONS (TEAMS-LIKE)
-        // ============================================
-
-        function getStatusIcon(status) {
-            switch (status) {
-                case 'SENDING':
-                    return '🕐'; // Clock (sending)
-                case 'SENT':
-                    return '✓'; // Single tick (delivered to server)
-                case 'DELIVERED':
-                    return '✓✓'; // Double tick (delivered to recipient)
-                case 'READ':
-                    return '<span style="color: #0078d4;">✓✓</span>'; // Blue double tick (read)
-                default:
-                    return '';
-            }
-        }
-
-
-        /**
- * 🔧 UPDATED: Handle Read Receipt
- * Replace the existing handleReadReceipt function
- */
-function handleReadReceipt(receipt) {
-    console.log('👁️ Read receipt received:', receipt);
-
-    if (receipt.type === 'MESSAGE_READ') {
-        const messageId = receipt.messageId;
-        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
-
-        if (messageElement) {
-            updateMessageStatusDisplay(messageElement, 'READ');
-            console.log(`✅ Message ${messageId} marked as READ (blue ticks)`);
-        }
-
-        // Update in allMessages array
-        const msg = allMessages.find(m => m.id === messageId);
-        if (msg) {
-            msg.deliveryStatus = 'READ';
-            msg.isRead = true;
-        }
-
-    } else if (receipt.type === 'CONVERSATION_READ') {
-        // Mark all sent messages in conversation as read
-        const conversationId = receipt.conversationId;
-        if (currentId == conversationId && currentType === 'direct') {
-            document.querySelectorAll('.message-group.sent').forEach(msgEl => {
-                updateMessageStatusDisplay(msgEl, 'READ');
-            });
-
-            // Update all messages in array
-            allMessages.forEach(msg => {
-                if (msg.conversationId == conversationId && msg.senderId == myId) {
-                    msg.deliveryStatus = 'READ';
-                    msg.isRead = true;
-                }
-            });
-            
-            console.log(`✅ All messages in conversation ${conversationId} marked as READ`);
-        }
-    }
-}
-
-/**
- * 🔧 UPDATED: Update Message Status Display with proper colors
- * Replace the existing updateMessageStatusDisplay function
- */
-function updateMessageStatusDisplay(messageElement, status) {
-    const statusIcon = messageElement.querySelector('.msg-status');
-    if (statusIcon) {
-        statusIcon.className = `msg-status ${status.toLowerCase()}`;
-
-        if (status === 'READ') {
-            statusIcon.textContent = '✓✓';
-            statusIcon.style.color = '#3b82f6'; // Blue double tick
-            console.log('🔵 Set blue double tick');
-        } else if (status === 'DELIVERED') {
-            statusIcon.textContent = '✓✓';
-            statusIcon.style.color = '#94a3b8'; // Gray double tick
-            console.log('⚪ Set gray double tick');
-        } else {
-            statusIcon.textContent = '✓';
-            statusIcon.style.color = '#94a3b8'; // Gray single tick
-            console.log('⚪ Set gray single tick');
-        }
-    } else {
-        console.warn('❌ No .msg-status element found in message');
-    }
-}
-
-        // ============================================
-        // UPDATE MESSAGE STATUS
-        // ============================================
-
-        function updateMessageStatus(messageElement, newStatus) {
-            const statusIcon = messageElement.querySelector('.message-status-icon');
-            if (statusIcon) {
-                statusIcon.setAttribute('data-status', newStatus);
-                statusIcon.innerHTML = getStatusIcon(newStatus);
-            }
-        }
-
-
-        // ============================================
-        // SEND READ RECEIPTS
-        // ============================================
-
-        function sendReadReceipt(messageId) {
-            if (!stompClient || !stompClient.connected || !messageId) return;
-
-            stompClient.send("/app/chat.messageRead", {}, JSON.stringify({
-                messageId: messageId
-            }));
-
-            console.log('✅ Read receipt sent for message:', messageId);
-        }
-
-        function markConversationAsRead() {
-            if (!stompClient || !stompClient.connected || !currentId || currentType !== 'direct') return;
-
-            stompClient.send("/app/chat.markConversationRead", {}, JSON.stringify({
-                conversationId: currentId
-            }));
-        }
-
-
-        async function handleFileUpload(input) {
-            const file = input.files[0];
-            if (!file || !currentId) return;
-
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("chatId", currentId);
-            formData.append("chatType", 'direct');
-
-            try {
-                const messageData = await fetchJson('/api/chat/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                displayNewMessage(messageData);
-                input.value = "";
-            } catch (err) {
-                alert("File upload failed.");
-            }
-        }
-
-        function closeChat() {
-            document.getElementById('welcome-screen').classList.remove('hidden');
-            document.getElementById('chat-window').classList.add('hidden');
-            currentId = null;
+        function subscribeToConversation(conversationId) {
             subscriptions.forEach(s => s.unsubscribe());
-            subscriptions = [];
-            document.querySelectorAll('.conversation-item, .pin-item').forEach(el => el.classList.remove('active'));
+            subscriptions = [stompClient.subscribe(`/topic/conversation.${conversationId}`, (m) => displayNewMessage(JSON.parse(m.body)))];
         }
 
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            if (modalId === 'new-direct-modal') {
-                loadUsersForModal();
-            }
+        function displayNewMessage(msg) {
+            if (allMessages.find(m => m.id === msg.id)) return;
+            allMessages.push(msg);
+            const container = document.getElementById('messages-container');
+            container.appendChild(createMessageElementWithStatus(msg, String(msg.senderId) === String(myId), true));
+            container.scrollTop = container.scrollHeight;
         }
 
-        function closeModals() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const content = input.value.trim();
+            if (!content || !currentId) return;
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
+                chatType: 'conversation', chatId: currentId, content: content
+            }));
+            input.value = '';
         }
+
+        function showModal(id) { document.getElementById(id).classList.add('active'); if (id==='new-direct-modal') loadUsersForModal(); }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
 
         async function loadUsersForModal() {
-            try {
-                const users = await fetchJson('/api/users');
-                const html = users.map(u => {
-                    const initial = u.fullName.charAt(0).toUpperCase();
-                    return `
-                    <div class="user-select-item" style="background: var(--bg-light); margin: 2px 0; padding: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-radius: 6px;" onclick="startDirectChat('${u.id}', '${u.fullName.replace(/'/g, "\\'")}', '${u.department || ''}', '${u.email || ''}', '${u.username || ''}', '${u.status || 'AVAILABLE'}'); closeModals();">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">${initial}</div>
-                        <div><div style="font-weight: 600;">${u.fullName}</div><span style="font-size: 12px; color: var(--text-muted);">${u.department || 'N/A'}</span></div>
-                    </div>
-                    `;
-                }).join('');
-                document.getElementById('users-list-modal').innerHTML = html;
-            } catch (e) {
-                console.error('Error loading users:', e);
-            }
-        }
-
-        async function searchUsers(query) {
-            if (!query) {
-                loadUsersForModal();
-                return;
-            }
-            try {
-                const users = await fetchJson(`/api/users/search?query=${encodeURIComponent(query)}`);
-                const html = users.map(u => {
-                    const initial = u.fullName.charAt(0).toUpperCase();
-                    return `
-                    <div class="user-select-item" style="background: var(--bg-light); margin: 2px 0; padding: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-radius: 6px;" onclick="startDirectChat('${u.id}', '${u.fullName.replace(/'/g, "\\'")}', '${u.department || ''}', '${u.email || ''}', '${u.username || ''}', '${u.status || 'AVAILABLE'}'); closeModals();">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">${initial}</div>
-                        <div><div style="font-weight: 600;">${u.fullName}</div><span style="font-size: 12px; color: var(--text-muted);">${u.department || 'N/A'}</span></div>
-                    </div>
-                    `;
-                }).join('');
-                document.getElementById('users-list-modal').innerHTML = html;
-            } catch (e) {
-                console.error('Error searching users:', e);
-            }
+            const users = await fetchJson('/api/users');
+            document.getElementById('users-list-modal').innerHTML = users.map(u => `
+                <div class="user-select-item" style="background: var(--bg-light); padding: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 4px 0; border-radius: 8px;" 
+                     onclick="startDirectChat('${u.id}', '${u.fullName.replace(/'/g, "\\'")}', '${u.department || ''}', '${u.email || ''}', '${u.username || ''}', '${u.status || 'AVAILABLE'}'); closeModals();">
+                    <div class="notification-avatar">${u.fullName.charAt(0)}</div>
+                    <div><strong>${u.fullName}</strong><div style="font-size: 11px;">${u.department || 'N/A'}</div></div>
+                </div>`).join('');
         }
 
         async function fetchJson(url, options = {}) {
-            try {
-                const response = await fetch(url, options);
-                if (response.redirected && response.url.includes('/login')) {
-                    window.location.reload();
-                    return;
-                }
-                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-                const ct = response.headers.get("content-type");
-                return (ct && ct.includes("application/json")) ? await response.json() : null;
-            } catch (err) {
-                console.error("API Call Failed:", url, err);
-                throw err;
-            }
+            const response = await fetch(url, options);
+            if (response.redirected && response.url.includes('/login')) { window.location.reload(); return; }
+            return response.ok ? response.json() : null;
         }
 
-        function toggleSearch() {
-            console.log('Search clicked');
-        }
-
-        function initiateCall(type) {
-            console.log('Call initiated:', type);
-        }
-
-        function showChatInfo() {
-            if (currentRecipient) {
-                showUserInfo(null, currentRecipient.id, currentRecipient.fullName,
-                    currentRecipient.email, currentRecipient.department,
-                    currentRecipient.username, currentRecipient.status);
-            }
-        }
-
-        window.onclick = (e) => {
-            if (e.target.classList.contains('modal')) closeModals();
-        };
-
-        document.getElementById('message-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+        function closeChat() { document.getElementById('welcome-screen').classList.remove('hidden'); document.getElementById('chat-window').classList.add('hidden'); currentId = null; }
+        function showChatInfo() { if (currentRecipient) showUserInfo(null, currentRecipient.id, currentRecipient.fullName, currentRecipient.email, currentRecipient.department, currentRecipient.username, currentRecipient.status); }
+        window.onclick = (e) => { if (e.target.classList.contains('modal')) closeModals(); };
+        document.getElementById('message-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
     </script>
 </body>
-
 </html>

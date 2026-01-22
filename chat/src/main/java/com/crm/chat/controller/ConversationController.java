@@ -39,18 +39,9 @@ public class ConversationController {
         try {
             User currentUser = getCurrentUser();
             settingsService.pinConversation(currentUser.getId(), otherUserId);
-            
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Conversation pinned successfully",
-                "userId", currentUser.getId(),
-                "otherUserId", otherUserId
-            ));
+            return ResponseEntity.ok(Map.of("success", true, "message", "Pinned"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to pin conversation: " + e.getMessage()
-            ));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 
@@ -58,21 +49,14 @@ public class ConversationController {
      * Unpin a conversation
      * POST /api/conversations/unpin/{otherUserId}
      */
-    @PostMapping("/unpin/{otherUserId}")
+  @PostMapping("/unpin/{otherUserId}")
     public ResponseEntity<Map<String, Object>> unpinConversation(@PathVariable Long otherUserId) {
         try {
             User currentUser = getCurrentUser();
             settingsService.unpinConversation(currentUser.getId(), otherUserId);
-            
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Conversation unpinned successfully"
-            ));
+            return ResponseEntity.ok(Map.of("success", true, "message", "Unpinned"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to unpin conversation: " + e.getMessage()
-            ));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 
@@ -85,16 +69,9 @@ public class ConversationController {
         try {
             User currentUser = getCurrentUser();
             settingsService.muteConversation(currentUser.getId(), otherUserId);
-            
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Conversation muted successfully"
-            ));
+            return ResponseEntity.ok(Map.of("success", true, "message", "Conversation muted successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to mute conversation: " + e.getMessage()
-            ));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 
@@ -102,21 +79,25 @@ public class ConversationController {
      * Unmute a conversation
      * POST /api/conversations/unmute/{otherUserId}
      */
-    @PostMapping("/unmute/{otherUserId}")
+     @PostMapping("/unmute/{otherUserId}")
     public ResponseEntity<Map<String, Object>> unmuteConversation(@PathVariable Long otherUserId) {
         try {
             User currentUser = getCurrentUser();
             settingsService.unmuteConversation(currentUser.getId(), otherUserId);
-            
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Conversation unmuted successfully"
-            ));
+            return ResponseEntity.ok(Map.of("success", true, "message", "Conversation unmuted successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to unmute conversation: " + e.getMessage()
-            ));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/unread/{otherUserId}")
+    public ResponseEntity<Map<String, Object>> markAsUnread(@PathVariable Long otherUserId) {
+        try {
+            // Logic for unread is handled visually on frontend for immediate feedback
+            // and can be persisted here if you add a 'markedUnread' flag to ConversationSettings
+            return ResponseEntity.ok(Map.of("success", true, "message", "Marked as unread"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 
@@ -196,30 +177,43 @@ public class ConversationController {
     public ResponseEntity<?> getConversationSettings(@PathVariable Long otherUserId) {
         try {
             User currentUser = getCurrentUser();
-            ConversationSettings settings = 
-                settingsService.getSettings(currentUser.getId(), otherUserId);
-            
+            ConversationSettings settings = settingsService.getSettings(currentUser.getId(), otherUserId);
             if (settings == null) {
-                return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "isPinned", false,
-                    "isMuted", false,
-                    "isHidden", false
-                ));
+                return ResponseEntity.ok(Map.of("isPinned", false, "isMuted", false, "isHidden", false));
             }
-            
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "isPinned", settings.getIsPinned(),
-                "isMuted", settings.getIsMuted(),
-                "isHidden", settings.getIsHidden(),
-                "settings", settings
-            ));
+            return ResponseEntity.ok(settings);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to get settings: " + e.getMessage()
-            ));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
+    // @GetMapping("/settings/{otherUserId}")
+    // public ResponseEntity<?> getConversationSettings(@PathVariable Long otherUserId) {
+    //     try {
+    //         User currentUser = getCurrentUser();
+    //         ConversationSettings settings = 
+    //             settingsService.getSettings(currentUser.getId(), otherUserId);
+            
+    //         if (settings == null) {
+    //             return ResponseEntity.ok(Map.of(
+    //                 "success", true,
+    //                 "isPinned", false,
+    //                 "isMuted", false,
+    //                 "isHidden", false
+    //             ));
+    //         }
+            
+    //         return ResponseEntity.ok(Map.of(
+    //             "success", true,
+    //             "isPinned", settings.getIsPinned(),
+    //             "isMuted", settings.getIsMuted(),
+    //             "isHidden", settings.getIsHidden(),
+    //             "settings", settings
+    //         ));
+    //     } catch (Exception e) {
+    //         return ResponseEntity.badRequest().body(Map.of(
+    //             "success", false,
+    //             "message", "Failed to get settings: " + e.getMessage()
+    //         ));
+    //     }
+    // }
 }
