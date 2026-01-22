@@ -42,6 +42,23 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
                                      @Param("chatRoomId") Long chatRoomId,
                                      Pageable pageable);
 
+
+        /**
+     * Search messages in a direct conversation
+     */
+    @Query("SELECT m FROM Message m WHERE m.conversation.id = :conversationId " +
+           "AND LOWER(m.content) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "AND m.deleted = false ORDER BY m.createdAt DESC")
+    List<Message> searchConversationMessages(@Param("conversationId") Long conversationId, @Param("query") String query);
+
+    /**
+     * Search messages in a chat room
+     */
+    @Query("SELECT m FROM Message m WHERE m.chatRoom.id = :chatRoomId " +
+           "AND LOWER(m.content) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "AND m.deleted = false ORDER BY m.createdAt DESC")
+    List<Message> searchChatRoomMessages(@Param("chatRoomId") Long chatRoomId, @Param("query") String query);                               
+
     void deleteByConversationId(Long conversationId);
 
     void deleteByChatRoomId(Long chatRoomId);

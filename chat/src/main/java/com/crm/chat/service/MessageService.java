@@ -160,4 +160,16 @@ public class MessageService {
         message.markAsDelivered();
         messageRepository.save(message);
     }
+
+
+    /**
+     * Search messages based on chat type and ID
+     */
+    public List<Message> searchMessages(String chatType, Long chatId, String query) {
+        if ("direct".equalsIgnoreCase(chatType) || "conversation".equalsIgnoreCase(chatType)) {
+            return messageRepository.searchConversationMessages(chatId, query);
+        } else {
+            return messageRepository.searchChatRoomMessages(chatId, query);
+        }
+    }
 }

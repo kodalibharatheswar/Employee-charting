@@ -191,65 +191,80 @@ class CallUIManager {
      * Initiate a call
      * @param {string} callType - 'AUDIO', 'VIDEO', or 'SCREEN_SHARE'
      */
-    async initiateCall(callType) {
-        try {
-            // Determine call mode based on current chat context
-            const callMode = currentType === 'group' ? 'GROUP' : 'DIRECT';
+    initiateCall(type) {
+    if (!currentId) return;
 
-            console.log(`Initiating ${callType} call (${callMode} mode)`);
-
-            // Prepare call parameters
-            const callParams = {
-                callType: callType,
-                callMode: callMode
-            };
-
-            if (callMode === 'DIRECT') {
-                // Direct call
-                if (!currentId || !currentConversationId) {
-                    this.showError('Please select a user to call');
-                    return;
-                }
-                
-                callParams.conversationId = currentConversationId;
-                callParams.recipientId = currentId;
-            } else {
-                // Group call
-                if (!currentId) {
-                    this.showError('Please select a group to call');
-                    return;
-                }
-                
-                callParams.chatRoomId = currentId;
-                
-                // Subscribe to group call channels
-                this.webrtcManager.subscribeToGroupCall(currentId);
-            }
-
-            // Show loading state
-            this.showCallStatus('Initiating call...');
-
-            // Initiate call through WebRTC Manager
-            const success = await this.webrtcManager.initiateCall(callParams);
-
-            if (success) {
-                // Show active call UI
-                this.showActiveCallModal(callType);
-                
-                // Display local stream
-                this.displayLocalStream();
-                
-                // Start call duration timer
-                this.startCallDuration();
-                
-                this.showCallStatus('Calling...');
-            }
-
-        } catch (error) {
-            console.error('Error initiating call:', error);
-            this.showError('Failed to initiate call: ' + error.message);
-        }
+    console.log(`Starting ${type} call...`);
+    
+    // Set UI state to calling
+    this.showActiveCall();
+    this.updateStatusText('Calling...');
+    
+    // Trigger the WebRTC manager
+    // In your webrtc.js, startCall takes (chatType, chatId, callType)
+    if (this.webrtcManager) {
+        this.webrtcManager.startCall(currentType, currentId, type);
     }
+}
+    // async initiateCall(callType) {
+    //     try {
+    //         // Determine call mode based on current chat context
+    //         const callMode = currentType === 'group' ? 'GROUP' : 'DIRECT';
+
+    //         console.log(`Initiating ${callType} call (${callMode} mode)`);
+
+    //         // Prepare call parameters
+    //         const callParams = {
+    //             callType: callType,
+    //             callMode: callMode
+    //         };
+
+    //         if (callMode === 'DIRECT') {
+    //             // Direct call
+    //             if (!currentId || !currentConversationId) {
+    //                 this.showError('Please select a user to call');
+    //                 return;
+    //             }
+                
+    //             callParams.conversationId = currentConversationId;
+    //             callParams.recipientId = currentId;
+    //         } else {
+    //             // Group call
+    //             if (!currentId) {
+    //                 this.showError('Please select a group to call');
+    //                 return;
+    //             }
+                
+    //             callParams.chatRoomId = currentId;
+                
+    //             // Subscribe to group call channels
+    //             this.webrtcManager.subscribeToGroupCall(currentId);
+    //         }
+
+    //         // Show loading state
+    //         this.showCallStatus('Initiating call...');
+
+    //         // Initiate call through WebRTC Manager
+    //         const success = await this.webrtcManager.initiateCall(callParams);
+
+    //         if (success) {
+    //             // Show active call UI
+    //             this.showActiveCallModal(callType);
+                
+    //             // Display local stream
+    //             this.displayLocalStream();
+                
+    //             // Start call duration timer
+    //             this.startCallDuration();
+                
+    //             this.showCallStatus('Calling...');
+    //         }
+
+    //     } catch (error) {
+    //         console.error('Error initiating call:', error);
+    //         this.showError('Failed to initiate call: ' + error.message);
+    //     }
+    // }
 
     /**
      * Show incoming call modal

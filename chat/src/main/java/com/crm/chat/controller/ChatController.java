@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +37,16 @@ public class ChatController {
     // Define a storage location
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
-
     /**
-     * Helper to check if the current user has ADMIN privileges in a specific chat room.
+     * Helper to check if the current user has ADMIN privileges in a specific chat
+     * room.
      */
     private boolean isCurrentUserAdmin(Long chatRoomId) {
         User currentUser = getCurrentUser();
         return chatRoomService.getChatRoomMembers(chatRoomId).stream()
-                .anyMatch(m -> m.getUser().getId().equals(currentUser.getId()) && 
-                          m.getRole() == ChatRoomMember.MemberRole.ADMIN);
+                .anyMatch(m -> m.getUser().getId().equals(currentUser.getId()) &&
+                        m.getRole() == ChatRoomMember.MemberRole.ADMIN);
     }
-
 
     @PostMapping("/api/chat/upload")
     public ResponseEntity<MessageDTO> uploadFile(
@@ -77,7 +75,7 @@ public class ChatController {
             message = messageService.sendGroupMessage(currentUser.getId(), chatId, fileUrl);
         }
         message.setType(Message.MessageType.FILE);
-        
+
         return ResponseEntity.ok(MessageDTO.fromEntity(message));
     }
 
@@ -88,7 +86,7 @@ public class ChatController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-     @GetMapping("/chat")
+    @GetMapping("/chat")
     public String chatPage(Model model) {
         User currentUser = getCurrentUser();
         userService.setUserOnline(currentUser.getId());
@@ -115,6 +113,19 @@ public class ChatController {
         return userService.searchUsers(query, currentUser.getId())
                 .stream()
                 .map(UserDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/messages/search")
+    @ResponseBody
+    public List<MessageDTO> searchMessages(
+            @RequestParam String chatType,
+            @RequestParam Long chatId,
+            @RequestParam String query) {
+
+        return messageService.searchMessages(chatType, chatId, query)
+                .stream()
+                .map(MessageDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -152,25 +163,24 @@ public class ChatController {
                 .collect(Collectors.toList());
     }
 
-
     @PostMapping("/api/chatrooms/{chatRoomId}/members/batch")
-@ResponseBody
-public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId, 
-                                             @RequestBody List<Long> userIds) {
-    for (Long userId : userIds) {
-        try {
-            chatRoomService.addMemberToChatRoom(chatRoomId, userId, ChatRoomMember.MemberRole.MEMBER);
-        } catch (Exception e) {
-            // Ignore if already a member or log error
+    @ResponseBody
+    public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
+            @RequestBody List<Long> userIds) {
+        for (Long userId : userIds) {
+            try {
+                chatRoomService.addMemberToChatRoom(chatRoomId, userId, ChatRoomMember.MemberRole.MEMBER);
+            } catch (Exception e) {
+                // Ignore if already a member or log error
+            }
         }
+        return ResponseEntity.ok("Members added");
     }
-    return ResponseEntity.ok("Members added");
-}
 
     @PostMapping("/api/conversations/{conversationId}/messages")
     @ResponseBody
     public MessageDTO sendDirectMessage(@PathVariable Long conversationId,
-                                        @RequestBody Map<String, String> payload) {
+            @RequestBody Map<String, String> payload) {
         User currentUser = getCurrentUser();
         String content = payload.get("content");
 
@@ -180,17 +190,15 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
         return MessageDTO.fromEntity(message);
     }
 
-
     @PostMapping("/api/chatrooms")
     @ResponseBody
     public ChatRoomDTO createChatRoom(@RequestBody Map<String, String> payload) {
         User currentUser = getCurrentUser();
         ChatRoom chatRoom = chatRoomService.createChatRoom(
-                payload.get("name"), payload.get("description"), 
+                payload.get("name"), payload.get("description"),
                 currentUser.getId(), ChatRoom.ChatRoomType.valueOf(payload.getOrDefault("type", "GROUP")));
         return ChatRoomDTO.fromEntity(chatRoom);
     }
-
 
     @GetMapping("/api/chatrooms")
     @ResponseBody
@@ -201,7 +209,6 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
                 .map(ChatRoomDTO::fromEntity)
                 .collect(Collectors.toList());
     }
-
 
     @PutMapping("/api/chatrooms/{chatRoomId}")
     @ResponseBody
@@ -214,35 +221,35 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
         return ChatRoomDTO.fromEntity(updated);
     }
 
-
     @PutMapping("/api/chatrooms/{chatRoomId}/members/{userId}/role")
     @ResponseBody
-    public ResponseEntity<String> updateMemberRole(@PathVariable Long chatRoomId, @PathVariable Long userId, @RequestBody Map<String, String> payload) {
+    public ResponseEntity<String> updateMemberRole(@PathVariable Long chatRoomId, @PathVariable Long userId,
+            @RequestBody Map<String, String> payload) {
         // Fix: Check for ADMIN role instead of creator ID
         if (!isCurrentUserAdmin(chatRoomId)) {
             throw new RuntimeException("Unauthorized: Only group admins can change roles.");
         }
-        
+
         // Get the user whose role is being updated
         User updatedUser = userService.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
         String newRole = payload.get("role");
-        
+
         chatRoomService.updateMemberRole(chatRoomId, userId, ChatRoomMember.MemberRole.valueOf(newRole));
-        
+
         // Send WebSocket notification to all members of the chat room
         Map<String, Object> notification = new HashMap<>();
         notification.put("type", "ROLE_UPDATE");
         notification.put("userId", userId);
         notification.put("userName", updatedUser.getFullName());
         notification.put("newRole", newRole);
-        notification.put("message", updatedUser.getFullName() + " is now " + (newRole.equals("ADMIN") ? "an admin" : "a member"));
-        
+        notification.put("message",
+                updatedUser.getFullName() + " is now " + (newRole.equals("ADMIN") ? "an admin" : "a member"));
+
         messagingTemplate.convertAndSend("/topic/chatroom." + chatRoomId, (Object) notification);
-        
+
         return ResponseEntity.ok("Updated");
     }
-
 
     @GetMapping("/api/chatrooms/{chatRoomId}/messages")
     @ResponseBody
@@ -266,7 +273,7 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
     @PostMapping("/api/chatrooms/{chatRoomId}/messages")
     @ResponseBody
     public MessageDTO sendGroupMessage(@PathVariable Long chatRoomId,
-                                       @RequestBody Map<String, String> payload) {
+            @RequestBody Map<String, String> payload) {
         User currentUser = getCurrentUser();
         String content = payload.get("content");
 
@@ -275,7 +282,6 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
 
         return MessageDTO.fromEntity(message);
     }
-
 
     @PostMapping("/api/chatrooms/{chatRoomId}/members")
     @ResponseBody
@@ -309,7 +315,8 @@ public ResponseEntity<String> addMembersBatch(@PathVariable Long chatRoomId,
     @ResponseBody
     public ResponseEntity<String> removeMember(@PathVariable Long chatRoomId, @PathVariable Long userId) {
         User currentUser = getCurrentUser();
-        // Permission check: Admin can remove anyone; non-admins can only remove themselves (leave)
+        // Permission check: Admin can remove anyone; non-admins can only remove
+        // themselves (leave)
         if (!isCurrentUserAdmin(chatRoomId) && !userId.equals(currentUser.getId())) {
             throw new RuntimeException("Unauthorized: Only admins can remove other members.");
         }

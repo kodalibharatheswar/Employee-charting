@@ -186,34 +186,5 @@ public class ConversationController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
-    // @GetMapping("/settings/{otherUserId}")
-    // public ResponseEntity<?> getConversationSettings(@PathVariable Long otherUserId) {
-    //     try {
-    //         User currentUser = getCurrentUser();
-    //         ConversationSettings settings = 
-    //             settingsService.getSettings(currentUser.getId(), otherUserId);
-            
-    //         if (settings == null) {
-    //             return ResponseEntity.ok(Map.of(
-    //                 "success", true,
-    //                 "isPinned", false,
-    //                 "isMuted", false,
-    //                 "isHidden", false
-    //             ));
-    //         }
-            
-    //         return ResponseEntity.ok(Map.of(
-    //             "success", true,
-    //             "isPinned", settings.getIsPinned(),
-    //             "isMuted", settings.getIsMuted(),
-    //             "isHidden", settings.getIsHidden(),
-    //             "settings", settings
-    //         ));
-    //     } catch (Exception e) {
-    //         return ResponseEntity.badRequest().body(Map.of(
-    //             "success", false,
-    //             "message", "Failed to get settings: " + e.getMessage()
-    //         ));
-    //     }
-    // }
+    
 }
