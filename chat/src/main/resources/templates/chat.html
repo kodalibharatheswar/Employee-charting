@@ -1405,6 +1405,221 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 3px;
         }
+
+
+
+
+        /* Sidebar Section Toggle */
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .sidebar-section.hidden {
+            display: none !important;
+        }
+
+        /* Group Items */
+        .group-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .group-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .group-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-left-color: var(--primary);
+        }
+
+        .group-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .group-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .group-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: #f1f5f9;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .group-info {
+            font-size: 12px;
+            color: #64748b;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .group-admin-badge {
+            background: #3b82f6;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        /* Group Chat Header */
+        .group-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+        }
+
+        /* Group Settings Modal */
+        .group-settings-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .group-settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .group-settings-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .group-member-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        .group-member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        .group-member-info {
+            flex: 1;
+        }
+
+        .group-member-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--secondary);
+        }
+
+        .group-member-role {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .btn-change-role {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+
+        .btn-change-role:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-remove-member {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .btn-remove-member:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .group-name-edit-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .group-name-edit-input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-save-group-name {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-save-group-name:hover {
+            background: var(--primary-dark);
+        }
     </style>
 </head>
 
@@ -1577,125 +1792,218 @@
             </div>
         </div>
 
-        <!-- Main Chat Window (Right) -->
-        <div class="main-chat">
-            <div id="welcome-screen" class="welcome">
-                <h2>Internal CRM Chat</h2>
-                <p>Select a teammate or group to start collaborating</p>
+        <!-- GROUPS SECTION (Hidden by default) -->
+        <div id="groups-section" class="sidebar-section hidden">
+            <div class="content-sidebar-header">
+                <div class="content-sidebar-title">Groups</div>
             </div>
 
-            <div id="chat-window" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="chat-header">
-                    <div class="chat-header-left" id="header-info-container">
-                        <div class="chat-header-avatar">
-                            <span id="chat-avatar-initial">U</span>
-                            <div class="online-indicator" id="chat-header-indicator"></div>
-                        </div>
-                        <div class="chat-header-info" onclick="showChatInfo()">
-                            <div class="chat-header-name" id="chat-header-name">User Name</div>
-                            <div class="chat-header-status" id="chat-header-status-container">
-                                <span id="chat-header-status">Available</span>
-                            </div>
+            <!-- Groups Search -->
+            <div class="sidebar-search">
+                <input type="text" class="sidebar-search-input" id="groups-search-input" placeholder="Search groups..."
+                    oninput="filterGroups(this.value)">
+            </div>
+
+            <!-- Groups Section -->
+            <div class="conversations-section">
+                <div class="conversations-header">
+                    <span class="conversations-title">MY GROUPS</span>
+                    <button class="btn-add-conversation" onclick="showModal('create-group-modal')"
+                        title="Create Group">+</button>
+                </div>
+
+                <div class="conversation-list" id="groups-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Window (Right) -->
+    <div class="main-chat">
+        <div id="welcome-screen" class="welcome">
+            <h2>Internal CRM Chat</h2>
+            <p>Select a teammate or group to start collaborating</p>
+        </div>
+
+        <div id="chat-window" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="chat-header">
+                <div class="chat-header-left" id="header-info-container">
+                    <div class="chat-header-avatar">
+                        <span id="chat-avatar-initial">U</span>
+                        <div class="online-indicator" id="chat-header-indicator"></div>
+                    </div>
+                    <div class="chat-header-info" onclick="showChatInfo()">
+                        <div class="chat-header-name" id="chat-header-name">User Name</div>
+                        <div class="chat-header-status" id="chat-header-status-container">
+                            <span id="chat-header-status">Available</span>
                         </div>
                     </div>
+                </div>
 
 
-                    <!-- NEW: Search Input Container (Hidden by default) -->
-                    <div id="search-container" class="hidden"
-                        style="flex: 1; margin: 0 15px; display: flex; align-items: center;">
-                        <input type="text" id="chat-message-search" placeholder="Search messages..."
-                            style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px; outline: none;"
-                            oninput="performMessageSearch(this.value)">
-                    </div>
+                <!-- NEW: Search Input Container (Hidden by default) -->
+                <div id="search-container" class="hidden"
+                    style="flex: 1; margin: 0 15px; display: flex; align-items: center;">
+                    <input type="text" id="chat-message-search" placeholder="Search messages..."
+                        style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px; outline: none;"
+                        oninput="performMessageSearch(this.value)">
+                </div>
 
-                    <div class="header-actions">
-                        <button class="btn-header-action" id="search-toggle-btn" onclick="toggleSearch()"
-                            title="Search">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </button>
-                        <!-- <div class="header-actions">
-                        <button class="btn-header-action" onclick="toggleSearch()" title="Search">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </button> -->
+                <div class="header-actions">
+                    <button class="btn-header-action" id="search-toggle-btn" onclick="toggleSearch()" title="Search">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
 
 
-                        <!-- Replace the call button in the .header-actions div with this -->
-                        <div class="call-dropdown-container" style="position: relative;">
-                            <button class="btn-header-action" onclick="toggleCallMenu(event)" title="Start Call">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                                    </path>
-                                </svg>
-                            </button>
-
-                            <div id="call-menu" class="more-menu" style="right: 0; top: 110%; width: 180px;">
-                                <button class="more-menu-item" onclick="initiateSpecificCall('AUDIO')">
-                                    <span style="margin-right: 10px;">📞</span> Audio Call
-                                </button>
-                                <button class="more-menu-item" onclick="initiateSpecificCall('VIDEO')">
-                                    <span style="margin-right: 10px;">📹</span> Video Call
-                                </button>
-                                <button class="more-menu-item" onclick="initiateSpecificCall('SCREEN_SHARE')">
-                                    <span style="margin-right: 10px;">🖥️</span> Share Screen
-                                </button>
-                            </div>
-                        </div>
-                        <!-- <button class="btn-header-action" onclick="initiateCall('audio')" title="Audio Call">
+                    <!-- Replace the call button in the .header-actions div with this -->
+                    <div class="call-dropdown-container" style="position: relative;">
+                        <button class="btn-header-action" onclick="toggleCallMenu(event)" title="Start Call">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
                                 </path>
                             </svg>
-                        </button> -->
+                        </button>
 
-                        <button class="btn-header-action" onclick="closeChat()" title="Close">
+                        <div id="call-menu" class="more-menu" style="right: 0; top: 110%; width: 180px;">
+                            <button class="more-menu-item" onclick="initiateSpecificCall('AUDIO')">
+                                <span style="margin-right: 10px;">📞</span> Audio Call
+                            </button>
+                            <button class="more-menu-item" onclick="initiateSpecificCall('VIDEO')">
+                                <span style="margin-right: 10px;">📹</span> Video Call
+                            </button>
+                            <button class="more-menu-item" onclick="initiateSpecificCall('SCREEN_SHARE')">
+                                <span style="margin-right: 10px;">🖥️</span> Share Screen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!--  INCOMING CALL MODAL -->
+                    <div id="incoming-call-modal" class="modal">
+                        <div class="modal-content" style="width: 400px; text-align: center;">
+                            <div style="margin-bottom: 20px;">
+                                <div class="user-info-avatar-large"
+                                    style="margin: 0 auto 15px; width: 80px; height: 80px;">
+                                    <span id="incoming-caller-avatar">C</span>
+                                </div>
+                                <h3 id="caller-name" style="margin: 0 0 5px 0;">Incoming Call</h3>
+                                <p id="call-type" style="color: var(--text-muted); margin: 0;">Audio Call</p>
+                            </div>
+
+                            <div style="display: flex; gap: 15px; justify-content: center;">
+                                <button id="btn-reject-call"
+                                    style="background: #ef4444; color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-weight: 600;">
+                                    ✕ Decline
+                                </button>
+                                <button id="btn-accept-call"
+                                    style="background: #10b981; color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-weight: 600;">
+                                    ✓ Accept
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE CALL MODAL -->
+                    <div id="active-call-modal" class="modal">
+                        <div class="modal-content"
+                            style="width: 90%; max-width: 1200px; height: 80vh; padding: 0; overflow: hidden;">
+                            <!-- Call Header -->
+                            <div
+                                style="background: #1e293b; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div id="call-status" style="font-size: 14px; color: #94a3b8;">Connecting...
+                                    </div>
+                                    <div id="call-duration" style="font-size: 18px; font-weight: 600;">00:00</div>
+                                </div>
+                                <button onclick="if(window.callUIManager) window.callUIManager.endCall()"
+                                    style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 600;">
+                                    End Call
+                                </button>
+                            </div>
+
+                            <!-- Video Container -->
+                            <div
+                                style="position: relative; flex: 1; background: #0f172a; display: flex; align-items: center; justify-content: center; height: calc(80vh - 130px);">
+                                <!-- Remote Video -->
+                                <div id="remote-video-container"
+                                    style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1e293b;">
+                                    <div style="color: #64748b; font-size: 18px;">Waiting for other participant...
+                                    </div>
+                                </div>
+
+                                <!-- Local Video (Picture-in-Picture) -->
+                                <div id="local-video-container"
+                                    style="position: absolute; bottom: 20px; right: 20px; width: 200px; height: 150px; background: #334155; border-radius: 10px; overflow: hidden; border: 2px solid white;">
+                                </div>
+                            </div>
+
+                            <!-- Call Controls -->
+                            <div
+                                style="background: #1e293b; padding: 20px; display: flex; justify-content: center; gap: 15px;">
+                                <button id="btn-mute"
+                                    style="background: rgba(255,255,255,0.1); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                    🎤
+                                </button>
+                                <button id="btn-camera"
+                                    style="background: rgba(255,255,255,0.1); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                    📹
+                                </button>
+                                <button id="btn-toggle-screen-share"
+                                    style="background: rgba(255,255,255,0.1); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                    🖥️
+                                </button>
+                                <button id="btn-end-call"
+                                    onclick="if(window.callUIManager) window.callUIManager.endCall()"
+                                    style="background: #ef4444; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                    📞
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-header-action" onclick="closeChat()" title="Close">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messages-container"></div>
+
+            <div id="typing-indicator" class="typing-wrapper">
+                <div class="typing-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span id="typing-text"></span>
+            </div>
+
+            <div class="input-area">
+                <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(this)">
+                <div class="input-wrapper">
+                    <div class="input-actions-left">
+                        <button class="btn-input-action" onclick="document.getElementById('file-input').click()"
+                            title="Attach File">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
+                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
+                                </path>
                             </svg>
                         </button>
                     </div>
-                </div>
 
-                <div class="messages-container" id="messages-container"></div>
+                    <input type="text" id="message-input" placeholder="Message..." autocomplete="off">
 
-                <div id="typing-indicator" class="typing-wrapper">
-                    <div class="typing-dots">
-                        <span></span><span></span><span></span>
-                    </div>
-                    <span id="typing-text"></span>
-                </div>
-
-                <div class="input-area">
-                    <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(this)">
-                    <div class="input-wrapper">
-                        <div class="input-actions-left">
-                            <button class="btn-input-action" onclick="document.getElementById('file-input').click()"
-                                title="Attach File">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <input type="text" id="message-input" placeholder="Message..." autocomplete="off">
-
-                        <div class="input-actions-right">
-                            <button id="send-button" onclick="sendMessage()">Send</button>
-                        </div>
+                    <div class="input-actions-right">
+                        <button id="send-button" onclick="sendMessage()">Send</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- New Conversation Modal -->
@@ -1736,6 +2044,105 @@
         </div>
     </div>
 
+
+    <!-- Create Group Modal -->
+    <div id="create-group-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3 style="margin-bottom: 20px;">Create New Group</h3>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Group Name</label>
+                <input type="text" id="group-name-input" placeholder="Enter group name..."
+                    style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Description (Optional)</label>
+                <textarea id="group-description-input" placeholder="Enter group description..."
+                    style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; min-height: 80px; resize: vertical;"></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600;">Add Members</label>
+                <input type="text" id="search-members-input" placeholder="Search users..."
+                    style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px;"
+                    oninput="searchMembersForGroup(this.value)">
+                <div id="members-selection-list"
+                    style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 8px;">
+                </div>
+            </div>
+
+            <button onclick="createGroup()"
+                style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                Create Group
+            </button>
+        </div>
+    </div>
+
+    <!-- Group Settings Modal -->
+    <div id="group-settings-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3 style="margin-bottom: 24px;">Group Settings</h3>
+
+            <!-- Group Name Section -->
+            <div class="group-settings-section">
+                <div class="group-settings-label">Group Name</div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="edit-group-name-input" class="group-name-edit-input" readonly
+                        style="flex: 1;">
+                    <button id="btn-edit-group-name" onclick="enableGroupNameEdit()"
+                        style="background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                        Edit
+                    </button>
+                </div>
+                <button id="btn-save-group-name" onclick="saveGroupName()" class="btn-save-group-name hidden">
+                    Save Changes
+                </button>
+            </div>
+
+            <!-- Members Section -->
+            <div class="group-settings-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="group-settings-label" style="margin: 0;">Members</div>
+                    <button onclick="showAddMembersModal()"
+                        style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                        + Add Members
+                    </button>
+                </div>
+                <div id="group-members-list"></div>
+            </div>
+
+            <!-- Leave/Delete Group -->
+            <div class="group-settings-section">
+                <button id="btn-leave-group" onclick="leaveGroup()"
+                    style="width: 100%; padding: 12px; background: var(--warning); color: white; border: none; border-radius: 6px; cursor: pointer; margin-bottom: 10px;">
+                    Leave Group
+                </button>
+                <button id="btn-delete-group" onclick="deleteGroup()" class="hidden"
+                    style="width: 100%; padding: 12px; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    Delete Group
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Members to Group Modal -->
+    <div id="add-members-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModals()">×</span>
+            <h3 style="margin-bottom: 20px;">Add Members</h3>
+
+            <input type="text" id="search-add-members-input" placeholder="Search users..."
+                style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px;"
+                oninput="searchUsersToAdd(this.value)">
+
+            <div id="add-members-list" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+
     <input type="hidden" id="currentUserId" th:value="${currentUser.id}">
     <input type="hidden" id="currentUsername" th:value="${currentUser.username}">
 
@@ -1761,6 +2168,45 @@
         let pendingMessages = new Map();
 
         let isSearchActive = false;
+
+        // ============================================
+        // GROUPS FUNCTIONALITY
+        // ============================================
+        let currentGroupId = null;
+        let currentGroupData = null;
+        let selectedMembersForGroup = new Set();
+
+        // Initialize WebRTC Manager after STOMP connection
+        let webrtcManager;
+        let callUIManager;
+
+        // Store original initWebSocket function
+        const originalInitWebSocket = initWebSocket;
+        // Override initWebSocket to initialize WebRTC after connection
+        initWebSocket = function () {
+            originalInitWebSocket();
+
+            // Wait for STOMP connection, then initialize WebRTC
+            const checkConnection = setInterval(() => {
+                if (stompClient && stompClient.connected) {
+                    clearInterval(checkConnection);
+
+                    // Initialize WebRTC Manager
+                    webrtcManager = new WebRTCManager();
+                    webrtcManager.initialize(stompClient);
+
+                    // Initialize Call UI Manager
+                    callUIManager = new CallUIManager();
+                    callUIManager.initialize(webrtcManager);
+
+                    // Make globally accessible
+                    window.webrtcManager = webrtcManager;
+                    window.callUIManager = callUIManager;
+
+                    console.log('✅ WebRTC and Call UI Managers initialized');
+                }
+            }, 100);
+        };
 
         const myId = document.getElementById('currentUserId').value;
         const myUsername = document.getElementById('currentUsername').value;
@@ -1799,26 +2245,48 @@
             stompClient.connect({}, () => {
                 console.log("✅ WebSocket Connected");
 
+                const userId = document.getElementById('currentUserId').value;
+                console.log("👤 Current User ID:", userId);
+
+                // Subscribe to user status updates
                 stompClient.subscribe('/topic/user.status', (message) => {
                     const statusUpdate = JSON.parse(message.body);
                     handleStatusUpdate(statusUpdate);
                 });
 
+                // Subscribe to public notifications
                 stompClient.subscribe('/topic/public', (message) => {
                     const data = JSON.parse(message.body);
                     if (data.type === 'USER_ONLINE') handleUserOnline(data);
                 });
 
+                // ✅ NEW: Subscribe to user-specific call notifications
+                stompClient.subscribe('/user/' + userId + '/queue/call', (message) => {
+                    console.log('📞 [chat.html] Received call notification:', message.body);
+                    const data = JSON.parse(message.body);
+                    if (data.type === 'INCOMING_CALL') {
+                        console.log('🔔 Incoming call from:', data.callerName);
+                    }
+                });
+
+                // Alternative subscription
+                stompClient.subscribe('/user/queue/call', (message) => {
+                    console.log('📞 [chat.html ALT] Received call notification:', message.body);
+                });
+
+                // Delivery acknowledgments
                 stompClient.subscribe('/user/queue/delivery', (message) => {
                     const ack = JSON.parse(message.body);
                     handleDeliveryAcknowledgment(ack);
                 });
 
+                // Read receipts
                 stompClient.subscribe('/user/queue/read-receipts', (message) => {
                     const receipt = JSON.parse(message.body);
                     handleReadReceipt(receipt);
                 });
 
+                // Message notifications
                 stompClient.subscribe('/user/queue/notifications', (notification) => {
                     const data = JSON.parse(notification.body);
                     if (data.type === 'NEW_MESSAGE') {
@@ -1832,12 +2300,16 @@
                     }
                 });
 
+                // Add user online
                 stompClient.send("/app/chat.addUser", {}, JSON.stringify({ username: myUsername }));
+
+                console.log("✅ All subscriptions registered for user:", userId);
             }, (error) => {
                 console.error("❌ WebSocket connection error:", error);
                 setTimeout(initWebSocket, 5000);
             });
         }
+
 
         function showNotification(senderName, message, senderId) {
             if (currentId && String(currentRecipient?.id) === String(senderId)) return;
@@ -1912,16 +2384,27 @@
             // Close menu
             document.getElementById('call-menu').classList.remove('active');
 
-            if (!currentRecipient) {
+            if (!currentId || !currentRecipient) {
                 alert("Please select a user to call.");
                 return;
             }
 
-            // Call the global initiation function handled by call-ui.js
+            console.log(`🔥 Initiating ${type} call to ${currentRecipient.fullName}`);
+
+            // Check if managers are initialized
+            if (!window.webrtcManager || !window.callUIManager) {
+                console.error('❌ WebRTC managers not initialized yet');
+                alert('Call system is initializing. Please try again in a moment.');
+                return;
+            }
+
+            // Start the call through WebRTC manager
+            window.webrtcManager.startCall(currentType, currentId, type);
+
+            // Update UI to show calling state
             if (window.callUIManager) {
-                window.callUIManager.initiateCall(type);
-            } else {
-                console.error("Call UI Manager not initialized");
+                window.callUIManager.showActiveCall();
+                window.callUIManager.updateStatusText('Calling...');
             }
         }
 
@@ -2139,13 +2622,536 @@
             }
         }
 
-
+        /**
+ * Switch between Chats and Groups sections
+ */
         function switchSection(section) {
             currentSection = section;
+
+            // Update navigation icons
             document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
             document.getElementById(`nav-${section}`).classList.add('active');
-            if (section === 'chats') loadConversations();
+
+            // Show/hide appropriate sidebar sections
+            if (section === 'chats') {
+                document.getElementById('chats-section').classList.remove('hidden');
+                document.getElementById('groups-section').classList.add('hidden');
+                loadConversations();
+            } else if (section === 'groups') {
+                document.getElementById('chats-section').classList.add('hidden');
+                document.getElementById('groups-section').classList.remove('hidden');
+                loadGroups();
+            }
         }
+        // function switchSection(section) {
+        //     currentSection = section;
+        //     document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
+        //     document.getElementById(`nav-${section}`).classList.add('active');
+        //     if (section === 'chats') loadConversations();
+        // }
+
+        /**
+ * Load all groups for current user
+ */
+        async function loadGroups() {
+            try {
+                const groups = await fetchJson('/api/chatrooms');
+                console.log('📦 Loaded groups:', groups.length);
+
+                const groupsList = document.getElementById('groups-list');
+                if (!groupsList) return;
+
+                if (!groups || groups.length === 0) {
+                    groupsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">No groups yet. Create one to get started!</div>';
+                    return;
+                }
+
+                groupsList.innerHTML = groups.map(group => {
+                    const initial = group.name.charAt(0).toUpperCase();
+                    const isCreator = group.createdById === parseInt(myId);
+
+                    return `
+                <div class="group-item" id="group-${group.id}" onclick="openGroup(${group.id}, '${group.name.replace(/'/g, "\\'")}', ${group.memberCount})">
+                    <div class="group-avatar">${initial}</div>
+                    <div class="group-content">
+                        <div class="group-name">
+                            ${group.name}
+                            ${isCreator ? '<span class="group-admin-badge">Admin</span>' : ''}
+                        </div>
+                        <div class="group-info">${group.memberCount} members</div>
+                    </div>
+                </div>
+            `;
+                }).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading groups:', error);
+            }
+        }
+
+        /**
+ * Filter groups by search query
+ */
+        function filterGroups(query) {
+            document.querySelectorAll('.group-item').forEach(item => {
+                const name = item.querySelector('.group-name').textContent.toLowerCase();
+                item.style.display = name.includes(query.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+
+
+        /**
+ * Open a group chat
+ */
+        async function openGroup(groupId, groupName, memberCount) {
+            try {
+                currentId = groupId;
+                currentType = 'group';
+                currentGroupId = groupId;
+
+                console.log('📦 Opening group:', groupName, 'ID:', groupId);
+
+                // Hide welcome screen, show chat window
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('chat-window').classList.remove('hidden');
+
+                // Update chat header for group
+                document.getElementById('chat-avatar-initial').textContent = groupName.charAt(0).toUpperCase();
+                document.getElementById('chat-header-name').textContent = groupName;
+
+                const statusContainer = document.getElementById('chat-header-status-container');
+                statusContainer.innerHTML = `<span>${memberCount} members</span>`;
+                statusContainer.className = 'chat-header-status';
+
+                // Load group messages
+                const messages = await fetchJson(`/api/chatrooms/${groupId}/messages`);
+                allMessages = messages || [];
+                renderMessages(allMessages);
+
+                // Subscribe to group messages
+                subscribeToGroup(groupId);
+
+                // Highlight active group
+                document.querySelectorAll('.group-item').forEach(el => el.classList.remove('active'));
+                const activeGroup = document.getElementById(`group-${groupId}`);
+                if (activeGroup) activeGroup.classList.add('active');
+
+                // Load group data for settings
+                const groupData = await fetchJson(`/api/chatrooms/${groupId}`);
+                currentGroupData = groupData;
+
+            } catch (error) {
+                console.error('❌ Error opening group:', error);
+            }
+        }
+
+        /**
+ * Subscribe to group WebSocket channel
+ */
+        function subscribeToGroup(groupId) {
+            // Unsubscribe from previous channels
+            subscriptions.forEach(s => s.unsubscribe());
+            subscriptions = [];
+
+            // Subscribe to group messages
+            const sub = stompClient.subscribe(`/topic/chatroom.${groupId}`, (message) => {
+                const msg = JSON.parse(message.body);
+                displayNewMessage(msg);
+            });
+            subscriptions.push(sub);
+
+            console.log('✅ Subscribed to group:', groupId);
+        }
+
+        /**
+         * Search members for group creation
+         */
+        let allUsersForGroup = [];
+
+        async function searchMembersForGroup(query) {
+            if (!allUsersForGroup.length) {
+                allUsersForGroup = await fetchJson('/api/users');
+            }
+
+            const filtered = allUsersForGroup.filter(u =>
+                u.fullName.toLowerCase().includes(query.toLowerCase()) ||
+                u.username.toLowerCase().includes(query.toLowerCase())
+            );
+
+            const list = document.getElementById('members-selection-list');
+            list.innerHTML = filtered.map(u => `
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px; cursor: pointer; border-radius: 6px; transition: 0.2s;" 
+             onmouseover="this.style.background='var(--bg-light)'" 
+             onmouseout="this.style.background='transparent'"
+             onclick="toggleMemberSelection(${u.id}, '${u.fullName.replace(/'/g, "\\'")}', this)">
+            <input type="checkbox" id="member-${u.id}" style="cursor: pointer;">
+            <div class="notification-avatar">${u.fullName.charAt(0)}</div>
+            <div style="flex: 1;">
+                <div style="font-weight: 500;">${u.fullName}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${u.department || 'N/A'}</div>
+            </div>
+        </div>
+    `).join('');
+        }
+
+        /**
+         * Toggle member selection for group creation
+         */
+        function toggleMemberSelection(userId, fullName, element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+
+            if (checkbox.checked) {
+                selectedMembersForGroup.add(userId);
+            } else {
+                selectedMembersForGroup.delete(userId);
+            }
+
+            console.log('Selected members:', Array.from(selectedMembersForGroup));
+        }
+
+        /**
+         * Create new group
+         */
+        async function createGroup() {
+            const groupName = document.getElementById('group-name-input').value.trim();
+            const groupDescription = document.getElementById('group-description-input').value.trim();
+
+            if (!groupName) {
+                alert('Please enter a group name');
+                return;
+            }
+
+            try {
+                // Create group
+                const response = await fetch('/api/chatrooms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: groupName,
+                        description: groupDescription,
+                        type: 'GROUP'
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to create group');
+
+                const group = await response.json();
+                console.log('✅ Group created:', group);
+
+                // Add selected members
+                if (selectedMembersForGroup.size > 0) {
+                    await fetch(`/api/chatrooms/${group.id}/members/batch`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(Array.from(selectedMembersForGroup))
+                    });
+                }
+
+                // Reset form
+                document.getElementById('group-name-input').value = '';
+                document.getElementById('group-description-input').value = '';
+                selectedMembersForGroup.clear();
+
+                // Close modal and reload groups
+                closeModals();
+                loadGroups();
+
+                // Auto-open the new group
+                openGroup(group.id, group.name, selectedMembersForGroup.size + 1);
+
+            } catch (error) {
+                console.error('❌ Error creating group:', error);
+                alert('Failed to create group. Please try again.');
+            }
+        }
+
+        /**
+         * Show group settings modal
+         */
+        async function showGroupSettings() {
+            if (!currentGroupId || !currentGroupData) return;
+
+            try {
+                // Load current group data
+                const group = await fetchJson(`/api/chatrooms/${currentGroupId}`);
+                const members = await fetchJson(`/api/chatrooms/${currentGroupId}/members`);
+
+                // Populate group name
+                document.getElementById('edit-group-name-input').value = group.name;
+
+                // Check if current user is admin
+                const currentUserMember = members.find(m => m.id == myId);
+                const isAdmin = currentUserMember && currentUserMember.role === 'ADMIN';
+
+                // Show/hide admin controls
+                document.getElementById('btn-edit-group-name').style.display = isAdmin ? 'block' : 'none';
+                document.getElementById('btn-delete-group').classList.toggle('hidden', !isAdmin);
+
+                // Populate members list
+                const membersList = document.getElementById('group-members-list');
+                membersList.innerHTML = members.map(member => {
+                    const initial = member.fullName.charAt(0).toUpperCase();
+                    const isCurrentUser = member.id == myId;
+                    const canChangeRole = isAdmin && !isCurrentUser;
+
+                    return `
+                <div class="group-member-item">
+                    <div class="group-member-avatar">${initial}</div>
+                    <div class="group-member-info">
+                        <div class="group-member-name">
+                            ${member.fullName} 
+                            ${isCurrentUser ? '(You)' : ''}
+                        </div>
+                        <div class="group-member-role">${member.role}</div>
+                    </div>
+                    ${canChangeRole ? `
+                        <button class="btn-change-role" onclick="toggleMemberRole(${member.id}, '${member.role}')">
+                            ${member.role === 'ADMIN' ? 'Make Member' : 'Make Admin'}
+                        </button>
+                        <button class="btn-remove-member" onclick="removeMember(${member.id}, '${member.fullName.replace(/'/g, "\\'")}')">
+                            Remove
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+                }).join('');
+
+                showModal('group-settings-modal');
+
+            } catch (error) {
+                console.error('❌ Error loading group settings:', error);
+            }
+        }
+
+        /**
+         * Enable group name editing
+         */
+        function enableGroupNameEdit() {
+            const input = document.getElementById('edit-group-name-input');
+            const editBtn = document.getElementById('btn-edit-group-name');
+            const saveBtn = document.getElementById('btn-save-group-name');
+
+            input.readOnly = false;
+            input.focus();
+            editBtn.style.display = 'none';
+            saveBtn.classList.remove('hidden');
+        }
+
+        /**
+         * Save group name changes
+         */
+        async function saveGroupName() {
+            const newName = document.getElementById('edit-group-name-input').value.trim();
+
+            if (!newName) {
+                alert('Group name cannot be empty');
+                return;
+            }
+
+            try {
+                await fetch(`/api/chatrooms/${currentGroupId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName, description: currentGroupData.description })
+                });
+
+                // Update UI
+                document.getElementById('chat-header-name').textContent = newName;
+                document.getElementById('edit-group-name-input').readOnly = true;
+                document.getElementById('btn-edit-group-name').style.display = 'block';
+                document.getElementById('btn-save-group-name').classList.add('hidden');
+
+                // Reload groups list
+                loadGroups();
+
+                console.log('✅ Group name updated');
+
+            } catch (error) {
+                console.error('❌ Error updating group name:', error);
+                alert('Failed to update group name');
+            }
+        }
+
+        /**
+         * Toggle member role between ADMIN and MEMBER
+         */
+        async function toggleMemberRole(userId, currentRole) {
+            const newRole = currentRole === 'ADMIN' ? 'MEMBER' : 'ADMIN';
+
+            try {
+                await fetch(`/api/chatrooms/${currentGroupId}/members/${userId}/role`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: newRole })
+                });
+
+                console.log('✅ Member role updated');
+
+                // Reload settings
+                showGroupSettings();
+
+            } catch (error) {
+                console.error('❌ Error updating member role:', error);
+                alert('Failed to update member role');
+            }
+        }
+
+        /**
+         * Remove member from group
+         */
+        async function removeMember(userId, memberName) {
+            if (!confirm(`Remove ${memberName} from the group?`)) return;
+
+            try {
+                await fetch(`/api/chatrooms/${currentGroupId}/members/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                console.log('✅ Member removed');
+
+                // Reload settings
+                showGroupSettings();
+
+            } catch (error) {
+                console.error('❌ Error removing member:', error);
+                alert('Failed to remove member');
+            }
+        }
+
+        /**
+         * Show add members modal
+         */
+        function showAddMembersModal() {
+            closeModals();
+            showModal('add-members-modal');
+            searchUsersToAdd('');
+        }
+
+        /**
+         * Search users to add to group
+         */
+        async function searchUsersToAdd(query) {
+            try {
+                const allUsers = await fetchJson('/api/users');
+                const currentMembers = await fetchJson(`/api/chatrooms/${currentGroupId}/members`);
+                const memberIds = new Set(currentMembers.map(m => m.id));
+
+                const availableUsers = allUsers.filter(u => !memberIds.has(u.id));
+
+                const filtered = availableUsers.filter(u =>
+                    u.fullName.toLowerCase().includes(query.toLowerCase())
+                );
+
+                const list = document.getElementById('add-members-list');
+                list.innerHTML = filtered.map(u => `
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-light); margin: 4px 0; border-radius: 8px; cursor: pointer;"
+                 onclick="addMemberToGroup(${u.id}, '${u.fullName.replace(/'/g, "\\'")}')">
+                <div class="notification-avatar">${u.fullName.charAt(0)}</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 500;">${u.fullName}</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">${u.department || 'N/A'}</div>
+                </div>
+                <button style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px;">
+                    Add
+                </button>
+            </div>
+        `).join('');
+
+            } catch (error) {
+                console.error('❌ Error searching users:', error);
+            }
+        }
+
+        /**
+         * Add member to group
+         */
+        async function addMemberToGroup(userId, userName) {
+            try {
+                await fetch(`/api/chatrooms/${currentGroupId}/members`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: userId })
+                });
+
+                console.log('✅ Member added:', userName);
+
+                // Reload add members list
+                searchUsersToAdd('');
+
+                // Show success message
+                alert(`${userName} added to the group!`);
+
+            } catch (error) {
+                console.error('❌ Error adding member:', error);
+                alert('Failed to add member');
+            }
+        }
+
+        /**
+         * Leave group
+         */
+        async function leaveGroup() {
+            if (!confirm('Are you sure you want to leave this group?')) return;
+
+            try {
+                await fetch(`/api/chatrooms/${currentGroupId}/members/${myId}`, {
+                    method: 'DELETE'
+                });
+
+                console.log('✅ Left group');
+
+                closeModals();
+                closeChat();
+                loadGroups();
+
+            } catch (error) {
+                console.error('❌ Error leaving group:', error);
+                alert('Failed to leave group');
+            }
+        }
+
+        /**
+         * Delete group (admin only)
+         */
+        async function deleteGroup() {
+            if (!confirm('Are you sure you want to delete this group? This cannot be undone.')) return;
+
+            try {
+                // Implementation depends on your backend
+                alert('Delete group functionality - implement backend endpoint');
+
+            } catch (error) {
+                console.error('❌ Error deleting group:', error);
+                alert('Failed to delete group');
+            }
+        }
+
+        // Update chat header to show group settings icon
+        function updateChatHeaderForGroup() {
+            const headerActions = document.querySelector('.header-actions');
+
+            // Add group settings button if in group chat
+            if (currentType === 'group') {
+                const settingsBtn = document.createElement('button');
+                settingsBtn.className = 'btn-header-action';
+                settingsBtn.onclick = showGroupSettings;
+                settingsBtn.title = 'Group Settings';
+                settingsBtn.innerHTML = `
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+        `;
+
+                // Insert before search button
+                const searchBtn = document.getElementById('search-toggle-btn');
+                headerActions.insertBefore(settingsBtn, searchBtn);
+            }
+        }
+
+
 
         async function loadConversations() {
             try {

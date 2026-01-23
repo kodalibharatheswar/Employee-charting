@@ -90,22 +90,59 @@ class WebRTCManager {
     this.subscribeToSignaling();
   }
 
-  /**
-   * Subscribe to WebRTC signaling messages
-   */
-  subscribeToSignaling() {
-    // User-specific call signals (for direct calls)
-    this.stompClient.subscribe("/user/queue/call.signal", (message) => {
-      this.handleSignalingMessage(JSON.parse(message.body));
+/**
+ * Subscribe to WebRTC signaling messages
+ */
+subscribeToSignaling() {
+    const userId = document.getElementById('currentUserId').value;
+    const username = document.getElementById('currentUsername').value;
+    
+    console.log('=== WEBRTC SUBSCRIPTION DEBUG ===');
+    console.log('User ID:', userId);
+    console.log('Username:', username);
+    
+    // Subscribe to multiple possible destinations
+    const subscriptions = [];
+    
+    // Subscription 1: /user/{userId}/queue/call
+    const sub1 = this.stompClient.subscribe("/user/" + userId + "/queue/call", (message) => {
+        console.log('📞 [SUB1] Received on /user/' + userId + '/queue/call');
+        console.log('Message body:', message.body);
+        this.handleCallNotification(JSON.parse(message.body));
     });
-
-    // User-specific call notifications
-    this.stompClient.subscribe("/user/queue/call", (message) => {
-      this.handleCallNotification(JSON.parse(message.body));
+    subscriptions.push(sub1);
+    console.log('✅ Subscribed to: /user/' + userId + '/queue/call');
+    
+    // Subscription 2: /user/queue/call (Spring Security default)
+    const sub2 = this.stompClient.subscribe("/user/queue/call", (message) => {
+        console.log('📞 [SUB2] Received on /user/queue/call');
+        console.log('Message body:', message.body);
+        this.handleCallNotification(JSON.parse(message.body));
     });
+    subscriptions.push(sub2);
+    console.log('✅ Subscribed to: /user/queue/call');
+    
+    // Subscription 3: /user/{userId}/queue/call.signal
+    const sub3 = this.stompClient.subscribe("/user/" + userId + "/queue/call.signal", (message) => {
+        console.log('📨 [SUB3] Received signal on /user/' + userId + '/queue/call.signal');
+        this.handleSignalingMessage(JSON.parse(message.body));
+    });
+    subscriptions.push(sub3);
+    console.log('✅ Subscribed to: /user/' + userId + '/queue/call.signal');
+    
+    // Subscription 4: /user/queue/call.signal (Spring Security default)
+    const sub4 = this.stompClient.subscribe("/user/queue/call.signal", (message) => {
+        console.log('📨 [SUB4] Received signal on /user/queue/call.signal');
+        this.handleSignalingMessage(JSON.parse(message.body));
+    });
+    subscriptions.push(sub4);
+    console.log('✅ Subscribed to: /user/queue/call.signal');
+    
+    console.log('=== ALL SUBSCRIPTIONS REGISTERED ===');
+    
+    return subscriptions;
+}
 
-    console.log("Subscribed to WebRTC signaling channels");
-  }
 
   /**
    * Subscribe to group call channels
@@ -131,47 +168,67 @@ class WebRTCManager {
   }
 
   // Ensure startCall handles the media correctly based on type
-  async startCall(chatType, chatId, callType) {
+async startCall(chatType, chatId, callType) {
+    console.log(`🔥 WebRTC startCall: type=${callType}, chatType=${chatType}, chatId=${chatId}`);
+    
+    // Cleanup any previous call
     this.cleanup();
+    
     this.isInitiator = true;
-    this.callType = callType; // 'AUDIO', 'VIDEO', or 'SCREEN_SHARE'
-    this.callMode =
-      chatType === "group" || chatType === "room" ? "GROUP" : "DIRECT";
+    this.callType = callType;
+    this.callMode = chatType === 'group' || chatType === 'room' ? 'GROUP' : 'DIRECT';
 
     try {
-      // 1. Get appropriate media stream
-      if (callType === "SCREEN_SHARE") {
-        this.localStream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        });
-      } else {
-        this.localStream = await navigator.mediaDevices.getUserMedia({
-          video: callType === "VIDEO",
-          audio: true,
-        });
-      }
+        // 1. Get appropriate media stream
+        console.log('📹 Getting user media...');
+        
+        if (callType === 'SCREEN_SHARE') {
+            this.localStream = await navigator.mediaDevices.getDisplayMedia({
+                video: true,
+                audio: true
+            });
+            console.log('✅ Screen share stream acquired');
+        } else {
+            this.localStream = await navigator.mediaDevices.getUserMedia({
+                video: callType === 'VIDEO',
+                audio: true
+            });
+            console.log('✅ Media stream acquired');
+        }
 
-      // 2. Notify UI
-      if (window.callUIManager) {
-        window.callUIManager.setLocalStream(this.localStream);
-      }
+        // 2. Notify UI to display local stream
+        if (window.callUIManager) {
+            window.callUIManager.setLocalStream(this.localStream);
+        }
 
-      // 3. Send initiation signal to server
-      const signal = {
-        type: "INITIATE",
-        chatType: chatType,
-        chatId: chatId,
-        callType: callType,
-        callMode: this.callMode,
-      };
+        // 3. Prepare call initiation data
+        const callData = {
+            callType: callType,
+            callMode: this.callMode
+        };
 
-      stompClient.send("/app/call.initiate", {}, JSON.stringify(signal));
+        if (this.callMode === 'DIRECT') {
+            // For direct calls, we need conversationId and recipientId
+            callData.conversationId = chatId;
+            callData.recipientId = currentRecipient.id;
+        } else {
+            // For group calls
+            callData.chatRoomId = chatId;
+        }
+
+        console.log('📤 Sending call initiation to backend:', callData);
+
+        // 4. Send initiation signal to backend
+        this.stompClient.send("/app/call.initiate", {}, JSON.stringify(callData));
+
+        console.log('✅ Call initiation sent successfully');
+
     } catch (err) {
-      console.error("Could not start call:", err);
-      this.handleError("Failed to access media devices.");
+        console.error('❌ Failed to start call:', err);
+        this.handleError('Failed to access media devices: ' + err.message);
+        this.cleanup();
     }
-  }
+}
   /**
    * Initiate a call (audio, video, or screen share)
    *
@@ -584,52 +641,90 @@ class WebRTCManager {
   /**
    * Handle incoming call
    */
-  async handleIncomingCall(data) {
-    console.log("Incoming call from", data.callerName);
+handleIncomingCall(data) {
+    console.log('📞 Incoming call from', data.callerName, 'Type:', data.callType);
 
     this.currentCall = data;
     this.callType = data.callType;
     this.callMode = data.callMode;
     this.isInitiator = false;
 
-    // Notify UI layer to show incoming call modal
-    if (window.showIncomingCallModal) {
-      window.showIncomingCallModal(data);
+    // Show incoming call modal
+    const modal = document.getElementById('incoming-call-modal');
+    const callerName = document.getElementById('caller-name');
+    const callTypeEl = document.getElementById('call-type');
+    const callerAvatar = document.getElementById('incoming-caller-avatar');
+
+    if (modal && callerName && callTypeEl) {
+        callerName.textContent = data.callerName;
+        callTypeEl.textContent = this.getCallTypeLabel(data.callType);
+        
+        if (callerAvatar) {
+            callerAvatar.textContent = data.callerName.charAt(0).toUpperCase();
+        }
+        
+        modal.classList.add('active');
+        console.log('✅ Incoming call modal shown');
+    } else {
+        console.error('❌ Incoming call modal elements not found!');
     }
-  }
+}
+
+getCallTypeLabel(callType) {
+    switch (callType) {
+        case 'AUDIO': return 'Audio Call';
+        case 'VIDEO': return 'Video Call';
+        case 'SCREEN_SHARE': return 'Screen Share';
+        default: return 'Call';
+    }
+}
 
   /**
    * Accept incoming call
    */
-  async acceptCall() {
+async acceptCall() {
     try {
-      console.log("Accepting call");
+        console.log('✅ Accepting call');
 
-      // Get local media stream
-      await this.getLocalStream(this.callType);
+        // Hide incoming call modal
+        const incomingModal = document.getElementById('incoming-call-modal');
+        if (incomingModal) {
+            incomingModal.classList.remove('active');
+        }
 
-      // Join the call
-      this.stompClient.send(
-        "/app/call.join",
-        {},
-        JSON.stringify({
-          callId: this.currentCall.callId,
-        }),
-      );
+        // Show active call modal
+        if (window.callUIManager) {
+            window.callUIManager.showActiveCall();
+            window.callUIManager.updateStatusText('Connecting...');
+        }
 
-      // For direct calls, create peer connection with caller
-      if (this.callMode === "DIRECT") {
-        await this.createPeerConnection(this.currentCall.callerId);
-      }
+        // Get local media stream
+        await this.getLocalStream(this.callType);
 
-      console.log("Call accepted");
-      return true;
+        // Notify UI to display local stream
+        if (window.callUIManager) {
+            window.callUIManager.setLocalStream(this.localStream);
+        }
+
+        // Send join message to backend
+        this.stompClient.send("/app/call.join", {}, JSON.stringify({
+            callId: this.currentCall.callId
+        }));
+
+        // For direct calls, create peer connection with caller
+        if (this.callMode === 'DIRECT') {
+            await this.createPeerConnection(this.currentCall.callerId);
+        }
+
+        console.log('✅ Call accepted successfully');
+        return true;
+        
     } catch (error) {
-      console.error("Error accepting call:", error);
-      this.handleError("Failed to accept call: " + error.message);
-      return false;
+        console.error('❌ Error accepting call:', error);
+        this.handleError('Failed to accept call: ' + error.message);
+        return false;
     }
-  }
+}
 
   /**
    * Reject incoming call

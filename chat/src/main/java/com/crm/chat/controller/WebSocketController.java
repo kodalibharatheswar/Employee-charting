@@ -161,75 +161,130 @@ public class WebSocketController {
     // NEW WEBRTC SIGNALING METHODS FOR AUDIO/VIDEO CALLS
     // ============================================================================
 
-    /**
-     * Initiate a call (audio/video/screen share)
-     * 
-     * Payload structure:
-     * {
-     *   "callType": "AUDIO" | "VIDEO" | "SCREEN_SHARE",
-     *   "callMode": "DIRECT" | "GROUP",
-     *   "conversationId": Long (for direct calls),
-     *   "chatRoomId": Long (for group calls),
-     *   "recipientId": Long (for direct calls)
-     * }
-     */
-    @MessageMapping("/call.initiate")
-    public void initiateCall(@Payload Map<String, Object> callData, Principal principal) {
-        try {
-            if (principal == null) {
-                System.err.println("Principal is null in initiateCall");
-                return;
-            }
+/**
+ * Initiate a call (audio, video, or screen share)
+ * 
+ * Payload structure:
+ * {
+ *   "callType": "AUDIO" | "VIDEO" | "SCREEN_SHARE",
+ *   "callMode": "DIRECT" | "GROUP",
+ *   "conversationId": Long (for direct calls),
+ *   "chatRoomId": Long (for group calls),
+ *   "recipientId": Long (for direct calls)
+ * }
+ */
+@MessageMapping("/call.initiate")
+public void initiateCall(@Payload Map<String, Object> callData, Principal principal) {
+    try {
+        System.out.println("=== CALL INITIATE DEBUG START ===");
+        System.out.println("Principal: " + (principal != null ? principal.getName() : "NULL"));
+        System.out.println("Call Data: " + callData);
+        
+        if (principal == null) {
+            System.err.println("❌ Principal is null in initiateCall");
+            return;
+        }
 
-            String username = principal.getName();
-            User caller = userService.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        String username = principal.getName();
+        User caller = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-            String callTypeStr = callData.get("callType").toString();
-            String callModeStr = callData.get("callMode").toString();
+        String callTypeStr = callData.get("callType").toString();
+        String callModeStr = callData.get("callMode").toString();
+        
+        Call.CallType callType = Call.CallType.valueOf(callTypeStr);
+        Call.CallMode callMode = Call.CallMode.valueOf(callModeStr);
+
+        System.out.println("📞 Call Type: " + callType);
+        System.out.println("📞 Call Mode: " + callMode);
+        System.out.println("📞 Caller: " + caller.getFullName() + " (ID: " + caller.getId() + ")");
+
+        Call call;
+
+        if (callMode == Call.CallMode.DIRECT) {
+            Long conversationId = Long.valueOf(callData.get("conversationId").toString());
+            Long recipientId = Long.valueOf(callData.get("recipientId").toString());
             
-            Call.CallType callType = Call.CallType.valueOf(callTypeStr);
-            Call.CallMode callMode = Call.CallMode.valueOf(callModeStr);
+            System.out.println("📞 Conversation ID: " + conversationId);
+            System.out.println("📞 Recipient ID: " + recipientId);
+            
+            // Create call in database
+            call = callService.initiateDirectCall(caller.getId(), conversationId, callType);
+            System.out.println("✅ Call created in DB with ID: " + call.getId());
 
-            Call call;
-
-            if (callMode == Call.CallMode.DIRECT) {
-                // Direct call (1-on-1)
-                Long conversationId = Long.valueOf(callData.get("conversationId").toString());
-                call = callService.initiateDirectCall(caller.getId(), conversationId, callType);
-
-                // Get recipient ID and notify them
-                Long recipientId = Long.valueOf(callData.get("recipientId").toString());
-                
-                Map<String, Object> notification = createCallNotification(call, "INCOMING_CALL", caller);
-                
-                // Send to specific user using /user/{userId}/queue/call
+            // Get recipient user
+            User recipient = userService.findById(recipientId)
+                    .orElseThrow(() -> new RuntimeException("Recipient not found"));
+            
+            System.out.println("📞 Recipient: " + recipient.getFullName() + " (ID: " + recipient.getId() + ")");
+            
+            // Create notification
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "INCOMING_CALL");
+            notification.put("callId", call.getId());
+            notification.put("callType", callType.toString());
+            notification.put("callMode", callMode.toString());
+            notification.put("callerId", caller.getId());
+            notification.put("callerName", caller.getFullName());
+            notification.put("callerUsername", caller.getUsername());
+            notification.put("conversationId", conversationId);
+            notification.put("roomId", call.getRoomId());
+            
+            System.out.println("📤 Notification to send: " + notification);
+            
+            // Try BOTH methods to ensure delivery
+            try {
+                // Method 1: convertAndSendToUser
                 messagingTemplate.convertAndSendToUser(
                     recipientId.toString(),
                     "/queue/call",
                     notification
                 );
-
-            } else {
-                // Group call (conference)
-                Long chatRoomId = Long.valueOf(callData.get("chatRoomId").toString());
-                call = callService.initiateGroupCall(caller.getId(), chatRoomId, callType);
-
-                // Notify all group members
-                Map<String, Object> notification = createCallNotification(call, "INCOMING_GROUP_CALL", caller);
-                
-                String destination = "/topic/chatroom." + chatRoomId + ".call";
-                messagingTemplate.convertAndSend((String)destination, (Object)notification);
+                System.out.println("✅ Method 1: Sent via convertAndSendToUser to user: " + recipientId);
+            } catch (Exception e) {
+                System.err.println("❌ Method 1 failed: " + e.getMessage());
+            }
+            
+            try {
+                // Method 2: Direct destination
+                String destination = "/user/" + recipientId + "/queue/call";
+                messagingTemplate.convertAndSend(destination, (Object) notification);
+                System.out.println("✅ Method 2: Sent to destination: " + destination);
+            } catch (Exception e) {
+                System.err.println("❌ Method 2 failed: " + e.getMessage());
+            }
+            
+            try {
+                // Method 3: Username-based
+                messagingTemplate.convertAndSendToUser(
+                    recipient.getUsername(),
+                    "/queue/call",
+                    notification
+                );
+                System.out.println("✅ Method 3: Sent via username: " + recipient.getUsername());
+            } catch (Exception e) {
+                System.err.println("❌ Method 3 failed: " + e.getMessage());
             }
 
-            System.out.println("Call initiated: " + call.getId() + " by " + caller.getFullName());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendCallError(principal, "Failed to initiate call: " + e.getMessage());
+        } else {
+            // Group call handling...
+            Long chatRoomId = Long.valueOf(callData.get("chatRoomId").toString());
+            call = callService.initiateGroupCall(caller.getId(), chatRoomId, callType);
+            
+            Map<String, Object> notification = createCallNotification(call, "INCOMING_GROUP_CALL", caller);
+            String destination = "/topic/chatroom." + chatRoomId + ".call";
+            messagingTemplate.convertAndSend(destination, (Object) notification);
+            
+            System.out.println("✅ Group call notification sent to: " + destination);
         }
-    }
 
+        System.out.println("=== CALL INITIATE DEBUG END ===");
+
+    } catch (Exception e) {
+        System.err.println("❌ Error in initiateCall: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
     /**
      * WebRTC Offer - Send SDP offer to recipient(s)
      * 

@@ -191,80 +191,65 @@ class CallUIManager {
      * Initiate a call
      * @param {string} callType - 'AUDIO', 'VIDEO', or 'SCREEN_SHARE'
      */
-    initiateCall(type) {
-    if (!currentId) return;
+initiateCall(type) {
+    if (!currentId) {
+        console.error('❌ No active conversation');
+        return;
+    }
 
-    console.log(`Starting ${type} call...`);
+    console.log(`📞 Starting ${type} call...`);
     
-    // Set UI state to calling
+    // Show active call modal immediately
     this.showActiveCall();
     this.updateStatusText('Calling...');
     
-    // Trigger the WebRTC manager
-    // In your webrtc.js, startCall takes (chatType, chatId, callType)
-    if (this.webrtcManager) {
-        this.webrtcManager.startCall(currentType, currentId, type);
+    // WebRTC manager will handle the actual call setup
+    console.log('✅ Call UI ready, WebRTC manager will handle media');
+}
+
+// Add these helper methods
+showActiveCall() {
+    const modal = document.getElementById('active-call-modal');
+    if (modal) {
+        modal.classList.add('active');
+        console.log('✅ Active call modal shown');
     }
 }
-    // async initiateCall(callType) {
-    //     try {
-    //         // Determine call mode based on current chat context
-    //         const callMode = currentType === 'group' ? 'GROUP' : 'DIRECT';
 
-    //         console.log(`Initiating ${callType} call (${callMode} mode)`);
+updateStatusText(text) {
+    const statusEl = document.getElementById('call-status');
+    if (statusEl) {
+        statusEl.textContent = text;
+    }
+}
 
-    //         // Prepare call parameters
-    //         const callParams = {
-    //             callType: callType,
-    //             callMode: callMode
-    //         };
+setLocalStream(stream) {
+    console.log('🎥 Setting local stream in UI');
+    
+    // Create or update local video element
+    let localVideo = document.getElementById('local-video');
+    
+    if (!localVideo) {
+        localVideo = document.createElement('video');
+        localVideo.id = 'local-video';
+        localVideo.autoplay = true;
+        localVideo.muted = true;
+        localVideo.playsInline = true;
+        localVideo.style.width = '100%';
+        localVideo.style.height = '100%';
+        localVideo.style.objectFit = 'cover';
+        
+        const container = document.getElementById('local-video-container');
+        if (container) {
+            container.innerHTML = '';
+            container.appendChild(localVideo);
+        }
+    }
 
-    //         if (callMode === 'DIRECT') {
-    //             // Direct call
-    //             if (!currentId || !currentConversationId) {
-    //                 this.showError('Please select a user to call');
-    //                 return;
-    //             }
-                
-    //             callParams.conversationId = currentConversationId;
-    //             callParams.recipientId = currentId;
-    //         } else {
-    //             // Group call
-    //             if (!currentId) {
-    //                 this.showError('Please select a group to call');
-    //                 return;
-    //             }
-                
-    //             callParams.chatRoomId = currentId;
-                
-    //             // Subscribe to group call channels
-    //             this.webrtcManager.subscribeToGroupCall(currentId);
-    //         }
-
-    //         // Show loading state
-    //         this.showCallStatus('Initiating call...');
-
-    //         // Initiate call through WebRTC Manager
-    //         const success = await this.webrtcManager.initiateCall(callParams);
-
-    //         if (success) {
-    //             // Show active call UI
-    //             this.showActiveCallModal(callType);
-                
-    //             // Display local stream
-    //             this.displayLocalStream();
-                
-    //             // Start call duration timer
-    //             this.startCallDuration();
-                
-    //             this.showCallStatus('Calling...');
-    //         }
-
-    //     } catch (error) {
-    //         console.error('Error initiating call:', error);
-    //         this.showError('Failed to initiate call: ' + error.message);
-    //     }
-    // }
+    localVideo.srcObject = stream;
+    console.log('✅ Local stream attached to video element');
+}
+    
 
     /**
      * Show incoming call modal
@@ -420,32 +405,45 @@ class CallUIManager {
      * @param {number} userId - Remote user ID
      * @param {MediaStream} stream - Remote media stream
      */
-    handleRemoteStream(userId, stream) {
-        console.log('Handling remote stream for user:', userId);
+handleRemoteStream(userId, stream) {
+    console.log('🎥 Handling remote stream for user:', userId);
 
-        // Create video element for remote stream
-        const videoElement = document.createElement('video');
-        videoElement.id = `remote-video-${userId}`;
-        videoElement.autoplay = true;
-        videoElement.playsInline = true;
-        videoElement.srcObject = stream;
+    // Update status
+    this.updateStatusText('Connected');
 
-        // Add video element to remote container
-        if (this.elements.remoteVideoContainer) {
-            this.elements.remoteVideoContainer.appendChild(videoElement);
-        }
-
-        // Store reference
-        this.remoteStreams.set(userId, {
-            stream: stream,
-            videoElement: videoElement
-        });
-
-        // Update call status
-        this.showCallStatus('Connected');
-
-        console.log('Remote stream displayed for user:', userId);
+    // Create video element for remote stream
+    const remoteContainer = document.getElementById('remote-video-container');
+    if (!remoteContainer) {
+        console.error('❌ Remote video container not found');
+        return;
     }
+
+    // Clear waiting message
+    remoteContainer.innerHTML = '';
+
+    // Create video element
+    const videoElement = document.createElement('video');
+    videoElement.id = `remote-video-${userId}`;
+    videoElement.autoplay = true;
+    videoElement.playsInline = true;
+    videoElement.style.width = '100%';
+    videoElement.style.height = '100%';
+    videoElement.style.objectFit = 'contain';
+    videoElement.srcObject = stream;
+
+    remoteContainer.appendChild(videoElement);
+
+    // Store reference
+    this.remoteStreams.set(userId, {
+        stream: stream,
+        videoElement: videoElement
+    });
+
+    // Start call duration timer
+    this.startCallDuration();
+
+    console.log('✅ Remote stream displayed for user:', userId);
+}
 
     /**
      * Remove remote stream
